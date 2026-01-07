@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+.DS_Store
+lightning_logs/
+checkpoints/
+*.pth
+!best_model.pth
+venv/
+.idea/
+.vscode/
