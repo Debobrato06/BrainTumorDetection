@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-brain"></i>
+                <span>NeuroScan<span class="accent">AI</span></span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-target="dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-target="training">
+                    <i class="fa-solid fa-microchip"></i> Training
+                </a>
+                <a href="#" class="nav-item" data-target="testing">
+                    <i class="fa-solid fa-vial"></i> Testing
+                </a>
+                <a href="#" class="nav-item" data-target="reports">
+                    <i class="fa-solid fa-folder-open"></i> Reports
+                </a>
+                <a href="#" class="nav-item" data-target="settings">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="details">
+                        <span class="name">Dr. Researcher</span>
+                        <span class="role">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Dashboard View -->
+            <section id="dashboard" class="view-section active">
+                <header class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>System status and recent activities.</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="icon-box purple"><i class="fa-solid fa-database"></i></div>
+                        <div class="stat-info">
+                            <h3>Total Samples</h3>
+                            <p class="value">1,240</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-box green"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>Model Accuracy</h3>
+                            <p class="value">94.8%</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="icon-box blue"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="stat-info">
+                            <h3>Inference Time</h3>
+                            <p class="value">~120ms</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Training Accuracy History</h3>
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Training View -->
+            <section id="training" class="view-section">
+                <header class="section-header">
+                    <h1>Model Training</h1>
+                    <p>Configure and start new training sessions.</p>
+                </header>
+
+                <div class="training-layout">
+                    <div class="config-panel">
+                        <h3>Configuration</h3>
+                        <form id="training-form">
+                            <div class="form-group">
+                                <label>Epochs</label>
+                                <input type="number" name="epochs" value="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Batch Size</label>
+                                <input type="number" name="batch_size" value="4" min="1" max="32">
+                            </div>
+                            <div class="form-group">
+                                <label>Learning Rate</label>
+                                <input type="number" name="lr" value="0.0003" step="0.0001">
+                            </div>
+                            <div class="form-group">
+                                <label>Dataset Source</label>
+                                <select name="data_source" id="data-source-select" onchange="togglePathInput()">
+                                    <option value="synthetic">Synthetic (Demo)</option>
+                                    <option value="local">Local Data Folder</option>
+                                </select>
+                            </div>
+                            <div class="form-group hidden" id="path-input-group">
+                                <label>Dataset Folder Path</label>
+                                <input type="text" name="dataset_path" placeholder="e.g. D:/Data/BrainTumorImages">
+                                <small style="color:var(--text-muted); font-size:0.7em">Expected structure: /tumor and
+                                    /no_tumor subfolders containing images</small>
+                            </div>
+                            <button type="submit" class="btn-primary" id="start-training-btn">
+                                <i class="fa-solid fa-play"></i> Start Training
+                            </button>
+
+                            <script>
+                                function togglePathInput() {
+                                    const select = document.getElementById('data-source-select');
+                                    const inputGroup = document.getElementById('path-input-group');
+                                    if (select.value === 'local') {
+                                        inputGroup.classList.remove('hidden');
+                                    } else {
+                                        inputGroup.classList.add('hidden');
+                                    }
+                                }
+                            </script>
+                        </form>
+                    </div>
+
+                    <div class="logs-panel">
+                        <h3>Training Logs</h3>
+                        <div class="terminal-window" id="training-logs">
+                            <div class="log-line system">> System Ready...</div>
+                        </div>
+                        <div class="progress-area">
+                            <span>Progress</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" id="train-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testing / Inference View -->
+            <section id="testing" class="view-section">
+                <header class="section-header">
+                    <h1>Diagnostic Testing</h1>
+                    <p>Run inference on MRI scans or Images.</p>
+                </header>
+
+                <div class="testing-container">
+                    <div class="upload-area">
+                        <div class="upload-card" id="drop-zone">
+                            <input type="file" id="file-input" accept=".nii.gz,.nii,.jpg,.jpeg,.png" hidden>
+                            <div class="upload-icon">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <h3>Drag & Drop MRI Scan or Image</h3>
+                            <p>or <span class="browser-btn">browse files</span></p>
+                            <p class="file-info">Supported formats: .nii, .jpg, .png</p>
+                        </div>
+                    </div>
+
+                    <div class="results-area hidden" id="results-section">
+                        <div class="scan-preview">
+                            <div class="image-container">
+                                <img id="preview-image" src="" alt="MRI Preview">
+                                <div class="loading-overlay hidden" id="loading-overlay">
+                                    <div class="spinner"></div>
+                                    <p>Analyzing...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-details">
+                            <h3>Diagnostic Report</h3>
+
+                            <div class="patient-inputs">
+                                <div class="input-group">
+                                    <label>Patient Name</label>
+                                    <input type="text" id="patient-name" placeholder="John Doe">
+                                </div>
+                                <div class="input-group">
+                                    <label>Case ID</label>
+                                    <input type="text" id="case-id" placeholder="CASE-001">
+                                </div>
+                            </div>
+
+                            <div class="status-indicator" id="status-indicator">
+                                <div class="pulse-ring"></div>
+                                <span id="detection-text">--</span>
+                            </div>
+
+                            <div class="report-grid">
+                                <div class="report-item">
+                                    <span class="label">Confidence</span>
+                                    <span class="value" id="confidence-val">0%</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Tumor Size</span>
+                                    <span class="value" id="tumor-size-val">--</span>
+                                </div>
+                                <div class="report-item">
+                                    <span class="label">Location</span>
+                                    <span class="value" id="tumor-loc-val">--</span>
+                                </div>
+                                <div class="report-item full-width">
+                                    <span class="label">Impression</span>
+                                    <p class="summary-text" id="impression-text">Awaiting analysis...</p>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="btn-primary" id="save-report-btn"><i class="fa-solid fa-save"></i> Save
+                                    to History</button>
+                                <button class="btn-secondary" id="reset-btn">New Scan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports / History View -->
+            <section id="reports" class="view-section">
+                <header class="section-header">
+                    <h1>Patient Case Files</h1>
+                    <p>View long-term tracking and history.</p>
+                </header>
+
+                <div class="reports-container">
+                    <div class="reports-toolbar">
+                        <button class="btn-refresh" id="refresh-reports-btn"><i class="fa-solid fa-sync"></i>
+                            Refresh</button>
+                    </div>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Case ID</th>
+                                <th>Patient Name</th>
+                                <th>Diagnosis</th>
+                                <th>Confidence</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="settings" class="view-section">
+                <header class="section-header">
+                    <h1>Settings</h1>
+                    <p>System preferences and model management.</p>
+                </header>
+                <div class="settings-content">
+                    <p>Settings panel implementation pending.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
