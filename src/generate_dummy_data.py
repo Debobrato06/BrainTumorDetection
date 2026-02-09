@@ -3,7 +3,7 @@ from PIL import Image
 import os
 import pathlib
 
-root = pathlib.Path(r"D:\DebobratoResearch\BrainTumorDetection\dummy_data\Training")
+root = pathlib.Path(__file__).parent.parent / "dummy_data" / "Training"
 classes = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 for c in classes:
