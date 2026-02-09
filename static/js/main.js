@@ -142,6 +142,16 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('/training_status')
                 .then(res => res.json())
                 .then(data => {
+                    // Update Terminal Title to show mode
+                    const termTitle = document.querySelector('.terminal-title');
+                    if (data.logs.some(l => l.includes('[HYBRID-SIMULATION]'))) {
+                        termTitle.innerText = 'train.py - neuro_engine [SIMULATION MODE]';
+                        termTitle.style.color = '#f1c40f';
+                    } else {
+                        termTitle.innerText = 'train.py - neuro_engine';
+                        termTitle.style.color = '';
+                    }
+
                     // Update Progress
                     progressBar.style.width = data.progress + '%';
                     progressText.innerText = data.progress + '%';
@@ -304,6 +314,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    if (saveReportBtn) {
+        saveReportBtn.addEventListener('click', () => {
+            if (!currentAnalysisData) {
+                alert("No analysis data to save. Please run a scan first.");
+                return;
+            }
+
+            const pName = patientNameInput.value || "Anonymous";
+            const cId = caseIdInput.value || "TEMP-" + Math.floor(Math.random() * 10000);
+
+            saveReportBtn.disabled = true;
+            saveReportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Archiving...';
+
+            const reportData = {
+                case_id: cId,
+                patient_name: pName,
+                diagnosis: currentAnalysisData.label,
+                confidence: currentAnalysisData.confidence,
+                tumor_size: currentAnalysisData.details ? currentAnalysisData.details.tumor_size : "N/A",
+                tumor_loc: currentAnalysisData.details ? currentAnalysisData.details.tumor_loc : "N/A",
+                impression: currentAnalysisData.details ? currentAnalysisData.details.impression : "",
+                image_b64: currentAnalysisData.image_b64
+            };
+
+            fetch('/save_report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reportData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert("Case " + cId + " has been successfully archived in the Clinical Vault.");
+                        // Optional: trigger a refresh of the reports table
+                        if (reportsTableBody) loadReports();
+                    } else {
+                        alert("ERROR: " + data.message);
+                    }
+                })
+                .catch(err => alert("NETWORK ERROR: " + err))
+                .finally(() => {
+                    saveReportBtn.disabled = false;
+                    saveReportBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Archiving Report';
+                });
+        });
+    }
+
     // --- Clinical Case Archive Logic ---
     const refreshReportsBtn = document.getElementById('refresh-reports-btn');
     const reportsTableBody = document.getElementById('reports-table-body');
@@ -316,8 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reportsTableBody) return;
 
         // UI Feedback
-        const refreshIcon = refreshReportsBtn.querySelector('i');
-        refreshIcon.classList.add('fa-spin');
+        if (refreshReportsBtn) {
+            const refreshIcon = refreshReportsBtn.querySelector('i');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+        }
+
         reportsTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem; opacity: 0.5;">Synchronizing with Archive...</td></tr>';
 
         fetch('/get_reports')
@@ -333,23 +393,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (reports.length === 0) {
                     reportsTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem;">Archival Vault is Empty.</td></tr>';
                 } else {
+                    // Sort newest first by default
+                    reports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
                     reports.forEach((r, index) => {
-                        const isTumor = r.diagnosis.includes('Tumor Detected');
+                        const isTumor = r.diagnosis && r.diagnosis.includes('NEOPLASTIC');
                         if (isTumor) tumorCount++; else healthyCount++;
 
                         const row = document.createElement('tr');
-                        const date = new Date(r.timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                        const date = r.timestamp ? new Date(r.timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'N/A';
 
                         row.innerHTML = `
                             <td><span style="opacity: 0.7;">${date}</span></td>
-                            <td><code style="color: var(--secondary);">${r.case_id}</code></td>
-                            <td><span style="font-weight: 500;">${r.patient_name}</span></td>
-                            <td><span class="badge-clinical ${isTumor ? 'tumor' : 'healthy'}">${r.diagnosis}</span></td>
+                            <td><code style="color: var(--secondary);">${r.case_id || 'N/A'}</code></td>
+                            <td><span style="font-weight: 500;">${r.patient_name || 'Anonymous'}</span></td>
+                            <td><span class="badge-clinical ${isTumor ? 'tumor' : 'healthy'}">${r.diagnosis || 'Unknown'}</span></td>
                             <td>
                                 <div class="confidence-cell">
-                                    <span>${(r.confidence * 100).toFixed(1)}%</span>
+                                    <span>${((r.confidence || 0) * 100).toFixed(1)}%</span>
                                     <div class="confidence-bar-mini">
-                                        <div class="fill" style="width: ${r.confidence * 100}%;"></div>
+                                        <div class="fill" style="width: ${(r.confidence || 0) * 100}%;"></div>
                                     </div>
                                 </div>
                             </td>
@@ -380,9 +443,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 reportsTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--danger);">Synchronization Error: ${e}</td></tr>`;
             })
             .finally(() => {
-                refreshIcon.classList.remove('fa-spin');
+                if (refreshReportsBtn) {
+                    const refreshIcon = refreshReportsBtn.querySelector('i');
+                    if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                }
             });
     }
+
+    // Initial load
+    loadReports();
 
     // --- Global Helpers ---
     window.togglePathInput = function () {

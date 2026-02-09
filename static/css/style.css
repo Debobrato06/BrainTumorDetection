@@ -94,10 +94,24 @@ body {
     padding-top: 1rem;
 }
 
+.user-info-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: 0.3s;
+}
+
+.user-info-link:hover .user-info {
+    background: rgba(108, 92, 231, 0.1);
+    border-radius: 12px;
+}
+
 .user-info {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 10px;
+    transition: 0.3s;
 }
 
 .avatar {
@@ -182,6 +196,7 @@ body {
     font-weight: 700;
     background: linear-gradient(to right, #fff, var(--text-muted));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -1044,22 +1059,6 @@ body {
     height: calc(100vh - 180px);
 }
 
-.scanner-status-mini {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 206, 201, 0.1);
-    padding: 8px 16px;
-    border-radius: 50px;
-    border: 1px solid rgba(0, 206, 201, 0.2);
-}
-
-.scanner-status-mini .label {
-    font-size: 0.8rem;
-    color: var(--secondary);
-    font-weight: 600;
-}
-
 .imaging-chamber-premium {
     background: #000;
     border: 1px solid var(--border);
@@ -1197,10 +1196,12 @@ body {
 }
 
 .scan-preview-wrapper img {
-    max-width: 90%;
-    max-height: 90%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
-    filter: contrast(1.1) brightness(1.1);
+    filter: contrast(1.15) brightness(1.15);
 }
 
 .loading-overlay-premium {
@@ -1259,30 +1260,6 @@ body {
     font-family: monospace;
     color: var(--secondary);
     margin-bottom: 10px;
-}
-
-.mini-loading-bar {
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.mini-loading-bar .fill {
-    height: 100%;
-    background: var(--secondary);
-    width: 40%;
-    animation: loadingWidth 2s infinite linear;
-}
-
-@keyframes loadingWidth {
-    0% {
-        transform: translateX(-100%);
-    }
-
-    100% {
-        transform: translateX(250%);
-    }
 }
 
 .imaging-metadata {
@@ -1376,6 +1353,11 @@ body {
     margin-bottom: 1rem;
 }
 
+.result-data-structured {
+    display: flex;
+    flex-direction: column;
+}
+
 .detection-status-card {
     background: rgba(108, 92, 231, 0.1);
     border: 1px solid var(--primary);
@@ -1383,6 +1365,38 @@ body {
     border-radius: 12px;
     margin-bottom: 1.5rem;
     text-align: center;
+}
+
+.metrics-grid-medical {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.clinical-impression-box {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.clinical-impression-box .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.clinical-impression-box p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.sidebar-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 1.5rem;
 }
 
 .detection-status-card.healthy {
@@ -1823,4 +1837,185 @@ body {
     margin-top: 0;
     /* Override generic margin */
     flex: 1;
+}
+
+/* --- Profile Section Premium --- */
+.profile-container-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.profile-header-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-header-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background: linear-gradient(225deg, rgba(108, 92, 231, 0.1) 0%, transparent 100%);
+}
+
+.profile-avatar-large {
+    width: 180px;
+    height: 180px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 4px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.badge-premium {
+    background: rgba(108, 92, 231, 0.2);
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+.profile-header-info h2 {
+    font-size: 2.5rem;
+    margin: 10px 0 5px 0;
+}
+
+.profile-header-info .role {
+    color: var(--secondary);
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.profile-quick-stats {
+    display: flex;
+    gap: 30px;
+}
+
+.q-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.q-stat .val {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.q-stat .lab {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.p-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+}
+
+.p-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.p-card h3 i {
+    color: var(--primary);
+}
+
+.p-card p {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.p-timeline-item {
+    position: relative;
+    padding-left: 20px;
+    border-left: 2px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.p-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+.p-timeline-item .date {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.p-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.p-skills span {
+    background: var(--bg-dark);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+}
+
+.p-contact p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 1100px) {
+    .profile-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-header-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .profile-quick-stats {
+        justify-content: center;
+    }
 }
