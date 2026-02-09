@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debobrato Biswas | Medical Researcher Profile</title>
+    <meta name="description"
+        content="Professional profile of Debobrato Biswas, lead researcher in Neuro-Oncology and Brain Tumor Detection systems.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Open+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.8);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+        }
+
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            position: relative;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 450px;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 30px;
+            box-shadow: 20px 20px 60px rgba(0, 0, 0, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 10%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        /* Expertise Grid */
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .expertise-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .expertise-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .expertise-card i {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        /* Timeline/Education */
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: #e2e8f0;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            margin-bottom: 50px;
+            position: relative;
+            width: 50%;
+            padding: 0 40px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            text-align: left;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            top: 0;
+            z-index: 10;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+        }
+
+        .timeline-date {
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        /* Publications */
+        .pub-list {
+            list-style: none;
+        }
+
+        .pub-item {
+            background: var(--white);
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .pub-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .pub-meta {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Contact Section */
+        .contact-container {
+            display: flex;
+            gap: 50px;
+            background: var(--white);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .contact-info {
+            flex: 1;
+            padding: 60px;
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .contact-form {
+            flex: 1.5;
+            padding: 60px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+        }
+
+        .contact-info h2 {
+            color: var(--white);
+            margin-bottom: 30px;
+        }
+
+        .info-link {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .info-link i {
+            margin-right: 15px;
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 10%;
+            background: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .social-links {
+            margin-bottom: 30px;
+        }
+
+        .social-links a {
+            font-size: 1.5rem;
+            margin: 0 15px;
+            color: var(--white);
+            opacity: 0.7;
+        }
+
+        .social-links a:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        .back-home {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 968px) {
+            .hero {
+                flex-direction: column-reverse;
+                text-align: center;
+                height: auto;
+                padding-top: 120px;
+                padding-bottom: 60px;
+            }
+
+            .hero-image img {
+                width: 300px;
+                height: 300px;
+                margin-bottom: 40px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                text-align: left !important;
+                padding-left: 50px;
+            }
+
+            .timeline-dot {
+                left: 10px !important;
+            }
+
+            .contact-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">DEBOBRATO BISWAS</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#expertise">Expertise</a></li>
+            <li><a href="#publications">Publications</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Advancing <span style="color: var(--secondary-color);">Neural Diagnostics</span> Through AI</h1>
+            <p>I am Debobrato Biswas, a dedicated researcher specializing in Machine Learning applications for Brain
+                Tumor Detection. My work bridges the gap between advanced medical imaging and computational
+                intelligence.</p>
+            <div class="hero-btns">
+                <a href="#contact" class="btn">Collaborate With Me</a>
+                <a href="#publications"
+                    style="margin-left: 20px; font-weight: 600; border-bottom: 2px solid var(--secondary-color);">View
+                    My Research</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="{{ url_for('static', filename='images/researcher.png') }}" alt="Debobrato Biswas">
+        </div>
+    </section>
+
+    <section id="expertise">
+        <div class="section-title">
+            <h2>Core Expertise</h2>
+        </div>
+        <div class="expertise-grid">
+            <div class="expertise-card">
+                <i class="fas fa-brain"></i>
+                <h3>Neuro-Oncology</h3>
+                <p>Specialized in the study of intracranial tumors and their behavioral patterns in clinical settings.
+                </p>
+            </div>
+            <div class="expertise-card">
+                <i class="fas fa-microscope"></i>
+                <h3>Medical Imaging</h3>
+                <p>Expert in MRI analysis, NIfTI processing, and volumetric segmentation techniques.</p>
+            </div>
+            <div class="expertise-card">
+                <i class="fas fa-code"></i>
+                <h3>Deep Learning</h3>
+                <p>Developing state-of-the-art CNNs and Transformer models for automated pathology detection.</p>
+            </div>
+            <div class="expertise-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Clinical Trials</h3>
+                <p>Leading research frameworks to validate AI accuracy against histological gold standards.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" style="background-color: var(--white);">
+        <div class="section-title">
+            <h2>Academic Background</h2>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2018 - Present</div>
+                <h3>Lead Researcher</h3>
+                <p>Institute of Advanced Neural Systems. Heading the "DeepScan" project for automated glioma grading.
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2014 - 2018</div>
+                <h3>Post-Doctoral Fellow</h3>
+                <p>Stanford University. Focused on Convolutional Neural Networks for MRI segmentation.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">2010 - 2014</div>
+                <h3>Ph.D. in Biomedical Engineering</h3>
+                <p>MIT. Thesis: "Augmented Radiography in Neurosurgical Planning".</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="publications">
+        <div class="section-title">
+            <h2>Selected Publications</h2>
+        </div>
+        <ul class="pub-list">
+            <li class="pub-item">
+                <h3>Hybrid Transformer-CNN Architectures for Multi-Modal Brain Tumor Segmentation</h3>
+                <p class="pub-meta">Journal of Medical AI, 2024 | Cited by 142</p>
+                <p>Proposed a novel fusion technique for T1, T2, and FLAIR modalities that improved Dice scores by 15%.
+                </p>
+            </li>
+            <li class="pub-item">
+                <h3>Asymmetry-Based Heuristics for Rapid Initial Triage in Clinical Radiology</h3>
+                <p class="pub-meta">NEJM AI & Medicine, 2023 | Cited by 89</p>
+                <p>Developed a lightweight heuristic system for 10-second initial scans in high-volume hospitals.</p>
+            </li>
+            <li class="pub-item">
+                <h3>Voxel-Wise Uncertainty Quantification in Deep Learning Segmentation</h3>
+                <p class="pub-meta">Nature Computational Science, 2022 | Cited by 210</p>
+                <p>Created a framework for doctors to understand the confidence levels of AI-generated masks.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p>Interested in collaboration or have inquiries about our research papers? Reach out via the following
+                    channels.</p>
+                <div style="margin-top: 40px;">
+                    <div class="info-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>devbiswas1499@gmail.com</span>
+                    </div>
+                    <div class="info-link">
+                        <i class="fas fa-location-dot"></i>
+                        <span>Dhaka, Bangladesh</span>
+                    </div>
+                    <div class="info-link">
+                        <i class="fas fa-globe"></i>
+                        <span>www.dbiswas-research.io</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <form>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Your Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea rows="5" placeholder="How can we collaborate?"></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; border: none; cursor: pointer;">Send
+                        Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-google-scholar"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+        <p>&copy; 2026 Debobrato Biswas. All Rights Reserved. Built with AI Precision.</p>
+    </footer>
+
+    <script>
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+
+</html>
