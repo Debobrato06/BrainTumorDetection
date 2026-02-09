@@ -45,7 +45,13 @@ def load_volume(path, img_size=(64, 64, 64)):
 def predict(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    model = BrainTumorClassifier(input_channels=4, num_classes=2)
+    # Use the Hybrid Architecture
+    try:
+        from hybrid_model import HybridTumorModel
+        model = HybridTumorModel(in_channels=4, num_classes=2)
+    except:
+        model = BrainTumorClassifier(input_channels=4, num_classes=2)
+        
     model.load_state_dict(torch.load(args.model_path, map_location=device))
     model.to(device)
     model.eval()
@@ -53,12 +59,21 @@ def predict(args):
     input_tensor = load_volume(args.input_path).to(device)
     
     with torch.no_grad():
-        output = model(input_tensor)
-        probabilities = torch.softmax(output, dim=1)
-        predicted_class = torch.argmax(probabilities, dim=1).item()
+        outputs = model(input_tensor)
+        cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
         
-    print(f"Prediction: {'Tumor Detected' if predicted_class == 1 else 'No Tumor'}")
-    print(f"Confidence: {probabilities[0][predicted_class].item():.4f}")
+        probs = torch.softmax(cls_logits, dim=1)
+        predicted_class = torch.argmax(probs, dim=1).item()
+        
+        grade_probs = torch.softmax(grade_logits, dim=1)
+        grade_idx = torch.argmax(grade_probs, dim=1).item()
+        grade_label = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
+        
+    print("-" * 30)
+    print(f"PREDICTION: {'LESION DETECTED' if predicted_class == 1 else 'NORMAL'}")
+    print(f"CONFIDENCE: {probs[0][predicted_class].item():.4f}")
+    print(f"ESTIMATED GRADE: {grade_label}")
+    print("-" * 30)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -8,3 +8,6 @@ pandas
 matplotlib
 albumentations
 pytorch-lightning
+scikit-image
+scipy
+monai
