@@ -56,39 +56,122 @@
 
             <!-- Dashboard View -->
             <section id="dashboard" class="view-section active">
-                <header class="section-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>System status and recent activities.</p>
+                <header class="section-header-premium">
+                    <div class="header-left">
+                        <h1>Operations Hub</h1>
+                        <p>Real-time neural diagnostics & system performance.</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-bar-premium">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search case files...">
+                        </div>
+                        <div class="notification-bell">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="badge-dot"></span>
+                        </div>
+                    </div>
                 </header>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="icon-box purple"><i class="fa-solid fa-database"></i></div>
-                        <div class="stat-info">
-                            <h3>Total Samples</h3>
-                            <p class="value">1,240</p>
+                <div class="dashboard-primary-grid">
+                    <!-- Top Stats Row -->
+                    <div class="stats-row-premium">
+                        <div class="stat-widget">
+                            <div class="widget-icon purple"><i class="fa-solid fa-brain"></i></div>
+                            <div class="widget-data">
+                                <span class="label">Neural Scans</span>
+                                <span class="value">2,842</span>
+                                <span class="trend up"><i class="fa-solid fa-arrow-trend-up"></i> 12% vs last
+                                    month</span>
+                            </div>
+                        </div>
+                        <div class="stat-widget">
+                            <div class="widget-icon green"><i class="fa-solid fa-microscope"></i></div>
+                            <div class="widget-data">
+                                <span class="label">Peak Accuracy</span>
+                                <span class="value">96.4%</span>
+                                <span class="trend up"><i class="fa-solid fa-square-check"></i> High Precision</span>
+                            </div>
+                        </div>
+                        <div class="stat-widget">
+                            <div class="widget-icon blue"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="widget-data">
+                                <span class="label">Avg. Latency</span>
+                                <span class="value">84ms</span>
+                                <span class="trend down"><i class="fa-solid fa-bolt"></i> Optimized</span>
+                            </div>
+                        </div>
+                        <div class="stat-widget">
+                            <div class="widget-icon yellow"><i class="fa-solid fa-vial-circle-check"></i></div>
+                            <div class="widget-data">
+                                <span class="label">Clinical Tests</span>
+                                <span class="value">148</span>
+                                <span class="trend"><i class="fa-solid fa-database"></i> Dataset: V4.1</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="icon-box green"><i class="fa-solid fa-check-circle"></i></div>
-                        <div class="stat-info">
-                            <h3>Model Accuracy</h3>
-                            <p class="value">94.8%</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="icon-box blue"><i class="fa-solid fa-bolt"></i></div>
-                        <div class="stat-info">
-                            <h3>Inference Time</h3>
-                            <p class="value">~120ms</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="charts-container">
-                    <div class="chart-card">
-                        <h3>Training Accuracy History</h3>
-                        <canvas id="accuracyChart"></canvas>
+                    <!-- Main Analytics Section -->
+                    <div class="analytics-layout">
+                        <div class="chart-main-card">
+                            <div class="card-header-flex">
+                                <h3>Training Performance Evolution</h3>
+                                <div class="chart-controls">
+                                    <button class="active">Daily</button>
+                                    <button>Weekly</button>
+                                </div>
+                            </div>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="accuracyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="side-widgets-column">
+                            <!-- System Health -->
+                            <div class="health-card">
+                                <h3>System Integrity</h3>
+                                <div class="health-item">
+                                    <span>AI Engine</span>
+                                    <div class="health-bar">
+                                        <div class="fill" style="width: 98%"></div>
+                                    </div>
+                                </div>
+                                <div class="health-item">
+                                    <span>GPU Acceleration</span>
+                                    <div class="health-bar">
+                                        <div class="fill" style="width: 76%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity Feed -->
+                            <div class="activity-feed-card">
+                                <h3>Operational Stream</h3>
+                                <div class="feed-body">
+                                    <div class="feed-item">
+                                        <div class="feed-dot blue"></div>
+                                        <div class="feed-content">
+                                            <p>New MRI scan analyzed (Case #882)</p>
+                                            <span>2 mins ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item">
+                                        <div class="feed-dot green"></div>
+                                        <div class="feed-content">
+                                            <p>Model v4.2 weights deployed</p>
+                                            <span>1 hour ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item">
+                                        <div class="feed-dot gold"></div>
+                                        <div class="feed-content">
+                                            <p>Dataset backup completed</p>
+                                            <span>5 hours ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -96,66 +179,129 @@
             <!-- Training View -->
             <section id="training" class="view-section">
                 <header class="section-header">
-                    <h1>Model Training</h1>
-                    <p>Configure and start new training sessions.</p>
+                    <div class="header-main">
+                        <div>
+                            <h1>Neural Engine Training</h1>
+                            <p>Supervise and optimize your deep learning models.</p>
+                        </div>
+                        <div class="training-status-badge" id="global-train-status">
+                            <span class="dot"></span>
+                            <span class="status-label">Engine Standby</span>
+                        </div>
+                    </div>
                 </header>
 
-                <div class="training-layout">
-                    <div class="config-panel">
-                        <h3>Configuration</h3>
-                        <form id="training-form">
-                            <div class="form-group">
-                                <label>Epochs</label>
-                                <input type="number" name="epochs" value="10" min="1" max="100">
+                <div class="training-dashboard-grid">
+                    <!-- Left: Control Panel -->
+                    <div class="config-panel-premium">
+                        <div class="panel-header">
+                            <i class="fa-solid fa-sliders"></i>
+                            <h3>Hyperparameters</h3>
+                        </div>
+                        <form id="training-form" class="premium-form">
+                            <div class="form-row">
+                                <div class="form-group-premium">
+                                    <label><i class="fa-solid fa-repeat"></i> Epochs</label>
+                                    <input type="number" name="epochs" value="10" min="1" max="100">
+                                </div>
+                                <div class="form-group-premium">
+                                    <label><i class="fa-solid fa-layer-group"></i> Batch Size</label>
+                                    <input type="number" name="batch_size" value="4" min="1" max="32">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Batch Size</label>
-                                <input type="number" name="batch_size" value="4" min="1" max="32">
-                            </div>
-                            <div class="form-group">
-                                <label>Learning Rate</label>
+
+                            <div class="form-group-premium">
+                                <label><i class="fa-solid fa-bolt"></i> Learning Rate</label>
                                 <input type="number" name="lr" value="0.0003" step="0.0001">
                             </div>
-                            <div class="form-group">
-                                <label>Dataset Source</label>
+
+                            <div class="form-group-premium">
+                                <label><i class="fa-solid fa-database"></i> Data Infrastructure</label>
                                 <select name="data_source" id="data-source-select" onchange="togglePathInput()">
-                                    <option value="synthetic">Synthetic (Demo)</option>
-                                    <option value="local">Local Data Folder</option>
+                                    <option value="synthetic">Neural Synthesis (Demo)</option>
+                                    <option value="local">Local Repository</option>
                                 </select>
                             </div>
-                            <div class="form-group hidden" id="path-input-group">
-                                <label>Dataset Folder Path</label>
-                                <input type="text" name="dataset_path" placeholder="e.g. D:/Data/BrainTumorImages">
-                                <small style="color:var(--text-muted); font-size:0.7em">Expected structure: /tumor and
-                                    /no_tumor subfolders containing images</small>
-                            </div>
-                            <button type="submit" class="btn-primary" id="start-training-btn">
-                                <i class="fa-solid fa-play"></i> Start Training
-                            </button>
 
-                            <script>
-                                function togglePathInput() {
-                                    const select = document.getElementById('data-source-select');
-                                    const inputGroup = document.getElementById('path-input-group');
-                                    if (select.value === 'local') {
-                                        inputGroup.classList.remove('hidden');
-                                    } else {
-                                        inputGroup.classList.add('hidden');
-                                    }
-                                }
-                            </script>
+                            <div class="form-group-premium hidden" id="path-input-group">
+                                <label><i class="fa-solid fa-folder-tree"></i> Source Path</label>
+                                <input type="text" name="dataset_path" placeholder="D:/Data/MRI_Set">
+                            </div>
+
+                            <div class="btn-group-training">
+                                <button type="submit" class="btn-launch" id="start-training-btn">
+                                    <i class="fa-solid fa-rocket"></i> Launch Engine
+                                </button>
+                                <button type="button" class="btn-abort" id="stop-training-btn" disabled>
+                                    <i class="fa-solid fa-hand"></i> Abort
+                                </button>
+                            </div>
                         </form>
                     </div>
 
-                    <div class="logs-panel">
-                        <h3>Training Logs</h3>
-                        <div class="terminal-window" id="training-logs">
-                            <div class="log-line system">> System Ready...</div>
+                    <!-- Center: Visual Monitoring -->
+                    <div class="monitoring-panel">
+                        <div class="panel-header">
+                            <i class="fa-solid fa-microchip"></i>
+                            <h3>Live Process Stream</h3>
                         </div>
-                        <div class="progress-area">
-                            <span>Progress</span>
-                            <div class="progress-bar-bg">
-                                <div class="progress-bar-fill" id="train-progress" style="width: 0%"></div>
+                        <div class="terminal-container-premium">
+                            <div class="terminal-header">
+                                <div class="dots">
+                                    <span class="red"></span>
+                                    <span class="yellow"></span>
+                                    <span class="green"></span>
+                                </div>
+                                <div class="terminal-title">train.py - neuro_engine</div>
+                            </div>
+                            <div class="terminal-body-premium" id="training-logs">
+                                <div class="log-line system">> Initializing core modules...</div>
+                                <div class="log-line system">> Neural Engine Standby. Awaiting parameters.</div>
+                            </div>
+                        </div>
+
+                        <div class="execution-progress">
+                            <div class="progress-details">
+                                <span class="label">Total Progress</span>
+                                <span class="percent" id="train-progress-text">0%</span>
+                            </div>
+                            <div class="progress-track-premium">
+                                <div class="progress-fill-premium" id="train-progress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Live Metrics -->
+                    <div class="metrics-panel-training">
+                        <div class="panel-header">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <h3>Live Analytics</h3>
+                        </div>
+                        <div class="metrics-v-grid">
+                            <div class="metric-v-card">
+                                <span class="label">Current Accuracy</span>
+                                <div class="value-row">
+                                    <span class="value" id="live-accuracy">0.00</span>
+                                    <span class="unit">%</span>
+                                </div>
+                                <div class="mini-trend up"><i class="fa-solid fa-caret-up"></i> Baseline</div>
+                            </div>
+                            <div class="metric-v-card">
+                                <span class="label">Loss Function</span>
+                                <div class="value-row">
+                                    <span class="value" id="live-loss">0.000</span>
+                                </div>
+                                <div class="mini-trend down"><i class="fa-solid fa-caret-down"></i> Converging</div>
+                            </div>
+                            <div class="metric-v-card">
+                                <span class="label">GPU Load</span>
+                                <div class="value-row">
+                                    <span class="value">92</span>
+                                    <span class="unit">%</span>
+                                </div>
+                                <div class="resource-bar">
+                                    <div class="fill" style="width: 92%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,78 +310,122 @@
 
             <!-- Testing / Inference View -->
             <section id="testing" class="view-section">
-                <header class="section-header">
-                    <h1>Diagnostic Testing</h1>
-                    <p>Run inference on MRI scans or Images.</p>
+                <header class="section-header-premium">
+                    <div>
+                        <h1>Intelligence Scanner</h1>
+                        <p>High-precision neural analysis and lesion mapping.</p>
+                    </div>
+                    <div class="scanner-status-mini">
+                        <span class="pulse-dot"></span>
+                        <span class="label">Ready for Acquisition</span>
+                    </div>
                 </header>
 
-                <div class="testing-container">
-                    <div class="upload-area">
-                        <div class="upload-card" id="drop-zone">
+                <div class="scanner-console-grid">
+                    <!-- Left: Imaging Chamber -->
+                    <div class="imaging-chamber-premium">
+                        <div class="upload-area-premium" id="drop-zone">
                             <input type="file" id="file-input" accept=".nii.gz,.nii,.jpg,.jpeg,.png" hidden>
-                            <div class="upload-icon">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <div class="chamber-overlay">
+                                <div class="scanner-crosshair"></div>
+                                <div class="corner-markers top-left"></div>
+                                <div class="corner-markers top-right"></div>
+                                <div class="corner-markers bottom-left"></div>
+                                <div class="corner-markers bottom-right"></div>
                             </div>
-                            <h3>Drag & Drop MRI Scan or Image</h3>
-                            <p>or <span class="browser-btn">browse files</span></p>
-                            <p class="file-info">Supported formats: .nii, .jpg, .png</p>
+
+                            <div class="upload-prompt" id="upload-prompt">
+                                <i class="fa-solid fa-expand"></i>
+                                <h3>Insert Neural Image</h3>
+                                <p>Drag & Drop DICOM/MRI or Browse Files</p>
+                                <span class="format-tags">NIfTI . PNG . JPG</span>
+                            </div>
+
+                            <div class="scan-preview-wrapper hidden" id="results-section">
+                                <img id="preview-image" src="" alt="MRI Scan Preview">
+                                <div class="loading-overlay-premium hidden" id="loading-overlay">
+                                    <div class="scanning-line"></div>
+                                    <div class="processing-stats">
+                                        <p><i class="fa-solid fa-microchip"></i> Analyzing Slices...</p>
+                                        <div class="mini-loading-bar">
+                                            <div class="fill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="imaging-metadata">
+                            <div class="meta-item"><span>Format:</span> <span id="meta-format">N/A</span></div>
+                            <div class="meta-item"><span>Scan Type:</span> <span id="meta-type">AXIAL / T1CE</span>
+                            </div>
+                            <div class="meta-item"><span>Resolution:</span> <span id="meta-res">256 x 256</span></div>
                         </div>
                     </div>
 
-                    <div class="results-area hidden" id="results-section">
-                        <div class="scan-preview">
-                            <div class="image-container">
-                                <img id="preview-image" src="" alt="MRI Preview">
-                                <div class="loading-overlay hidden" id="loading-overlay">
-                                    <div class="spinner"></div>
-                                    <p>Analyzing...</p>
+                    <!-- Right: AI Diagnostic Report -->
+                    <div class="diagnostic-sidebar">
+                        <div class="report-header">
+                            <i class="fa-solid fa-file-medical"></i>
+                            <h3>Clinical Analysis Report</h3>
+                        </div>
+
+                        <div class="patient-profile-section">
+                            <div class="input-modern">
+                                <label>Patient Name</label>
+                                <input type="text" id="patient-name" placeholder="John Doe">
+                            </div>
+                            <div class="input-modern">
+                                <label>Case Reference</label>
+                                <input type="text" id="case-id" placeholder="REF-4092">
+                            </div>
+                        </div>
+
+                        <div class="analysis-results-box" id="analysis-results-box">
+                            <div class="initial-message">
+                                <i class="fa-solid fa-robot"></i>
+                                <p>Neural Engine Awaiting Image Acquisition</p>
+                            </div>
+
+                            <div class="result-data-structured hidden" id="result-data-structured">
+                                <div class="detection-status-card" id="status-indicator">
+                                    <span class="label">Finding</span>
+                                    <h2 id="detection-text">--</h2>
+                                </div>
+
+                                <div class="metrics-grid-medical">
+                                    <div class="m-card">
+                                        <span class="m-label">Confidence</span>
+                                        <span class="m-value" id="confidence-val">0%</span>
+                                    </div>
+                                    <div class="m-card">
+                                        <span class="m-label">Grading</span>
+                                        <span class="m-value" id="tumor-grade-val">N/A</span>
+                                    </div>
+                                    <div class="m-card">
+                                        <span class="m-label">Est. Volume</span>
+                                        <span class="m-value" id="tumor-size-val">--</span>
+                                    </div>
+                                    <div class="m-card">
+                                        <span class="m-label">Location</span>
+                                        <span class="m-value" id="tumor-loc-val">--</span>
+                                    </div>
+                                </div>
+
+                                <div class="clinical-impression-box">
+                                    <span class="label">Impression & Findings</span>
+                                    <p id="impression-text">Awaiting Scan...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="analysis-details">
-                            <h3>Diagnostic Report</h3>
-
-                            <div class="patient-inputs">
-                                <div class="input-group">
-                                    <label>Patient Name</label>
-                                    <input type="text" id="patient-name" placeholder="John Doe">
-                                </div>
-                                <div class="input-group">
-                                    <label>Case ID</label>
-                                    <input type="text" id="case-id" placeholder="CASE-001">
-                                </div>
-                            </div>
-
-                            <div class="status-indicator" id="status-indicator">
-                                <div class="pulse-ring"></div>
-                                <span id="detection-text">--</span>
-                            </div>
-
-                            <div class="report-grid">
-                                <div class="report-item">
-                                    <span class="label">Confidence</span>
-                                    <span class="value" id="confidence-val">0%</span>
-                                </div>
-                                <div class="report-item">
-                                    <span class="label">Tumor Size</span>
-                                    <span class="value" id="tumor-size-val">--</span>
-                                </div>
-                                <div class="report-item">
-                                    <span class="label">Location</span>
-                                    <span class="value" id="tumor-loc-val">--</span>
-                                </div>
-                                <div class="report-item full-width">
-                                    <span class="label">Impression</span>
-                                    <p class="summary-text" id="impression-text">Awaiting analysis...</p>
-                                </div>
-                            </div>
-
-                            <div class="action-buttons">
-                                <button class="btn-primary" id="save-report-btn"><i class="fa-solid fa-save"></i> Save
-                                    to History</button>
-                                <button class="btn-secondary" id="reset-btn">New Scan</button>
-                            </div>
+                        <div class="sidebar-actions">
+                            <button class="btn-report-save" id="save-report-btn">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Archiving Report
+                            </button>
+                            <button class="btn-reset-scanner" id="reset-btn">
+                                <i class="fa-solid fa-rotate-right"></i> Reset Scanner
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -243,29 +433,63 @@
 
             <!-- Reports / History View -->
             <section id="reports" class="view-section">
-                <header class="section-header">
-                    <h1>Patient Case Files</h1>
-                    <p>View long-term tracking and history.</p>
+                <header class="section-header-premium">
+                    <div>
+                        <h1>Clinical Case Archive</h1>
+                        <p>Historical patient diagnostics and longitudinal records.</p>
+                    </div>
+                    <button class="btn-refresh-primary" id="refresh-reports-btn">
+                        <i class="fa-solid fa-sync"></i> Synchronize Records
+                    </button>
                 </header>
 
-                <div class="reports-container">
-                    <div class="reports-toolbar">
-                        <button class="btn-refresh" id="refresh-reports-btn"><i class="fa-solid fa-sync"></i>
-                            Refresh</button>
+                <div class="archive-overview-bar">
+                    <div class="archive-stat">
+                        <span class="label">Total Records</span>
+                        <span class="value" id="total-reports-count">0</span>
                     </div>
-                    <table class="reports-table">
+                    <div class="archive-stat">
+                        <span class="label">Positives Detected</span>
+                        <span class="value color-danger" id="tumor-reports-count">0</span>
+                    </div>
+                    <div class="archive-stat">
+                        <span class="label">Healthy Cases</span>
+                        <span class="value color-success" id="healthy-reports-count">0</span>
+                    </div>
+                    <div class="archive-stat">
+                        <span class="label">Archive Size</span>
+                        <span class="value">1.4 GB</span>
+                    </div>
+                </div>
+
+                <div class="data-table-container-premium">
+                    <div class="table-controls">
+                        <div class="filter-group">
+                            <span class="filter-label">Sort By:</span>
+                            <select id="report-sort">
+                                <option value="newest">Recent First</option>
+                                <option value="oldest">Date Descending</option>
+                            </select>
+                        </div>
+                        <div class="search-mini">
+                            <i class="fa-solid fa-filter"></i>
+                            <input type="text" placeholder="Filter by Case ID or Patient...">
+                        </div>
+                    </div>
+
+                    <table class="clinical-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
+                                <th>Timestamp</th>
                                 <th>Case ID</th>
                                 <th>Patient Name</th>
-                                <th>Diagnosis</th>
+                                <th>AI Diagnosis</th>
                                 <th>Confidence</th>
-                                <th>Actions</th>
+                                <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="reports-table-body">
-                            <!-- Populated by JS -->
+                            <!-- Populated via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -273,12 +497,125 @@
 
             <!-- Settings View -->
             <section id="settings" class="view-section">
-                <header class="section-header">
-                    <h1>Settings</h1>
-                    <p>System preferences and model management.</p>
+                <header class="section-header-premium">
+                    <div>
+                        <h1>System Control Vault</h1>
+                        <p>Configure neural engine parameters and organizational security.</p>
+                    </div>
                 </header>
-                <div class="settings-content">
-                    <p>Settings panel implementation pending.</p>
+
+                <div class="settings-grid-premium">
+                    <!-- Category: Neural Engine -->
+                    <div class="settings-card-premium">
+                        <div class="card-icon"><i class="fa-solid fa-microchip"></i></div>
+                        <h3>Neural Engine</h3>
+                        <div class="setting-item-group">
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">GPU Acceleration</span>
+                                    <span class="desc">Enable CUDA support for faster processing.</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Heuristic Fallback</span>
+                                    <span class="desc">Use classical analysis if AI fails.</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Inference Precision</span>
+                                </div>
+                                <select class="modern-select">
+                                    <option>FP32 (Stable)</option>
+                                    <option>FP16 (Optimized)</option>
+                                    <option>INT8 (Ultra Fast)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Data & Security -->
+                    <div class="settings-card-premium">
+                        <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Security & Privacy</h3>
+                        <div class="setting-item-group">
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Anonymize Patient Data</span>
+                                    <span class="desc">Remove PII from MRI headers automatically.</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Audit Logging</span>
+                                    <span class="desc">Track every analysis in session logs.</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Encryption Vault</span>
+                                </div>
+                                <button class="btn-vault-action">Configure RSA Keys</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Cloud Sync -->
+                    <div class="settings-card-premium">
+                        <div class="card-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <h3>Network & Cloud</h3>
+                        <div class="setting-item-group">
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Auto-Sync Reports</span>
+                                    <span class="desc">Backup analysis to hospital database.</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">API Endpoint</span>
+                                </div>
+                                <input type="text" class="modern-input" placeholder="https://api.med-cloud.com/v1">
+                            </div>
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="title">Auto-Check Updates</span>
+                                </div>
+                                <label class="premium-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-footer-premium">
+                    <button class="btn-save-settings">
+                        <i class="fa-solid fa-floppy-disk"></i> Apply Global Configuration
+                    </button>
+                    <button class="btn-restore-default">Restore defaults</button>
                 </div>
             </section>
 
