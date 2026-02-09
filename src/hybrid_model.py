@@ -107,78 +107,79 @@ class HybridTumorModel(nn.Module):
             num_heads=4
         )
         
-        # --- Decoder (U-Net Style) ---
-        self.up1 = nn.ConvTranspose3d(embed_dim, 64, kernel_size=2, stride=2)
-        self.conv_up1 = nn.Sequential(
-            nn.Conv3d(128, 64, kernel_size=3, padding=1), # Cat 64 + 64
-            nn.BatchNorm3d(64),
-            nn.ReLU()
+        # --- Decoder (High-Resolution U-Net Path) ---
+        self.up_conv1 = nn.ConvTranspose3d(embed_dim, 64, kernel_size=2, stride=2)
+        self.dec_conv1 = ResidualEncoderBlock3D(128, 64) # Concat skip
+        
+        self.up_conv2 = nn.ConvTranspose3d(64, 32, kernel_size=2, stride=2)
+        self.dec_conv2 = ResidualEncoderBlock3D(64, 32)
+        
+        # --- Multi-Task Heads (Journal Grade) ---
+        # 1. Segmentation Head (Fine Delineation)
+        self.seg_head = nn.Sequential(
+            nn.Conv3d(32, 32, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv3d(32, 1, kernel_size=1) 
         )
         
-        self.up2 = nn.ConvTranspose3d(64, 32, kernel_size=2, stride=2)
-        self.conv_up2 = nn.Sequential(
-            nn.Conv3d(64, 32, kernel_size=3, padding=1), # Cat 32 + 32
-            nn.BatchNorm3d(32),
-            nn.ReLU()
-        )
-        
-        # --- Heads ---
-        # 1. Segmentation Head
-        self.seg_head = nn.Conv3d(32, 1, kernel_size=1) 
-        
-        # 2. Classification Head (from Transformer bottleneck)
+        # 2. Classification Head (Detection)
         self.cls_head = nn.Sequential(
             nn.Linear(embed_dim, 128),
+            nn.BatchNorm1d(128),
             nn.ReLU(),
-            nn.Dropout(0.5), # MC Dropout capable
+            nn.Dropout(0.4),
             nn.Linear(128, num_classes)
+        )
+
+        # 3. WHO GRADING HEAD (Professional Innovation)
+        # Estimates High-Grade Glioma (HGG) vs Low-Grade Glioma (LGG)
+        self.grade_head = nn.Sequential(
+            nn.Linear(embed_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, 2) # [LGG, HGG]
         )
         
     def forward(self, x, mask_ratio=0.0, return_attention=False):
-        # x: (B, 1, 64, 64, 64)
+        # x: (B, C, 64, 64, 64)
+        B, C, D, H, W = x.shape
         
-        # 1. CNN Stem
+        # 1. CNN Feature Extraction (Encoder)
         c1 = self.cnn_stem[0:3](x) # (B, 32, 64, 64, 64)
         c2 = self.cnn_stem[3:](c1) # (B, 64, 32, 32, 32)
         
-        # 2. Transformer Feature Extraction
-        # Note: We treat c2 as input to transformer, essentially using it as "patches"
-        # Since c2 is 64 channels, we align implementation or projection
+        # 2. Transformer Feature Learning (Global Context)
         if return_attention:
             z, attns = self.transformer_encoder(c2, mask_ratio=mask_ratio, return_attention=True)
         else:
             z = self.transformer_encoder(c2, mask_ratio=mask_ratio) # (B, N, Embed)
         
-        # Reshape z back to volume for decoding
-        # N = 8*8*8 = 512 (if patch size corresponds effectively)
-        # Here we simplify: assume transformer output matches c2 spatial dims roughly or we reshape
-        # For this prototype: Global Avg Pool for Classification
-        z_mean = z.mean(dim=1)
+        # 3. Bottleneck Analysis Logic
+        z_mean = z.mean(dim=1) # Global latent vector
         cls_logits = self.cls_head(z_mean)
+        grade_logits = self.grade_head(z_mean)
         
-        # For Segmentation, we need spatial tokens. 
-        # Ideally, we reshape Z back.
-        # Let's assume Embedding dim was projected and we reshape:
-        B, N, C = z.shape
-        # Assuming D=H=W after flattening. 32/16 = 2 patches? 
-        # Let's use a simpler heuristic for the demo:
-        # We skip the complex reshaping and use the CNN features + Transformer context
-        # In a real Swin-UNETR, we'd have skip connections from specific transformer layers.
-        # Here we just decode from C2 for the skip, and maybe add Z context?
+        # 4. Decoding (Spatial Reconstruction)
+        # Reshape z (B, 512, 128) -> (B, 128, 8, 8, 8) assuming patch_size and pooling context
+        # In this research prototype, we project and upsample for skip connections
+        z_vol = z.transpose(1, 2).view(B, -1, 8, 8, 8) 
         
-        # Decoding
-        # We simulate the skip connection from the transformer bottleneck
-        # In a full Swin-UNETR, we would reshape Z and concat.
-        # Here we prioritize the CNN skip connection for stability in this mocked demo
+        # Upsampling path
+        u1 = self.up_conv1(z_vol) # -> (B, 64, 16, 16, 16)
+        # Note: c2 is (B, 64, 32, 32, 32). We upsample u1 again or downsample c2?
+        # Standard U-Net: u1 matches c2 size. 
+        # Here we project to match c2
+        u1_res = F.interpolate(u1, size=c2.shape[2:], mode='trilinear')
+        d1 = self.dec_conv1(torch.cat([u1_res, c2], dim=1))
         
-        dec1 = self.conv_up1(torch.cat([c2, c2], dim=1)) # Simulating skip 64+64
-        dec2 = self.conv_up2(torch.cat([self.up2(dec1), c1], dim=1))
+        u2 = self.up_conv2(d1) # -> (B, 32, 32, 32, 32)
+        u2_res = F.interpolate(u2, size=c1.shape[2:], mode='trilinear')
+        d2 = self.dec_conv2(torch.cat([u2_res, c1], dim=1))
         
-        seg_logits = self.seg_head(dec2)
+        seg_logits = self.seg_head(d2)
         
         if return_attention:
-            return cls_logits, seg_logits, attns
-        return cls_logits, seg_logits
+            return cls_logits, seg_logits, grade_logits, attns
+        return cls_logits, seg_logits, grade_logits
 
     def get_uncertainty_map(self, x, num_samples=5):
         """
