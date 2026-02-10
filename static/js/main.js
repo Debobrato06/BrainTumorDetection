@@ -487,8 +487,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateInferenceUI(currentAnalysisData);
 
         // Switch View
-        // 1. Hide Dropzone, Show Results
-        if (dropZone) dropZone.style.display = 'none';
+        // 1. Hide Upload Prompt, Show Results, Ensure Dropzone is visible
+        if (uploadPrompt) uploadPrompt.classList.add('hidden');
+        if (dropZone) dropZone.style.display = 'flex';
         if (resultsSection) resultsSection.classList.remove('hidden');
 
         // 2. Switch Tab
