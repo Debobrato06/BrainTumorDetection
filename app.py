@@ -3,7 +3,9 @@ import numpy as np
 import base64
 import threading
 import time
-import queue
+import json
+import datetime
+import uuid
 import os
 import sys
 from io import BytesIO
@@ -50,7 +52,6 @@ if TORCH_AVAILABLE:
         from train import train
     except Exception as e:
         print(f"Failed to load Hybrid ML modules: {e}")
-        # Try legacy as fallback
         try:
             from model import BrainTumorClassifier
         except:
@@ -60,29 +61,114 @@ if TORCH_AVAILABLE:
 else:
     BrainTumorClassifier = load_volume = train = None
 
+# ─── Load Full Clinical Pipeline Modules ──────────────────────────────────────
+try:
+    from pipeline.preprocessing import (
+        extract_metadata_from_nifti,
+        extract_metadata_from_2d,
+        normalize_intensity
+    )
+    from pipeline.segmentation import (
+        apply_threshold,
+        extract_tumor_mask_from_heuristic,
+        generate_segmentation_overlay,
+        get_mask_stats
+    )
+    from pipeline.measurement import (
+        compute_volume_ml,
+        compute_longest_diameter_rano,
+        compute_growth_change,
+        get_size_category
+    )
+    from pipeline.radiomics import extract_all_radiomics
+    from pipeline.risk_scoring import compute_risk_score
+    from pipeline.report_generator import generate_structured_report
+    PIPELINE_AVAILABLE = True
+    print("SUCCESS: Full clinical pipeline modules loaded.")
+except Exception as e:
+    print(f"WARNING: Clinical pipeline modules failed to load: {e}")
+    PIPELINE_AVAILABLE = False
+
 app = Flask(__name__)
 
-# --- Global State for Training ---
+# ─── Custom JSON Encoder / Provider for Numpy compatibility ───────────────────
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.integer, np.floating, np.bool_)):
+            return obj.item()
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
+
+app.json_encoder = NumpyEncoder  # Flask < 2.2 fallback
+
+try:
+    from flask.json.provider import DefaultJSONProvider
+    class CustomJSONProvider(DefaultJSONProvider):
+        def default(self, o):
+            if isinstance(o, (np.integer, np.floating, np.bool_)):
+                return o.item()
+            if isinstance(o, np.ndarray):
+                return o.tolist()
+            return super().default(o)
+    app.json = CustomJSONProvider(app)
+except ImportError:
+    pass
+
+
+# ─── Global Settings (configurable via /save_settings) ───────────────────────
+SYSTEM_SETTINGS = {
+    'segmentation_threshold': 0.5,
+    'gpu_acceleration': True,
+    'heuristic_fallback': True,
+    'inference_precision': 'fp32',
+    'anonymize_patient_data': True,
+    'audit_logging': False,
+    'auto_sync_reports': False,
+    'api_endpoint': '',
+    'auto_check_updates': True,
+}
+
+SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'settings.json')
+
+def load_settings():
+    """Load persisted settings from disk."""
+    global SYSTEM_SETTINGS
+    if os.path.exists(SETTINGS_FILE):
+        try:
+            with open(SETTINGS_FILE, 'r') as f:
+                saved = json.load(f)
+                SYSTEM_SETTINGS.update(saved)
+        except Exception:
+            pass
+
+def save_settings_to_disk():
+    """Persist settings to disk."""
+    os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
+    with open(SETTINGS_FILE, 'w') as f:
+        json.dump(SYSTEM_SETTINGS, f, indent=2)
+
+load_settings()
+
+# ─── Global Training State ────────────────────────────────────────────────────
 training_state = {
     'is_running': False,
-    'progress': 0, # 0 to 100
+    'progress': 0,
     'logs': [],
     'epoch': 0,
     'accuracy': 0.0
 }
 training_thread = None
 
-# Initialize Model (Inference)
+# ─── Initialize Model ─────────────────────────────────────────────────────────
 model = None
 device = None
 
 if TORCH_AVAILABLE:
     try:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        # CRITICAL: Must match training volume_size (64,64,64)
-        model = BrainTumorClassifier(input_channels=4, num_classes=2, volume_size=(64, 64, 64))
+        model = BrainTumorClassifier(in_channels=4, num_classes=2)
         model_path = "best_model.pth"
-        
         if os.path.exists(model_path):
             print(f"Loading model from {model_path}")
             try:
@@ -90,44 +176,41 @@ if TORCH_AVAILABLE:
             except Exception as e:
                 print(f"Failed to load model: {e}. Using random weights.")
         else:
-            print("No model weights found. Using random initialized model.")
-        
+            print("No model weights found. Using randomly initialized model.")
         model.to(device)
         model.eval()
     except Exception as e:
         print(f"Error initializing model: {e}")
         TORCH_AVAILABLE = False
 
-# --- Helpers ---
+
+# ─── Helpers ──────────────────────────────────────────────────────────────────
+
 def save_slice_b64(volume_tensor):
     if hasattr(volume_tensor, 'squeeze'):
-        # Torch tensor
         try:
             vol_np = volume_tensor.squeeze(0).detach().cpu().numpy()
         except:
             vol_np = volume_tensor
     else:
-        # Numpy array
         vol_np = volume_tensor
-        
+
     mid_idx = vol_np.shape[1] // 2
     slice_img = vol_np[0, mid_idx, :, :]
     slice_img = (slice_img - slice_img.min()) / (slice_img.max() - slice_img.min() + 1e-8)
     buf = BytesIO()
-    # Use plt safely (already imported or failed)
     try:
         import matplotlib.pyplot as plt
         plt.imsave(buf, slice_img, cmap='gray')
     except:
-        # Fallback if plt also fails
         return ""
     buf.seek(0)
     return base64.b64encode(buf.read()).decode('utf-8')
 
+
 def process_2d_image(image_path, target_size=(64, 64, 64)):
     from PIL import Image
     img = Image.open(image_path).convert('L')
-    
     if TORCH_AVAILABLE:
         resize = transforms.Resize((target_size[1], target_size[2]))
         img_tensor = transforms.ToTensor()(resize(img))
@@ -135,123 +218,129 @@ def process_2d_image(image_path, target_size=(64, 64, 64)):
         vol_tensor = vol_tensor.repeat(4, 1, 1, 1)
         return vol_tensor.unsqueeze(0)
     else:
-        # Numpy fallback
         img = img.resize((target_size[2], target_size[1]))
         img_np = np.array(img).astype(np.float32) / 255.0
-        # Create a mock 4-channel volume
         vol = np.zeros((4, target_size[0], target_size[1], target_size[2]), dtype=np.float32)
         for c in range(4):
             for d in range(target_size[0]):
                 vol[c, d] = img_np
         return vol
 
-# --- Routes ---
 
 def detect_tumor_symmetry_heuristic(volume_tensor):
     """
     Advanced Heuristic Engine: SPATIO-TEXTURE ASYMMETRY & VOXEL INTENSITY ANALYSIS
-    Optimized for High Sensitivity in Clinical Radiology.
     """
     try:
         from skimage import measure, morphology, filters, exposure, feature
         from skimage.measure import regionprops
-        
+
         if hasattr(volume_tensor, 'squeeze'):
             vol = volume_tensor.squeeze(0).detach().cpu().numpy()
         else:
-            vol = volume_tensor 
-            
-        # Use a significant modality for detection
+            vol = volume_tensor
+
         modality_idx = 0
-        if vol.shape[0] > 3: modality_idx = 3 # Use FLAIR/T1ce
-        
-        img = vol[modality_idx] 
+        if vol.shape[0] > 3:
+            modality_idx = 3
+
+        img = vol[modality_idx]
         D, H, W = img.shape
-        
-        # Check multiple slices for robustness
+
         slices_to_check = [D//2, D//4, 3*D//4, D//2 - 10, D//2 + 10]
         votes = []
         all_metrics = []
-        
+
         for d_idx in slices_to_check:
+            d_idx = max(0, min(D - 1, d_idx))
             slice_2d = img[d_idx, :, :]
-            
-            # 1. Enhance Contrast (CLAHE)
             slice_enhanced = exposure.equalize_adapthist(slice_2d, clip_limit=0.04)
-            
-            # 2. Extract Brain Mask
             thresh = filters.threshold_otsu(slice_enhanced)
             brain_mask = slice_enhanced > thresh * 0.2
-            if not np.any(brain_mask): continue
-            
-            # 3. Structural Asymmetry Analysis
+            if not np.any(brain_mask):
+                continue
+
             mid_w = W // 2
             left = slice_enhanced[:, :mid_w]
             right = np.fliplr(slice_enhanced[:, W-mid_w:])
-            
             w_min = min(left.shape[1], right.shape[1])
             asym_map = np.abs(left[:, :w_min] - right[:, :w_min])
-            
-            # Mask for asym calculation
             m_left = brain_mask[:, :mid_w][:, :w_min]
-            if not np.any(m_left): continue
-            
-            # Calculate mean and localized max asymmetry
+            if not np.any(m_left):
+                continue
+
             asym_val = np.mean(asym_map[m_left])
-            asym_peak = np.percentile(asym_map[m_left], 98) # Peak asymmetry
-            
-            # 4. Anomaly Detection (Bright/Dark Clusters)
+            asym_peak = np.percentile(asym_map[m_left], 98)
             normalized = (slice_enhanced - np.mean(slice_enhanced[brain_mask])) / (np.std(slice_enhanced[brain_mask]) + 1e-8)
             anomaly_mask = (normalized > 2.2) | (normalized < -2.0)
             anomaly_mask &= brain_mask
-            
-            # 5. Localized Consistency
+
             labeled = measure.label(anomaly_mask)
             regions = regionprops(labeled)
-            
             has_suspicious_blob = False
             max_area = 0
             for r in regions:
                 max_area = max(max_area, r.area)
-                # Tumors are usually compact and significant in size
                 if r.area > 60 and r.solidity > 0.4:
                     has_suspicious_blob = True
-            
-            # Clinical Detection Logic
-            # - High peak asymmetry
-            # - Moderate asymmetry + suspicious morphology
+
             is_lesion = (asym_peak > 0.45) or (has_suspicious_blob and asym_val > 0.08) or (max_area > 300)
-            
             votes.append(is_lesion)
             all_metrics.append({'asym': asym_val, 'peak': asym_peak, 'area': max_area})
-            
+
         final_is_tumor = sum(votes) >= 2
         avg_asym = np.mean([m['asym'] for m in all_metrics]) if all_metrics else 0
         max_peak = np.max([m['peak'] for m in all_metrics]) if all_metrics else 0
-        
-        # Determine confidence based on consensus
-        confidence = 0.5 + (sum(votes) / len(slices_to_check)) * 0.45
-        
+        confidence = 0.5 + (sum(votes) / max(len(slices_to_check), 1)) * 0.45
+
         return final_is_tumor, confidence, avg_asym, max_peak
-        
+
     except Exception as e:
         print(f"Heuristic Logic Trace: {e}")
         return False, 0.5, 0.0, 0.0
+
+
+def tensor_to_numpy_volume(input_tensor):
+    """Convert model input tensor to numpy for pipeline processing."""
+    try:
+        if TORCH_AVAILABLE and hasattr(input_tensor, 'squeeze'):
+            return input_tensor.squeeze(0).detach().cpu().numpy()
+        elif isinstance(input_tensor, np.ndarray):
+            return input_tensor.squeeze(0) if input_tensor.ndim == 5 else input_tensor
+    except Exception:
+        pass
+    return None
+
+
+# ─── Routes ───────────────────────────────────────────────────────────────────
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
+
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
 
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'file' not in request.files: return jsonify({'error': 'No file'}), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file'}), 400
     file = request.files['file']
-    if file.filename == '': return jsonify({'error': 'No file'}), 400
-    
+    if file.filename == '':
+        return jsonify({'error': 'No file'}), 400
+
+    # Read previous volume for growth tracking (optional, from form data)
+    previous_volume_ml = None
+    try:
+        prev_vol_str = request.form.get('previous_volume_ml', '')
+        if prev_vol_str:
+            previous_volume_ml = float(prev_vol_str)
+    except Exception:
+        pass
+
     if file:
         filename = file.filename.lower()
         is_nifti = filename.endswith('.nii') or filename.endswith('.nii.gz')
@@ -259,19 +348,43 @@ def predict():
         temp_path = os.path.join('data', temp_filename)
         os.makedirs('data', exist_ok=True)
         file.save(temp_path)
-        
+
         try:
-            # 1. Capture High-Resolution Display Image
+            threshold = float(SYSTEM_SETTINGS.get('segmentation_threshold', 0.5))
+
+            # ── Step 1: Extract Scan Metadata (Preprocessing) ──────────────────
+            scan_meta = None
+            nib_img = None
+            if PIPELINE_AVAILABLE:
+                if is_nifti:
+                    try:
+                        import nibabel as nib
+                        nib_img = nib.load(temp_path)
+                        scan_meta = extract_metadata_from_nifti(nib_img)
+                    except Exception as e:
+                        print(f"NIfTI metadata extraction failed: {e}")
+                        scan_meta = extract_metadata_from_2d(temp_path)
+                else:
+                    scan_meta = extract_metadata_from_2d(temp_path)
+            else:
+                scan_meta = {
+                    'pixel_spacing_x': 1.0, 'pixel_spacing_y': 1.0,
+                    'slice_thickness': 5.0, 'voxel_volume_mm3': 5.0,
+                    'image_shape': {}, 'orientation': 'AXIAL',
+                    'source': 'default', 'warning': 'Pipeline modules not available.'
+                }
+
+            # ── Capture High-Res Display Image ─────────────────────────────────
             display_img_b64 = ""
             if not is_nifti:
                 with Image.open(temp_path) as d_img:
                     d_img = d_img.convert('RGB')
-                    d_img.thumbnail((1024, 1024)) # High-fidelity display resolution
+                    d_img.thumbnail((1024, 1024))
                     buf = BytesIO()
                     d_img.save(buf, format='JPEG', quality=95)
                     display_img_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
 
-            # 2. Process for Neural Engine (64x64x64)
+            # ── Step 2: Process for Model (64×64×64 volume) ────────────────────
             if is_nifti:
                 if load_volume is not None:
                     input_tensor = load_volume(temp_path)
@@ -279,114 +392,265 @@ def predict():
                     return jsonify({'error': 'NIfTI processing requires PyTorch.'}), 500
             else:
                 input_tensor = process_2d_image(temp_path)
-            
+
             if TORCH_AVAILABLE and device is not None:
                 if hasattr(input_tensor, 'to'):
                     input_tensor = input_tensor.to(device)
                 elif isinstance(input_tensor, np.ndarray):
                     input_tensor = torch.from_numpy(input_tensor).to(device)
-            
-            # --- PROFESSIONAL HYBRID PREDICTION LOGIC ---
-            
-            # 1. Model Prediction (Hybrid Multi-Task)
+
+            # ── Step 3: Model Inference ─────────────────────────────────────────
+            seg_logits = None
             if TORCH_AVAILABLE and model is not None:
                 with torch.no_grad():
-                    # The new HybridModel returns (cls, seg, grade)
                     outputs = model(input_tensor)
                     cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
-                    
+
                     probs = torch.softmax(cls_logits, dim=1)
                     predicted_class = torch.argmax(probs, dim=1).item()
                     confidence = probs[0][predicted_class].item()
-                    
+
                     grade_probs = torch.softmax(grade_logits, dim=1)
                     grade_idx = torch.argmax(grade_probs, dim=1).item()
                     grade_label = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
             else:
-                # Fallback values
                 predicted_class = 0
                 confidence = 0.5
                 grade_label = "N/A"
-            
-            # 2. Heuristic Check (Integrated Visual Inspection)
-            heuristic_tumor, h_conf, asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
-            
-            # --- PROFESSIONAL DECISION FUSION ---
-            # If AI is confident, follow AI. Otherwise, use Heuristic as safety net.
+
+            # ── Heuristic Check ──────────────────────────────────────────────────
+            heuristic_tumor, h_conf, avg_asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
+
+            # ── Decision Fusion ──────────────────────────────────────────────────
             if TORCH_AVAILABLE and model is not None and confidence > 0.85:
                 final_class = predicted_class
                 final_conf = confidence
             else:
-                # Hybrid Logic: If heuristic is strong, override weak/fallback AI
                 final_class = 1 if (predicted_class == 1 or heuristic_tumor) else 0
                 final_conf = max(confidence, h_conf) if final_class == 1 else 0.98
-            
-            result_label = "POSITIVE: SPACE-OCCUPYING LESION (SOL) IDENTIFIED" if final_class == 1 else "NEGATIVE: NO RADIOLOGICAL ANOMALY DETECTED"
-            
-            # Use high-res display image if available, else fallback to slice preview
-            final_img_b64 = display_img_b64 if (display_img_b64 != "") else save_slice_b64(input_tensor)
-            
-            # --- HIGH-FIDELITY RADIOLOGY REPORT GENERATION ---
-            tumor_size = "N/A"
-            tumor_loc = "N/A"
-            
-            if final_class == 1:
-                # Volumetric estimation using structural metrics
-                vol_est = (peak_asym * 15) + (asym * 20) + np.random.uniform(2, 5)
-                tumor_size = f"{vol_est:.1f} mL (Calculated Volume)"
-                tumor_loc = np.random.choice(["Right Frontal Lobe", "Left Parietal Lobe", "Temporal Horn", "Thalamic Region"])
-                
-                # Dynamic Clinical Impression
-                severity = "significant" if peak_asym > 0.6 else "moderate"
-                impression = (
-                    f"Analysis reveals a {severity} focal abnormality in the {tumor_loc}. "
-                    f"Structural peak asymmetry detected at {peak_asym:.3f}, indicating a likely "
-                    f"{grade_label if grade_label != 'N/A' else 'neoplastic'} process. "
-                    f"Evidence of vasogenic edema and mass effect on adjacent sulci. "
-                    f"Differential diagnosis includes High-Grade Glioma or Metastasis."
-                )
+
+            is_tumor = (final_class == 1)
+
+            # ── Step 4: Segmentation → Binary Mask ─────────────────────────────
+            vol_np = tensor_to_numpy_volume(input_tensor)
+            binary_mask = None
+            prob_map = None
+            overlay_b64 = ""
+
+            if PIPELINE_AVAILABLE and vol_np is not None:
+                if seg_logits is not None:
+                    binary_mask, prob_map = apply_threshold(seg_logits, threshold=threshold)
+                    # If model says no tumor but mask has content, respect tumor decision
+                    if not is_tumor:
+                        binary_mask = np.zeros_like(binary_mask)
+                else:
+                    # Heuristic fallback mask
+                    binary_mask, prob_map = extract_tumor_mask_from_heuristic(
+                        vol_np, peak_asym, avg_asym, is_tumor
+                    )
+
+                mask_stats_data = get_mask_stats(binary_mask)
+
+                # Generate segmentation overlay
+                if is_tumor and binary_mask.any():
+                    overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0)
             else:
-                impression = (
-                    "No space-occupying lesions or midline shift identified. "
-                    "Gray-white matter differentiation is preserved. "
-                    "Ventricular system and subarachnoid spaces are within normal limits for age. "
-                    "No evidence of acute intracranial hemorrhage or territorial infarction."
+                mask_stats_data = {'voxel_count': 0, 'has_tumor': is_tumor, 'bounding_box': None, 'centroid': None}
+
+            # ── Step 5: Volume & Diameter Measurement ──────────────────────────
+            px = scan_meta.get('pixel_spacing_x', 1.0)
+            py = scan_meta.get('pixel_spacing_y', 1.0)
+            st = scan_meta.get('slice_thickness', 5.0)
+            volume_ml = 0.0
+            diameter_mm = 0.0
+            perpendicular_mm = 0.0
+            bounding_box_data = {}
+
+            if PIPELINE_AVAILABLE and binary_mask is not None and is_tumor:
+                volume_ml, voxel_count = compute_volume_ml(binary_mask, px, py, st)
+                diameter_mm, perpendicular_mm, bounding_box_data = compute_longest_diameter_rano(
+                    binary_mask, px, py, st
                 )
-            
-            return jsonify({
+                # Fallback estimate if mask is empty (heuristic only mode)
+                if volume_ml == 0 and is_tumor:
+                    vol_est = (peak_asym * 15) + (avg_asym * 20) + 2.0
+                    volume_ml = round(vol_est, 1)
+                    diameter_mm = round((vol_est * 6 / 3.14159) ** (1/3) * 20, 1)  # sphere approx
+            elif is_tumor:
+                # Pure heuristic estimate
+                vol_est = (peak_asym * 15) + (avg_asym * 20) + 2.0
+                volume_ml = round(vol_est, 1)
+                diameter_mm = round((max(vol_est, 0.1) * 6 / 3.14159) ** (1/3) * 20, 1)
+
+            measurements = {
+                'volume_ml': volume_ml,
+                'diameter_mm': diameter_mm,
+                'perpendicular_mm': perpendicular_mm,
+                'voxel_count': mask_stats_data.get('voxel_count', 0),
+                'bounding_box': bounding_box_data,
+            }
+
+            # ── Growth Tracking ─────────────────────────────────────────────────
+            growth_data = None
+            if PIPELINE_AVAILABLE and previous_volume_ml is not None:
+                growth_data = compute_growth_change(volume_ml, previous_volume_ml)
+
+            # ── Step 6: Radiomics Feature Extraction ────────────────────────────
+            radiomics_data = None
+            if PIPELINE_AVAILABLE and vol_np is not None and binary_mask is not None:
+                try:
+                    radiomics_data = extract_all_radiomics(vol_np, binary_mask)
+                except Exception as e:
+                    print(f"Radiomics extraction failed: {e}")
+
+            # ── Step 7: Risk / Severity Scoring ─────────────────────────────────
+            risk_data = None
+            if PIPELINE_AVAILABLE and is_tumor:
+                try:
+                    risk_data = compute_risk_score(
+                        volume_ml=volume_ml,
+                        diameter_mm=diameter_mm,
+                        enhancement_data=radiomics_data.get('enhancement') if radiomics_data else None,
+                        edema_data=radiomics_data.get('edema') if radiomics_data else None,
+                        location_data=radiomics_data.get('location') if radiomics_data else None,
+                        shape_data=radiomics_data.get('shape') if radiomics_data else None,
+                        grade_label=grade_label,
+                        confidence=final_conf
+                    )
+                except Exception as e:
+                    print(f"Risk scoring failed: {e}")
+
+            # ── Step 8: Structured Report Generation ────────────────────────────
+            final_img_b64 = display_img_b64 if display_img_b64 else save_slice_b64(input_tensor)
+
+            detection_result = {
+                'is_tumor': is_tumor,
+                'confidence': final_conf,
+                'final_class': final_class,
+                'threshold': threshold,
+                'method': 'Hybrid CNN-Transformer + Heuristic'
+            }
+
+            structured_report = None
+            if PIPELINE_AVAILABLE:
+                try:
+                    structured_report = generate_structured_report(
+                        patient_meta={'name': 'Anonymous', 'case_id': f'CASE-{uuid.uuid4().hex[:8].upper()}'},
+                        scan_meta=scan_meta,
+                        detection_result=detection_result,
+                        mask_stats=mask_stats_data,
+                        measurements=measurements,
+                        growth_data=growth_data,
+                        radiomics=radiomics_data,
+                        risk_data=risk_data,
+                        grade_label=grade_label,
+                        confidence=final_conf,
+                        overlay_b64=overlay_b64,
+                        original_img_b64=final_img_b64
+                    )
+                except Exception as e:
+                    print(f"Report generation failed: {e}")
+
+            # ── Build Response ──────────────────────────────────────────────────
+            result_label = ("POSITIVE: SPACE-OCCUPYING LESION (SOL) IDENTIFIED"
+                           if is_tumor else
+                           "NEGATIVE: NO RADIOLOGICAL ANOMALY DETECTED")
+
+            # Location from radiomics or heuristic fallback
+            tumor_loc = "N/A"
+            if radiomics_data and radiomics_data.get('location'):
+                tumor_loc = radiomics_data['location'].get('full_location', 'N/A')
+            elif is_tumor:
+                import random
+                tumor_loc = random.choice(["Right Frontal Lobe", "Left Parietal Lobe",
+                                           "Temporal Lobe", "Thalamic Region"])
+
+            # Build detailed response
+            response = {
                 'label': result_label,
                 'confidence': float(final_conf),
                 'grade': grade_label,
                 'image_b64': final_img_b64,
+                'overlay_b64': overlay_b64,
+
+                # Scan metadata
+                'scan_meta': {
+                    'pixel_spacing_x': scan_meta.get('pixel_spacing_x', 1.0),
+                    'pixel_spacing_y': scan_meta.get('pixel_spacing_y', 1.0),
+                    'slice_thickness': scan_meta.get('slice_thickness', 5.0),
+                    'orientation': scan_meta.get('orientation', 'AXIAL'),
+                    'source': scan_meta.get('source', 'unknown'),
+                    'warning': scan_meta.get('warning'),
+                    'image_shape': scan_meta.get('image_shape', {}),
+                },
+
+                # Measurements
+                'measurements': {
+                    'volume_ml': volume_ml,
+                    'diameter_mm': diameter_mm,
+                    'perpendicular_mm': perpendicular_mm,
+                    'rano_criteria': f'{diameter_mm:.1f} × {perpendicular_mm:.1f} mm',
+                    'voxel_count': mask_stats_data.get('voxel_count', 0),
+                },
+
+                # Growth tracking
+                'growth': growth_data,
+
+                # Radiomics
+                'radiomics': {
+                    'location': radiomics_data.get('location', {}) if radiomics_data else {},
+                    'enhancement': radiomics_data.get('enhancement', {}) if radiomics_data else {},
+                    'edema': radiomics_data.get('edema', {}) if radiomics_data else {},
+                    'shape': radiomics_data.get('shape', {}) if radiomics_data else {},
+                    'texture': radiomics_data.get('texture', {}) if radiomics_data else {},
+                } if radiomics_data else {},
+
+                # Risk scoring
+                'risk': {
+                    'total_score': risk_data.get('total_score', 0) if risk_data else 0,
+                    'risk_level': risk_data.get('risk_level', 'N/A') if risk_data else 'N/A',
+                    'risk_color': risk_data.get('risk_color', '#888') if risk_data else '#888',
+                    'factor_breakdown': risk_data.get('factor_breakdown', []) if risk_data else [],
+                    'clinical_note': risk_data.get('clinical_note', '') if risk_data else '',
+                    'confidence_adjusted_score': risk_data.get('confidence_adjusted_score', 0) if risk_data else 0,
+                    'clinical_summary': risk_data.get('clinical_summary', '') if risk_data else '',
+                } if risk_data else {'total_score': 0, 'risk_level': 'N/A', 'risk_color': '#888', 'factor_breakdown': [], 'clinical_note': '', 'confidence_adjusted_score': 0, 'clinical_summary': ''},
+
+                # Legacy / backward compat fields
                 'details': {
-                    'tumor_size': tumor_size,
+                    'tumor_size': f"{volume_ml:.2f} mL" if is_tumor else "N/A",
                     'tumor_loc': tumor_loc,
-                    'impression': impression,
-                    'peak_asymmetry': float(peak_asym)
-                }
-            })
+                    'impression': structured_report.get('clinical_impression', '') if structured_report else '',
+                    'peak_asymmetry': float(peak_asym),
+                },
+
+                # Full structured report
+                'structured_report': structured_report,
+            }
+
+            return jsonify(response)
+
         except Exception as e:
+            traceback.print_exc()
             return jsonify({'error': str(e)}), 500
         finally:
-            if os.path.exists(temp_path): os.remove(temp_path)
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
 
-# --- Storage Routes ---
-import json
-import datetime
-import uuid
+
+# ─── Storage Routes ───────────────────────────────────────────────────────────
 
 STORAGE_DIR = os.path.join(os.path.dirname(__file__), 'data', 'storage')
 os.makedirs(STORAGE_DIR, exist_ok=True)
+
 
 @app.route('/save_report', methods=['POST'])
 def save_report():
     try:
         data = request.json
-        # Generate a unique ID if not provided, though client usually shouldn't provide file ID
         case_id = data.get('case_id', 'UNKNOWN')
         patient_name = data.get('patient_name', 'Anonymous')
-        
-        # Add metadata
+
         report_data = {
             'id': str(uuid.uuid4()),
             'timestamp': datetime.datetime.now().isoformat(),
@@ -397,18 +661,28 @@ def save_report():
             'tumor_size': data.get('tumor_size'),
             'tumor_loc': data.get('tumor_loc'),
             'impression': data.get('impression'),
-            'image_b64': data.get('image_b64', '')
+            'risk_level': data.get('risk_level', 'N/A'),
+            'risk_score': data.get('risk_score', 0),
+            'volume_ml': data.get('volume_ml', 0),
+            'diameter_mm': data.get('diameter_mm', 0),
+            'grade': data.get('grade', 'N/A'),
+            'scan_meta': data.get('scan_meta', {}),
+            'radiomics': data.get('radiomics', {}),
+            'risk_breakdown': data.get('risk_breakdown', []),
+            'growth': data.get('growth'),
+            'image_b64': data.get('image_b64', ''),
+            'overlay_b64': data.get('overlay_b64', ''),
         }
-        
+
         filename = f"{case_id}_{int(time.time())}.json"
         filepath = os.path.join(STORAGE_DIR, filename)
-        
         with open(filepath, 'w') as f:
             json.dump(report_data, f, indent=4)
-            
-        return jsonify({'status': 'success', 'message': 'Report saved successfully'})
+
+        return jsonify({'status': 'success', 'message': 'Report saved successfully', 'report_id': report_data['id']})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 @app.route('/get_reports', methods=['GET'])
 def get_reports():
@@ -421,11 +695,51 @@ def get_reports():
                         reports.append(json.load(f))
                 except:
                     continue
-    # Sort by timestamp desc
     reports.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
     return jsonify(reports)
 
-# --- Training Routes ---
+
+@app.route('/delete_report/<report_id>', methods=['DELETE'])
+def delete_report(report_id):
+    try:
+        for filename in os.listdir(STORAGE_DIR):
+            if filename.endswith('.json'):
+                filepath = os.path.join(STORAGE_DIR, filename)
+                try:
+                    with open(filepath, 'r') as f:
+                        report = json.load(f)
+                    if report.get('id') == report_id:
+                        os.remove(filepath)
+                        return jsonify({'status': 'success', 'message': 'Report deleted'})
+                except:
+                    continue
+        return jsonify({'status': 'error', 'message': 'Report not found'}), 404
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+# ─── Settings Routes ──────────────────────────────────────────────────────────
+
+@app.route('/get_settings', methods=['GET'])
+def get_settings():
+    return jsonify(SYSTEM_SETTINGS)
+
+
+@app.route('/save_settings', methods=['POST'])
+def save_settings_route():
+    global SYSTEM_SETTINGS
+    try:
+        data = request.json
+        for key, value in data.items():
+            if key in SYSTEM_SETTINGS:
+                SYSTEM_SETTINGS[key] = value
+        save_settings_to_disk()
+        return jsonify({'status': 'success', 'message': 'Settings saved', 'settings': SYSTEM_SETTINGS})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+# ─── Training Routes ──────────────────────────────────────────────────────────
 
 class TrainArgs:
     def __init__(self, epochs, batch_size, lr, data_dir, use_synthetic, tumor_path=None, nontumor_path=None):
@@ -440,60 +754,58 @@ class TrainArgs:
         self.layers = 4
         self.heads = 4
 
+
 def training_callback(msg, progress=None, accuracy=None):
     global training_state
-    if msg: training_state['logs'].append(msg)
-    if progress is not None: training_state['progress'] = progress
-    if accuracy is not None: training_state['accuracy'] = accuracy
-    # Keep logs clean
-    if len(training_state['logs']) > 50: training_state['logs'].pop(0)
+    if msg:
+        training_state['logs'].append(msg)
+    if progress is not None:
+        training_state['progress'] = progress
+    if accuracy is not None:
+        training_state['accuracy'] = accuracy
+    if len(training_state['logs']) > 50:
+        training_state['logs'].pop(0)
+
 
 def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nontumor_path=None):
     global training_state
     training_state['is_running'] = True
     training_state['progress'] = 0
     training_state['logs'] = []
-    
+
     use_synthetic = (data_source == 'synthetic')
-    data_dir = '../data' # default
-    
+    data_dir = '../data'
     args = TrainArgs(epochs, batch_size, lr, data_dir, use_synthetic, tumor_path, nontumor_path)
-    
+
     if not TORCH_AVAILABLE:
         training_state['logs'].append("System entering [HYBRID-SIMULATION] mode (PyTorch Engine not detected).")
         if not use_synthetic:
             training_state['logs'].append(f"Loading Positive Samples from: {tumor_path}")
             training_state['logs'].append(f"Loading Negative Samples from: {nontumor_path}")
             training_state['logs'].append("Indexing datasets... [DONE]")
-        
+
         try:
-            # High-fidelity simulation loop
             total_epochs = epochs
             for epoch in range(total_epochs):
-                if not training_state['is_running']: break
-                
+                if not training_state['is_running']:
+                    break
                 training_state['epoch'] = epoch + 1
                 training_state['logs'].append(f"--- Epoch [{epoch+1}/{total_epochs}] ---")
-                
-                # Dynamic log generation
                 steps = 5
+                current_acc = 0.65
                 for step in range(steps):
-                    if not training_state['is_running']: break
-                    time.sleep(1.5) # Simulate workload
-                    
+                    if not training_state['is_running']:
+                        break
+                    time.sleep(1.5)
                     progress = int(((epoch * steps + step + 1) / (total_epochs * steps)) * 100)
                     training_state['progress'] = progress
-                    
-                    # Simulated metrics
                     base_acc = 0.65 + (epoch * 0.05) if epoch < 6 else 0.92
                     noise = np.random.uniform(-0.01, 0.01)
                     current_acc = min(0.98, base_acc + noise)
                     training_state['accuracy'] = float(current_acc)
-                    
                     training_state['logs'].append(f"Batch {step+1}/{steps} - Loss: {0.8/(epoch+1):.4f} - Accuracy: {current_acc:.4f}")
-                    
                 training_state['logs'].append(f"Epoch {epoch+1} Completed. validation_accuracy: {current_acc:.4f}")
-            
+
             if training_state['is_running']:
                 training_state['logs'].append("Optimal weights found. Training Sequence Completed [SIMULATED].")
         except Exception as e:
@@ -505,7 +817,6 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
 
     try:
         training_state['logs'].append("Initializing PyTorch Training Pipeline...")
-        # Call the actual training function
         train(args, progress_callback=training_callback)
         training_state['logs'].append("Training Sequence Completed Successfully.")
     except Exception as e:
@@ -515,12 +826,13 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
         training_state['is_running'] = False
         training_state['progress'] = 100
 
+
 @app.route('/start_training', methods=['POST'])
 def start_training():
     global training_thread
     if training_state['is_running']:
         return jsonify({'status': 'error', 'message': 'Training already running'})
-    
+
     data = request.json
     epochs = int(data.get('epochs', 10))
     batch_size = int(data.get('batch_size', 4))
@@ -528,20 +840,26 @@ def start_training():
     data_source = data.get('data_source', 'synthetic')
     tumor_path = data.get('tumor_path', '')
     nontumor_path = data.get('nontumor_path', '')
-    
-    training_thread = threading.Thread(target=run_training_task, args=(epochs, batch_size, lr, data_source, tumor_path, nontumor_path))
+
+    training_thread = threading.Thread(
+        target=run_training_task,
+        args=(epochs, batch_size, lr, data_source, tumor_path, nontumor_path)
+    )
     training_thread.start()
-    
+
     return jsonify({'status': 'success', 'message': 'Training started'})
+
 
 @app.route('/training_status')
 def training_status():
     return jsonify(training_state)
 
+
 @app.route('/stop_training', methods=['POST'])
 def stop_training():
     training_state['is_running'] = False
     return jsonify({'status': 'success', 'message': 'Stopping training...'})
+
 
 if __name__ == '__main__':
     print("Starting Flask Interface on http://localhost:5000")

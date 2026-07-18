@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from model import ResidualEncoderBlock3D
 
 class ViTBlock(nn.Module):
     """
@@ -161,7 +162,7 @@ class HybridTumorModel(nn.Module):
         # 4. Decoding (Spatial Reconstruction)
         # Reshape z (B, 512, 128) -> (B, 128, 8, 8, 8) assuming patch_size and pooling context
         # In this research prototype, we project and upsample for skip connections
-        z_vol = z.transpose(1, 2).view(B, -1, 8, 8, 8) 
+        z_vol = z.transpose(1, 2).view(B, -1, 2, 2, 2) 
         
         # Upsampling path
         u1 = self.up_conv1(z_vol) # -> (B, 64, 16, 16, 16)
