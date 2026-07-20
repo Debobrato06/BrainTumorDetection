@@ -3051,4 +3051,153 @@ body {
     color: #fff;
     background: rgba(255,255,255,0.1);
     border-color: rgba(255,255,255,0.2);
-}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PIPELINE VALIDATION UI — Rules 4, 7, 8
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Rule 8: Fail-Loud Alert Banner ─────────────────────────────────────── */
+.pipeline-alert {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    border-left: 5px solid;
+    font-family: 'Outfit', sans-serif;
+    animation: alertSlideIn 0.35s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes alertSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.pipeline-alert.alert-critical {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: #ef4444;
+}
+.pipeline-alert.alert-warning {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: #f59e0b;
+}
+.pipeline-alert.alert-info {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: #6366f1;
+}
+.pipeline-alert .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+.pipeline-alert .alert-icon { font-size: 1.2rem; }
+.pipeline-alert .alert-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+.alert-critical .alert-title  { color: #fca5a5; }
+.alert-warning  .alert-title  { color: #fcd34d; }
+.alert-info     .alert-title  { color: #a5b4fc; }
+.pipeline-alert .alert-body {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    margin-bottom: 6px;
+}
+.pipeline-alert .alert-stage-summary {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.45);
+    font-family: monospace;
+    letter-spacing: 0.03em;
+    margin-top: 4px;
+}
+
+/* ── Rule 4: Reliability Badge ───────────────────────────────────────────── */
+.reliability-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border: 1px solid;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+.reliability-badge.badge-reduced {
+    background: rgba(245,158,11,0.15);
+    color: #fcd34d;
+    border-color: #f59e0b66;
+}
+.reliability-badge.badge-low {
+    background: rgba(239,68,68,0.15);
+    color: #fca5a5;
+    border-color: #ef444466;
+}
+
+/* ── Rule 3 / state-na: Dimmed Cards for uncomputed fields ──────────────── */
+.state-na {
+    opacity: 0.45;
+    filter: grayscale(0.6);
+    pointer-events: none;
+}
+.state-na::after {
+    content: 'Not Computed';
+    display: block;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.35);
+    text-align: center;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* ── Rule 5: Indeterminate Detection State ───────────────────────────────── */
+#detection-hero-card.indeterminate {
+    border-color: #f59e0b44;
+    background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(30,30,50,0.0) 100%);
+}
+#detection-hero-card.indeterminate .detection-label,
+#detection-hero-card.indeterminate #detection-text {
+    color: #fcd34d;
+}
+#detection-hero-card.indeterminate #detection-icon { color: #f59e0b; }
+
+/* ── Rule 4: Confidence caveat footnote ──────────────────────────────────── */
+#conf-caveat {
+    font-size: 0.7rem;
+    color: #f59e0b;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* ── Rule 7: Pipeline Status Block ──────────────────────────────────────── */
+#pipeline-status-block {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 10px;
+    margin-top: 14px;
+}
+.ps-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-family: 'Outfit', sans-serif;
+}
+.ps-icon { font-size: 0.9rem; font-weight: 700; line-height: 1; }
+.ps-label { color: rgba(255,255,255,0.55); }
+
+/* ── no-data-msg ─────────────────────────────────────────────────────────── */
+.no-data-msg {
+    color: rgba(255,255,255,0.35);
+    font-size: 0.82rem;
+    font-style: italic;
+    padding: 12px 0;
+    text-align: center;
+}
+

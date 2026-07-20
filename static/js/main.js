@@ -305,74 +305,132 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateInferenceUI(data) {
-        const isTumor = data.label && data.label.includes('POSITIVE');
+        // ── Determine pipeline state (Rules 2, 5, 8) ──────────────────────────
+        const isIndeterminate    = data.is_indeterminate === true;
+        const isTumor            = !isIndeterminate && data.label && data.label.includes('POSITIVE');
+        const insufficientMask   = data.insufficient_mask_data === true;
+        const reliabilityReduced = data.reliability_reduced === true;
+        const oodDetected        = data.ood_detected === true;
+        const alert              = data.alert || { level: 'none', title: '', message: '', show_results: true };
+        const pipeStatus         = data.pipeline_status || {};
+
+        // Helper: render '—' for null/undefined, format number otherwise
+        const fmt = (val, decimals, suffix) =>
+            (val == null) ? '\u2014' : parseFloat(val).toFixed(decimals || 2) + (suffix || '');
 
         // ── Preview Image ──
         if (previewImage && data.image_b64) {
             previewImage.src = 'data:image/jpeg;base64,' + data.image_b64;
         }
 
-        // ── Scan Metadata Strip ──
+        // ── Scan Metadata Strip ────────────────────────────────────────────────
         const sm = data.scan_meta || {};
-        if (metaType) metaType.textContent = sm.orientation || '—';
-        if (metaPx) metaPx.textContent = sm.pixel_spacing_x ? `${sm.pixel_spacing_x}mm × ${sm.pixel_spacing_y}mm` : '—';
-        if (metaSt) metaSt.textContent = sm.slice_thickness ? `${sm.slice_thickness}mm` : '—';
+        if (metaType) metaType.textContent = sm.modality_label || sm.orientation || '\u2014';
+        if (metaPx)   metaPx.textContent   = sm.pixel_spacing_x ? `${sm.pixel_spacing_x}mm \u00d7 ${sm.pixel_spacing_y}mm` : '\u2014';
+        if (metaSt)   metaSt.textContent   = sm.slice_thickness  ? `${sm.slice_thickness}mm` : '\u2014';
 
-        // ── Metadata Warning ──
+        // ── Rule 8: Top-Level Fail-Loud Alert Banner ───────────────────────────
+        renderAlertBanner(alert, pipeStatus, oodDetected, reliabilityReduced);
+
+        // ── Rule 4: OOD / Low Reliability Badge ───────────────────────────────
+        renderReliabilityBadge(reliabilityReduced, oodDetected, pipeStatus, data.seg_quality_score);
+
+        // ── Metadata Warning (secondary, subordinate to alert banner) ──────────
         const warnBanner = document.getElementById('meta-warning-banner');
-        const warnText = document.getElementById('meta-warning-text');
-        if (sm.warning && warnBanner && warnText) {
+        const warnText   = document.getElementById('meta-warning-text');
+        if (sm.warning && warnBanner && warnText && alert.level !== 'critical') {
             warnText.textContent = sm.warning;
             warnBanner.classList.remove('hidden');
         } else if (warnBanner) {
             warnBanner.classList.add('hidden');
         }
 
-        // ── Detection Hero Card ──
-        const heroCard = document.getElementById('detection-hero-card');
+        // ── Rule 5: Detection Hero Card (3 states) ────────────────────────────
+        const heroCard      = document.getElementById('detection-hero-card');
         const detectionText = document.getElementById('detection-text');
         const detectionIcon = document.getElementById('detection-icon');
-        const confVal = document.getElementById('confidence-val');
-        const confBarFill = document.getElementById('conf-bar-fill');
+        const confVal       = document.getElementById('confidence-val');
+        const confBarFill   = document.getElementById('conf-bar-fill');
+        const confCaveat    = document.getElementById('conf-caveat');
 
-        if (detectionText) detectionText.textContent = isTumor ? 'SPACE-OCCUPYING LESION IDENTIFIED' : 'NO RADIOLOGICAL ANOMALY DETECTED';
         if (heroCard) {
-            heroCard.classList.remove('tumor', 'healthy');
-            heroCard.classList.add(isTumor ? 'tumor' : 'healthy');
+            heroCard.classList.remove('tumor', 'healthy', 'indeterminate');
+            heroCard.classList.add(isIndeterminate ? 'indeterminate' : isTumor ? 'tumor' : 'healthy');
+        }
+        if (detectionText) {
+            if (isIndeterminate) {
+                detectionText.textContent = 'INDETERMINATE \u2014 MANUAL REVIEW REQUIRED';
+            } else if (isTumor) {
+                detectionText.textContent = 'SPACE-OCCUPYING LESION IDENTIFIED';
+            } else {
+                detectionText.textContent = 'NO RADIOLOGICAL ANOMALY DETECTED';
+            }
         }
         if (detectionIcon) {
-            detectionIcon.innerHTML = isTumor
+            detectionIcon.innerHTML = isIndeterminate
+                ? '<i class="fa-solid fa-circle-question"></i>'
+                : isTumor
                 ? '<i class="fa-solid fa-circle-exclamation"></i>'
                 : '<i class="fa-solid fa-circle-check"></i>';
         }
         const confPct = ((data.confidence || 0) * 100).toFixed(1);
-        if (confVal) confVal.textContent = confPct + '%';
+        if (confVal) confVal.textContent = confPct + '%' + (reliabilityReduced ? '*' : '');
         if (confBarFill) confBarFill.style.width = confPct + '%';
+        if (confCaveat) {
+            confCaveat.textContent = reliabilityReduced
+                ? '* Confidence capped \u2014 unverified modality or out-of-distribution scan'
+                : '';
+            confCaveat.classList.toggle('hidden', !reliabilityReduced);
+        }
 
-        // ── Risk Gauge ──
-        const risk = data.risk || {};
-        const riskScore = risk.total_score || 0;
-        const riskLevel = risk.risk_level || 'N/A';
-        const riskColor = risk.risk_color || '#888888';
+        // ── Rule 3: Measurements (null = '\u2014', 0.0 never shown as valid data) ──
+        const meas = data.measurements || {};
+        const measActive = isTumor && !insufficientMask;
 
-        animateGauge(riskScore, riskColor);
+        setText('vol-val',  measActive ? fmt(meas.volume_ml,  2, ' mL') : '\u2014');
+        setText('diam-val', measActive ? fmt(meas.diameter_mm, 1, ' mm') : '\u2014');
+        setText('perp-val', measActive ? fmt(meas.perpendicular_mm, 1, ' mm') : '\u2014');
+
+        ['vol-card','diam-card','perp-card'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('state-na', !measActive);
+        });
+
+        // ── Rule 3: Grade (never stale \u2014 always server-sanitized) ─────────────
+        const gradeEl   = document.getElementById('grade-val');
+        const gradeCard = document.getElementById('grade-card');
+        if (gradeEl) {
+            var g = data.grade || '\u2014';
+            gradeEl.textContent = g;
+            var gradeIsNA = !isTumor || insufficientMask || g.startsWith('Not');
+            if (gradeCard) gradeCard.classList.toggle('state-na', gradeIsNA);
+        }
+
+        // ── Risk Gauge ────────────────────────────────────────────────────────
+        const risk       = data.risk || {};
+        const riskScore  = (risk.total_score != null) ? risk.total_score : 0;
+        const riskLevel  = risk.risk_level || null;
+        const riskColor  = risk.risk_color || '#888888';
+        const riskActive = isTumor && !insufficientMask && riskLevel != null;
+
+        animateGauge(riskActive ? riskScore : 0, riskActive ? riskColor : '#4b5563');
 
         const riskBadge = document.getElementById('risk-level-badge');
         if (riskBadge) {
-            riskBadge.textContent = riskLevel;
-            riskBadge.style.background = riskColor + '22';
-            riskBadge.style.color = riskColor;
-            riskBadge.style.borderColor = riskColor + '66';
+            if (riskActive) {
+                riskBadge.textContent = riskLevel;
+                riskBadge.style.background = riskColor + '22';
+                riskBadge.style.color = riskColor;
+                riskBadge.style.borderColor = riskColor + '66';
+            } else {
+                riskBadge.textContent = isTumor ? 'Analysis Incomplete' : 'Not Applicable';
+                riskBadge.style.background = '';
+                riskBadge.style.color = '#6b7280';
+                riskBadge.style.borderColor = '';
+            }
         }
         const riskNote = document.getElementById('risk-clinical-note');
-        if (riskNote) riskNote.textContent = risk.clinical_note || '';
-
-        // ── Measurements ──
-        const meas = data.measurements || {};
-        setText('vol-val', isTumor ? (meas.volume_ml || 0).toFixed(2) : '—');
-        setText('diam-val', isTumor ? (meas.diameter_mm || 0).toFixed(1) : '—');
-        setText('perp-val', isTumor ? (meas.perpendicular_mm || 0).toFixed(1) : '—');
-        setText('grade-val', data.grade || 'N/A');
+        if (riskNote) riskNote.textContent = riskActive ? (risk.clinical_note || '') : '';
 
         // ── Growth Tracking ──
         const growthTracker = document.getElementById('growth-tracker');
@@ -416,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const shape = rad.shape || {};
         const tex = rad.texture || {};
 
-        if (isTumor) {
+        if (isTumor && !insufficientMask) {
             setText('rad-location', loc.full_location || loc.region || '—');
             const eloquentEl = document.getElementById('rad-eloquent');
             if (eloquentEl) {
@@ -450,16 +508,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 depthEl.style.color = loc.depth_category === 'Deep' ? '#ef4444' : '#6b7280';
             }
         } else {
+            // Rule 3: No stale radiomics data shown
+            var naMsg = insufficientMask ? 'Segmentation insufficient \u2014 not computed.' : '\u2014';
             ['rad-location','rad-enhancement','rad-edema','rad-shape','rad-texture','rad-surgical-risk',
              'rad-eloquent','rad-ring','rad-edema-ratio','rad-sphericity','rad-homogeneity','rad-depth'
-            ].forEach(id => setText(id, '—'));
+            ].forEach(function(id) { setText(id, naMsg); });
         }
 
-        // ── Risk Factor Breakdown ──
+        // ── Rule 7: Pipeline Status Block ─────────────────────────────────────
+        renderPipelineStatus(pipeStatus);
+
+        // ── Risk Factor Breakdown ──────────────────────────────────────────────
         const factorsList = document.getElementById('risk-factors-list');
         if (factorsList) {
             const breakdown = (risk.factor_breakdown || []);
-            if (breakdown.length > 0 && isTumor) {
+            if (breakdown.length > 0 && riskActive) {
                 factorsList.innerHTML = breakdown.map(f => `
                     <div class="risk-factor-row">
                         <span class="rf-label">${f.factor}</span>
@@ -475,7 +538,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }, 50);
             } else {
-                factorsList.innerHTML = '<p class="no-data-msg">No tumor detected — risk scoring not applicable.</p>';
+                var noDataMsg = isIndeterminate
+                    ? 'Indeterminate scan \u2014 risk scoring not performed.'
+                    : insufficientMask
+                    ? 'Segmentation insufficient \u2014 risk scoring not computed.'
+                    : isTumor
+                    ? 'Risk scoring unavailable for this scan.'
+                    : 'No tumor detected \u2014 risk scoring not applicable.';
+                factorsList.innerHTML = '<p class="no-data-msg">' + noDataMsg + '</p>';
             }
         }
 
@@ -496,6 +566,88 @@ document.addEventListener('DOMContentLoaded', () => {
     function setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
+    }
+
+    // ── Rule 8: Render fail-loud alert banner at top of results ───────────────
+    function renderAlertBanner(alertData, pipeStatus, oodDetected, reliabilityReduced) {
+        var banner = document.getElementById('pipeline-alert-banner');
+        if (!banner) {
+            var resultsSection = document.getElementById('results-section') || document.querySelector('.results-section');
+            if (!resultsSection) return;
+            banner = document.createElement('div');
+            banner.id = 'pipeline-alert-banner';
+            banner.className = 'pipeline-alert hidden';
+            resultsSection.insertBefore(banner, resultsSection.firstChild);
+        }
+        if (alertData.level === 'none' && !oodDetected && !reliabilityReduced) {
+            banner.classList.add('hidden');
+            return;
+        }
+        var levelClass  = { critical: 'alert-critical', warning: 'alert-warning', info: 'alert-info' };
+        var levelIcon   = { critical: '\uD83D\uDEA8', warning: '\u26A0\uFE0F', info: '\u2139\uFE0F' };
+        var effectiveLevel = alertData.level !== 'none' ? alertData.level : reliabilityReduced ? 'warning' : 'info';
+        banner.className = 'pipeline-alert ' + (levelClass[effectiveLevel] || 'alert-warning');
+        banner.innerHTML =
+            '<div class="alert-header">'
+            + '<span class="alert-icon">' + (levelIcon[effectiveLevel] || '\u26A0\uFE0F') + '</span>'
+            + '<strong class="alert-title">' + (alertData.title || (reliabilityReduced ? 'LOW RELIABILITY \u2014 Unverified Input' : 'Analysis Notice')) + '</strong>'
+            + '</div>'
+            + ((alertData.message || pipeStatus.reason_if_reduced)
+                ? '<div class="alert-body">' + (alertData.message || pipeStatus.reason_if_reduced) + '</div>'
+                : '')
+            + (pipeStatus.stage_summary
+                ? '<div class="alert-stage-summary">' + pipeStatus.stage_summary + '</div>'
+                : '');
+        banner.classList.remove('hidden');
+    }
+
+    // ── Rule 4: OOD / Reliability Badge near confidence display ───────────────
+    function renderReliabilityBadge(reliabilityReduced, oodDetected, pipeStatus, segQuality) {
+        var badge = document.getElementById('reliability-badge');
+        if (!badge) {
+            var confArea = document.getElementById('confidence-area') || document.getElementById('detection-hero-card');
+            if (!confArea) return;
+            badge = document.createElement('span');
+            badge.id = 'reliability-badge';
+            badge.className = 'reliability-badge';
+            confArea.appendChild(badge);
+        }
+        if (!reliabilityReduced && !oodDetected) {
+            badge.classList.add('hidden');
+            return;
+        }
+        var overall = pipeStatus.overall_reliability || 'reduced';
+        badge.className = 'reliability-badge badge-' + overall;
+        badge.textContent = overall === 'low' ? '\u26A0 LOW RELIABILITY' : '\u26A0 REDUCED RELIABILITY';
+        badge.title = pipeStatus.reason_if_reduced || 'Input modality unverified or OOD';
+        badge.classList.remove('hidden');
+    }
+
+    // ── Rule 7: Pipeline stage status tracker ─────────────────────────────────
+    function renderPipelineStatus(pipeStatus) {
+        var container = document.getElementById('pipeline-status-block');
+        if (!container) return;
+        if (!pipeStatus || !pipeStatus.stage_summary) {
+            container.classList.add('hidden');
+            return;
+        }
+        var stages = [
+            { key: 'detection_stage',    label: 'Detection'    },
+            { key: 'segmentation_stage', label: 'Segmentation' },
+            { key: 'radiomics_stage',    label: 'Radiomics'    },
+            { key: 'grading_stage',      label: 'Grading'      },
+            { key: 'risk_scoring_stage', label: 'Risk Score'   },
+        ];
+        var iconMap  = { completed: '\u2713', failed: '\u2717', not_run: '\u25CB', skipped: '\u2014' };
+        var colorMap = { completed: '#22c55e', failed: '#ef4444', not_run: '#6b7280', skipped: '#9ca3af' };
+        container.innerHTML = stages.map(function(s) {
+            var status = pipeStatus[s.key] || 'not_run';
+            return '<div class="ps-item" title="' + s.label + ': ' + status + '">'
+                + '<span class="ps-icon" style="color:' + (colorMap[status] || '#6b7280') + '">' + (iconMap[status] || '\u25CB') + '</span>'
+                + '<span class="ps-label">' + s.label + '</span>'
+                + '</div>';
+        }).join('');
+        container.classList.remove('hidden');
     }
 
     // ─── Gauge Animation ─────────────────────────────────────────────────────

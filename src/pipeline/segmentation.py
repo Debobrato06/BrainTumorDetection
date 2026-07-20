@@ -209,10 +209,16 @@ def generate_segmentation_overlay(volume_np, binary_mask, channel=0):
         return ""
 
 
-def get_mask_stats(binary_mask):
+def get_mask_stats(binary_mask, prob_map=None, threshold=0.5):
     """Quick stats about the mask for downstream use."""
     if not binary_mask.any():
-        return {'voxel_count': 0, 'has_tumor': False, 'bounding_box': None, 'centroid': None}
+        return {
+            'voxel_count': 0,
+            'has_tumor': False,
+            'bounding_box': None,
+            'centroid': None,
+            'seg_quality_score': 1.0
+        }
 
     voxel_count = int(binary_mask.sum())
     indices = np.argwhere(binary_mask)
@@ -221,9 +227,18 @@ def get_mask_stats(binary_mask):
     bb_min = indices.min(axis=0).tolist()
     bb_max = indices.max(axis=0).tolist()
 
+    if prob_map is not None:
+        # Scale quality score from [threshold, 1.0] to [0.0, 1.0]
+        mean_prob = np.mean(prob_map[binary_mask])
+        seg_quality_score = float((mean_prob - threshold) / (1.0 - threshold + 1e-8))
+        seg_quality_score = max(0.0, min(1.0, seg_quality_score))
+    else:
+        seg_quality_score = 0.85
+
     return {
         'voxel_count': voxel_count,
         'has_tumor': True,
         'bounding_box': {'min': bb_min, 'max': bb_max},
-        'centroid': centroid
+        'centroid': centroid,
+        'seg_quality_score': round(seg_quality_score, 3)
     }

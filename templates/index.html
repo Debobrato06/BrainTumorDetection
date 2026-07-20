@@ -427,6 +427,8 @@
                                     <div class="conf-bar-track"><div class="conf-bar-fill" id="conf-bar-fill" style="width:0%"></div></div>
                                     <span id="confidence-val">—</span>
                                 </div>
+                                <div id="conf-caveat" class="hidden"></div>
+                                <div id="pipeline-status-block" class="hidden"></div>
                             </div>
                         </div>
 
@@ -454,22 +456,22 @@
                         <div class="quick-metrics-card">
                             <div class="panel-header"><i class="fa-solid fa-ruler"></i><h3>Measurements</h3></div>
                             <div class="quick-metrics-grid">
-                                <div class="qm-item">
+                                <div class="qm-item" id="vol-card">
                                     <span class="qm-label">Volume</span>
                                     <span class="qm-value" id="vol-val">—</span>
                                     <span class="qm-unit">mL</span>
                                 </div>
-                                <div class="qm-item">
+                                <div class="qm-item" id="diam-card">
                                     <span class="qm-label">Diameter (RANO)</span>
                                     <span class="qm-value" id="diam-val">—</span>
                                     <span class="qm-unit">mm</span>
                                 </div>
-                                <div class="qm-item">
+                                <div class="qm-item" id="perp-card">
                                     <span class="qm-label">Perpendicular</span>
                                     <span class="qm-value" id="perp-val">—</span>
                                     <span class="qm-unit">mm</span>
                                 </div>
-                                <div class="qm-item">
+                                <div class="qm-item" id="grade-card">
                                     <span class="qm-label">Grade Indicator</span>
                                     <span class="qm-value" id="grade-val">—</span>
                                     <span class="qm-unit"></span>

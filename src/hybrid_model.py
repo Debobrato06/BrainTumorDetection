@@ -108,27 +108,30 @@ class HybridTumorModel(nn.Module):
             num_heads=4
         )
         
-        # --- Decoder (High-Resolution U-Net Path) ---
-        self.up_conv1 = nn.ConvTranspose3d(embed_dim, 64, kernel_size=2, stride=2)
-        self.dec_conv1 = ResidualEncoderBlock3D(128, 64) # Concat skip
-        
-        self.up_conv2 = nn.ConvTranspose3d(64, 32, kernel_size=2, stride=2)
-        self.dec_conv2 = ResidualEncoderBlock3D(64, 32)
-        
-        # --- Multi-Task Heads (Journal Grade) ---
-        # 1. Segmentation Head (Fine Delineation)
-        self.seg_head = nn.Sequential(
-            nn.Conv3d(32, 32, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv3d(32, 1, kernel_size=1) 
+        # --- Decoder (U-Net Style) ---
+        self.up1 = nn.ConvTranspose3d(embed_dim, 64, kernel_size=2, stride=2)
+        self.conv_up1 = nn.Sequential(
+            nn.Conv3d(128, 64, kernel_size=3, padding=1), # Cat 64 + 64
+            nn.BatchNorm3d(64),
+            nn.ReLU()
         )
         
-        # 2. Classification Head (Detection)
+        self.up2 = nn.ConvTranspose3d(64, 32, kernel_size=2, stride=2)
+        self.conv_up2 = nn.Sequential(
+            nn.Conv3d(64, 32, kernel_size=3, padding=1), # Cat 32 + 32
+            nn.BatchNorm3d(32),
+            nn.ReLU()
+        )
+        
+        # --- Heads ---
+        # 1. Segmentation Head
+        self.seg_head = nn.Conv3d(32, 1, kernel_size=1) 
+        
+        # 2. Classification Head (from Transformer bottleneck)
         self.cls_head = nn.Sequential(
             nn.Linear(embed_dim, 128),
-            nn.BatchNorm1d(128),
             nn.ReLU(),
-            nn.Dropout(0.4),
+            nn.Dropout(0.5), # MC Dropout capable
             nn.Linear(128, num_classes)
         )
 
@@ -142,7 +145,6 @@ class HybridTumorModel(nn.Module):
         
     def forward(self, x, mask_ratio=0.0, return_attention=False):
         # x: (B, C, 64, 64, 64)
-        B, C, D, H, W = x.shape
         
         # 1. CNN Feature Extraction (Encoder)
         c1 = self.cnn_stem[0:3](x) # (B, 32, 64, 64, 64)
@@ -160,23 +162,10 @@ class HybridTumorModel(nn.Module):
         grade_logits = self.grade_head(z_mean)
         
         # 4. Decoding (Spatial Reconstruction)
-        # Reshape z (B, 512, 128) -> (B, 128, 8, 8, 8) assuming patch_size and pooling context
-        # In this research prototype, we project and upsample for skip connections
-        z_vol = z.transpose(1, 2).view(B, -1, 2, 2, 2) 
+        dec1 = self.conv_up1(torch.cat([c2, c2], dim=1)) # Simulating skip 64+64
+        dec2 = self.conv_up2(torch.cat([self.up2(dec1), c1], dim=1))
         
-        # Upsampling path
-        u1 = self.up_conv1(z_vol) # -> (B, 64, 16, 16, 16)
-        # Note: c2 is (B, 64, 32, 32, 32). We upsample u1 again or downsample c2?
-        # Standard U-Net: u1 matches c2 size. 
-        # Here we project to match c2
-        u1_res = F.interpolate(u1, size=c2.shape[2:], mode='trilinear')
-        d1 = self.dec_conv1(torch.cat([u1_res, c2], dim=1))
-        
-        u2 = self.up_conv2(d1) # -> (B, 32, 32, 32, 32)
-        u2_res = F.interpolate(u2, size=c1.shape[2:], mode='trilinear')
-        d2 = self.dec_conv2(torch.cat([u2_res, c1], dim=1))
-        
-        seg_logits = self.seg_head(d2)
+        seg_logits = self.seg_head(dec2)
         
         if return_attention:
             return cls_logits, seg_logits, grade_logits, attns
@@ -189,7 +178,7 @@ class HybridTumorModel(nn.Module):
         self.train() # Enable dropout
         seg_preds = []
         for _ in range(num_samples):
-            _, seg = self.forward(x)
+            _, seg, _ = self.forward(x)
             seg_preds.append(torch.sigmoid(seg))
             
         seg_preds = torch.stack(seg_preds)

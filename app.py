@@ -172,7 +172,7 @@ if TORCH_AVAILABLE:
         if os.path.exists(model_path):
             print(f"Loading model from {model_path}")
             try:
-                model.load_state_dict(torch.load(model_path, map_location=device))
+                model.load_state_dict(torch.load(model_path, map_location=device), strict=False)
             except Exception as e:
                 print(f"Failed to load model: {e}. Using random weights.")
         else:
@@ -401,115 +401,144 @@ def predict():
 
             # ── Step 3: Model Inference ─────────────────────────────────────────
             seg_logits = None
+            predicted_class = 0
+            raw_confidence = 0.5
+            grade_label_raw = "N/A"
+
             if TORCH_AVAILABLE and model is not None:
                 with torch.no_grad():
                     outputs = model(input_tensor)
                     cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
 
-                    probs = torch.softmax(cls_logits, dim=1)
+                    # Temperature Scaling (T=1.45) — reduces overconfidence (Rule 4)
+                    T = 1.45
+                    probs = torch.softmax(cls_logits / T, dim=1)
                     predicted_class = torch.argmax(probs, dim=1).item()
-                    confidence = probs[0][predicted_class].item()
+                    raw_confidence = float(probs[0][predicted_class].item())
 
                     grade_probs = torch.softmax(grade_logits, dim=1)
                     grade_idx = torch.argmax(grade_probs, dim=1).item()
-                    grade_label = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
-            else:
-                predicted_class = 0
-                confidence = 0.5
-                grade_label = "N/A"
+                    grade_label_raw = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
 
-            # ── Heuristic Check ──────────────────────────────────────────────────
+            # ── Heuristic Check (fallback only) ─────────────────────────────────
             heuristic_tumor, h_conf, avg_asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
 
-            # ── Decision Fusion ──────────────────────────────────────────────────
-            if TORCH_AVAILABLE and model is not None and confidence > 0.85:
-                final_class = predicted_class
-                final_conf = confidence
-            else:
-                final_class = 1 if (predicted_class == 1 or heuristic_tumor) else 0
-                final_conf = max(confidence, h_conf) if final_class == 1 else 0.98
+            # If no model available, use heuristic confidence score
+            if not (TORCH_AVAILABLE and model is not None):
+                predicted_class = 1 if heuristic_tumor else 0
+                raw_confidence = h_conf
 
-            is_tumor = (final_class == 1)
+            # ── OOD Detection ────────────────────────────────────────────────────
+            ood_detected = (
+                scan_meta.get('source') in ['2d_image', 'default']
+                or scan_meta.get('warning') is not None
+            )
 
-            # ── Step 4: Segmentation → Binary Mask ─────────────────────────────
+            # ── Step 4: Segmentation → Binary Mask ──────────────────────────────
             vol_np = tensor_to_numpy_volume(input_tensor)
             binary_mask = None
             prob_map = None
             overlay_b64 = ""
+            seg_quality_score = 1.0
+            binary_mask_has_voxels = False
 
             if PIPELINE_AVAILABLE and vol_np is not None:
                 if seg_logits is not None:
                     binary_mask, prob_map = apply_threshold(seg_logits, threshold=threshold)
-                    # If model says no tumor but mask has content, respect tumor decision
-                    if not is_tumor:
+                    # Pre-zero the mask for healthy predictions before gating
+                    # (actual gating happens via validator below)
+                    if predicted_class == 0:
                         binary_mask = np.zeros_like(binary_mask)
                 else:
-                    # Heuristic fallback mask
                     binary_mask, prob_map = extract_tumor_mask_from_heuristic(
-                        vol_np, peak_asym, avg_asym, is_tumor
+                        vol_np, peak_asym, avg_asym, predicted_class == 1
                     )
 
-                mask_stats_data = get_mask_stats(binary_mask)
-
-                # Generate segmentation overlay
-                if is_tumor and binary_mask.any():
-                    overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0)
+                mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
+                seg_quality_score = mask_stats_data.get('seg_quality_score', 1.0)
+                binary_mask_has_voxels = bool(binary_mask.any())
             else:
-                mask_stats_data = {'voxel_count': 0, 'has_tumor': is_tumor, 'bounding_box': None, 'centroid': None}
+                mask_stats_data = {
+                    'voxel_count': 0, 'has_tumor': False,
+                    'bounding_box': None, 'centroid': None, 'seg_quality_score': 1.0
+                }
 
-            # ── Step 5: Volume & Diameter Measurement ──────────────────────────
+            # ════════════════════════════════════════════════════════════════════
+            # ── VALIDATION LAYER: All 8 Rules enforced here ─────────────────────
+            # ════════════════════════════════════════════════════════════════════
+            from src.pipeline.pipeline_validator import validate_pipeline
+
+            vld = validate_pipeline(
+                scan_meta=scan_meta,
+                predicted_class=predicted_class,
+                raw_confidence=raw_confidence,
+                model_available=(TORCH_AVAILABLE and model is not None),
+                seg_quality_score=seg_quality_score,
+                binary_mask_has_voxels=binary_mask_has_voxels,
+                ood_detected=ood_detected,
+                grade_label_raw=grade_label_raw
+            )
+
+            # Extract gated values from validator
+            is_tumor           = vld['is_tumor']
+            is_indeterminate   = vld['is_indeterminate']
+            final_conf         = vld['final_confidence']
+            grade_label        = vld['grade_label']          # Rule 3: stale-proof
+            gates              = vld['gates']
+            insufficient_mask  = vld['insufficient_mask_data']
+            status_block       = vld['status_block']
+            alert              = vld['alert']
+            reliability_reduced = vld['reliability_reduced']
+
+            # ── Step 5: Generate segmentation overlay (only if gate passed) ──────
+            if is_tumor and binary_mask_has_voxels and gates.get('segmentation_passed') and vol_np is not None:
+                overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0)
+
+            # ── Step 6: Measurements (gate: segmentation must have passed) ───────
             px = scan_meta.get('pixel_spacing_x', 1.0)
             py = scan_meta.get('pixel_spacing_y', 1.0)
             st = scan_meta.get('slice_thickness', 5.0)
-            volume_ml = 0.0
-            diameter_mm = 0.0
-            perpendicular_mm = 0.0
+            volume_ml = None        # Rule 3: explicit None = "not computed"
+            diameter_mm = None
+            perpendicular_mm = None
             bounding_box_data = {}
 
-            if PIPELINE_AVAILABLE and binary_mask is not None and is_tumor:
-                volume_ml, voxel_count = compute_volume_ml(binary_mask, px, py, st)
-                diameter_mm, perpendicular_mm, bounding_box_data = compute_longest_diameter_rano(
-                    binary_mask, px, py, st
-                )
-                # Fallback estimate if mask is empty (heuristic only mode)
-                if volume_ml == 0 and is_tumor:
+            if gates.get('run_measurements') and PIPELINE_AVAILABLE and binary_mask is not None:
+                _vol, _ = compute_volume_ml(binary_mask, px, py, st)
+                _diam, _perp, bounding_box_data = compute_longest_diameter_rano(binary_mask, px, py, st)
+                # Only accept if non-zero (zero = mask gave no data)
+                volume_ml = _vol if _vol > 0 else None
+                diameter_mm = _diam if _diam > 0 else None
+                perpendicular_mm = _perp if _perp > 0 else None
+
+                # If segmentation gave zeros, heuristic estimate as last resort
+                if volume_ml is None and is_tumor:
                     vol_est = (peak_asym * 15) + (avg_asym * 20) + 2.0
-                    volume_ml = round(vol_est, 1)
-                    diameter_mm = round((vol_est * 6 / 3.14159) ** (1/3) * 20, 1)  # sphere approx
-            elif is_tumor:
-                # Pure heuristic estimate
-                vol_est = (peak_asym * 15) + (avg_asym * 20) + 2.0
-                volume_ml = round(vol_est, 1)
-                diameter_mm = round((max(vol_est, 0.1) * 6 / 3.14159) ** (1/3) * 20, 1)
+                    volume_ml = round(max(vol_est, 0.1), 1)
+                    diameter_mm = round((vol_est * 6 / 3.14159) ** (1/3) * 20, 1)
+                    perpendicular_mm = round(diameter_mm * 0.75, 1)
 
-            measurements = {
-                'volume_ml': volume_ml,
-                'diameter_mm': diameter_mm,
-                'perpendicular_mm': perpendicular_mm,
-                'voxel_count': mask_stats_data.get('voxel_count', 0),
-                'bounding_box': bounding_box_data,
-            }
-
-            # ── Growth Tracking ─────────────────────────────────────────────────
+            # ── Step 7: Growth Tracking ─────────────────────────────────────────
             growth_data = None
-            if PIPELINE_AVAILABLE and previous_volume_ml is not None:
-                growth_data = compute_growth_change(volume_ml, previous_volume_ml)
+            if gates.get('run_measurements') and previous_volume_ml is not None and volume_ml is not None:
+                if PIPELINE_AVAILABLE:
+                    growth_data = compute_growth_change(volume_ml, previous_volume_ml)
 
-            # ── Step 6: Radiomics Feature Extraction ────────────────────────────
+            # ── Step 8: Radiomics ───────────────────────────────────────────────
             radiomics_data = None
-            if PIPELINE_AVAILABLE and vol_np is not None and binary_mask is not None:
+            if gates.get('run_radiomics') and PIPELINE_AVAILABLE and vol_np is not None and binary_mask is not None:
                 try:
                     radiomics_data = extract_all_radiomics(vol_np, binary_mask)
                 except Exception as e:
                     print(f"Radiomics extraction failed: {e}")
 
-            # ── Step 7: Risk / Severity Scoring ─────────────────────────────────
+            # ── Step 9: Risk Scoring ────────────────────────────────────────────
             risk_data = None
-            if PIPELINE_AVAILABLE and is_tumor:
+            if gates.get('run_risk_scoring') and PIPELINE_AVAILABLE:
                 try:
                     risk_data = compute_risk_score(
-                        volume_ml=volume_ml,
-                        diameter_mm=diameter_mm,
+                        volume_ml=volume_ml or 0,
+                        diameter_mm=diameter_mm or 0,
                         enhancement_data=radiomics_data.get('enhancement') if radiomics_data else None,
                         edema_data=radiomics_data.get('edema') if radiomics_data else None,
                         location_data=radiomics_data.get('location') if radiomics_data else None,
@@ -520,15 +549,32 @@ def predict():
                 except Exception as e:
                     print(f"Risk scoring failed: {e}")
 
-            # ── Step 8: Structured Report Generation ────────────────────────────
+            # ── Step 10: Build Measurements dict (null-safe) ────────────────────
+            # Rule 3: Use None not 0.0 for uncomputed fields — JS handles rendering
+            measurements = {
+                'volume_ml': volume_ml,
+                'diameter_mm': diameter_mm,
+                'perpendicular_mm': perpendicular_mm,
+                'rano_criteria': (
+                    f'{diameter_mm:.1f} × {perpendicular_mm:.1f} mm'
+                    if (diameter_mm is not None and perpendicular_mm is not None)
+                    else None
+                ),
+                'voxel_count': mask_stats_data.get('voxel_count', 0) if gates.get('segmentation_passed') else None,
+                'bounding_box': bounding_box_data if gates.get('segmentation_passed') else {},
+            }
+
+            # ── Step 11: Structured Report Generation ──────────────────────────
             final_img_b64 = display_img_b64 if display_img_b64 else save_slice_b64(input_tensor)
 
-            detection_result = {
+            detection_result_for_report = {
                 'is_tumor': is_tumor,
+                'is_indeterminate': is_indeterminate,
                 'confidence': final_conf,
-                'final_class': final_class,
+                'final_class': predicted_class,
                 'threshold': threshold,
-                'method': 'Hybrid CNN-Transformer + Heuristic'
+                'method': 'Hybrid CNN-Transformer v2.0 + Heuristic Fallback',
+                'detection_state': vld['detection']['detection_state']
             }
 
             structured_report = None
@@ -537,7 +583,7 @@ def predict():
                     structured_report = generate_structured_report(
                         patient_meta={'name': 'Anonymous', 'case_id': f'CASE-{uuid.uuid4().hex[:8].upper()}'},
                         scan_meta=scan_meta,
-                        detection_result=detection_result,
+                        detection_result=detection_result_for_report,
                         mask_stats=mask_stats_data,
                         measurements=measurements,
                         growth_data=growth_data,
@@ -546,32 +592,46 @@ def predict():
                         grade_label=grade_label,
                         confidence=final_conf,
                         overlay_b64=overlay_b64,
-                        original_img_b64=final_img_b64
+                        original_img_b64=final_img_b64,
+                        insufficient_mask_data=insufficient_mask
                     )
                 except Exception as e:
                     print(f"Report generation failed: {e}")
 
             # ── Build Response ──────────────────────────────────────────────────
-            result_label = ("POSITIVE: SPACE-OCCUPYING LESION (SOL) IDENTIFIED"
-                           if is_tumor else
-                           "NEGATIVE: NO RADIOLOGICAL ANOMALY DETECTED")
-
-            # Location from radiomics or heuristic fallback
-            tumor_loc = "N/A"
-            if radiomics_data and radiomics_data.get('location'):
-                tumor_loc = radiomics_data['location'].get('full_location', 'N/A')
+            # Rule 5: Three-state label
+            if is_indeterminate:
+                result_label = "INDETERMINATE: MANUAL REVIEW REQUIRED"
             elif is_tumor:
-                import random
-                tumor_loc = random.choice(["Right Frontal Lobe", "Left Parietal Lobe",
-                                           "Temporal Lobe", "Thalamic Region"])
+                result_label = "POSITIVE: SPACE-OCCUPYING LESION (SOL) IDENTIFIED"
+            else:
+                result_label = "NEGATIVE: NO RADIOLOGICAL ANOMALY DETECTED"
 
-            # Build detailed response
+            # Location (only if radiomics ran successfully)
+            tumor_loc = None
+            if radiomics_data and radiomics_data.get('location') and gates.get('run_radiomics'):
+                tumor_loc = radiomics_data['location'].get('full_location')
+
             response = {
+                # Core detection result
                 'label': result_label,
-                'confidence': float(final_conf),
-                'grade': grade_label,
+                'confidence': round(final_conf, 4),
+                'grade': grade_label,           # Rule 3: sanitized, never stale
                 'image_b64': final_img_b64,
                 'overlay_b64': overlay_b64,
+
+                # Rule 2/3/5: Pipeline state flags
+                'insufficient_mask_data': insufficient_mask,
+                'is_indeterminate': is_indeterminate,
+                'ood_detected': ood_detected,
+                'reliability_reduced': reliability_reduced,
+                'seg_quality_score': round(seg_quality_score, 3),
+
+                # Rule 8: Top-level fail-loud alert
+                'alert': alert,
+
+                # Rule 7: Machine-readable status block
+                'pipeline_status': status_block,
 
                 # Scan metadata
                 'scan_meta': {
@@ -582,44 +642,38 @@ def predict():
                     'source': scan_meta.get('source', 'unknown'),
                     'warning': scan_meta.get('warning'),
                     'image_shape': scan_meta.get('image_shape', {}),
+                    'modality_label': vld['modality'].get('modality_label', 'Unknown'),
                 },
 
-                # Measurements
-                'measurements': {
-                    'volume_ml': volume_ml,
-                    'diameter_mm': diameter_mm,
-                    'perpendicular_mm': perpendicular_mm,
-                    'rano_criteria': f'{diameter_mm:.1f} × {perpendicular_mm:.1f} mm',
-                    'voxel_count': mask_stats_data.get('voxel_count', 0),
-                },
+                # Rule 3: None means "not computed" — JS renders "—" or "N/A"
+                'measurements': measurements,
 
                 # Growth tracking
                 'growth': growth_data,
 
-                # Radiomics
+                # Radiomics (empty dict if not computed)
                 'radiomics': {
                     'location': radiomics_data.get('location', {}) if radiomics_data else {},
                     'enhancement': radiomics_data.get('enhancement', {}) if radiomics_data else {},
                     'edema': radiomics_data.get('edema', {}) if radiomics_data else {},
                     'shape': radiomics_data.get('shape', {}) if radiomics_data else {},
                     'texture': radiomics_data.get('texture', {}) if radiomics_data else {},
-                } if radiomics_data else {},
+                } if (radiomics_data and gates.get('run_radiomics')) else {},
 
-                # Risk scoring
+                # Risk scoring (null-safe)
                 'risk': {
-                    'total_score': risk_data.get('total_score', 0) if risk_data else 0,
                     'risk_level': risk_data.get('risk_level', 'N/A') if risk_data else 'N/A',
                     'risk_color': risk_data.get('risk_color', '#888') if risk_data else '#888',
                     'factor_breakdown': risk_data.get('factor_breakdown', []) if risk_data else [],
                     'clinical_note': risk_data.get('clinical_note', '') if risk_data else '',
                     'confidence_adjusted_score': risk_data.get('confidence_adjusted_score', 0) if risk_data else 0,
                     'clinical_summary': risk_data.get('clinical_summary', '') if risk_data else '',
-                } if risk_data else {'total_score': 0, 'risk_level': 'N/A', 'risk_color': '#888', 'factor_breakdown': [], 'clinical_note': '', 'confidence_adjusted_score': 0, 'clinical_summary': ''},
+                } if (risk_data and not insufficient_mask) else {'total_score': 0, 'risk_level': 'N/A', 'risk_color': '#888', 'factor_breakdown': [], 'clinical_note': '', 'confidence_adjusted_score': 0, 'clinical_summary': ''},
 
                 # Legacy / backward compat fields
                 'details': {
-                    'tumor_size': f"{volume_ml:.2f} mL" if is_tumor else "N/A",
-                    'tumor_loc': tumor_loc,
+                    'tumor_size': f"{volume_ml:.2f} mL" if (is_tumor and not insufficient_mask) else "—",
+                    'tumor_loc': tumor_loc if not insufficient_mask else "—",
                     'impression': structured_report.get('clinical_impression', '') if structured_report else '',
                     'peak_asymmetry': float(peak_asym),
                 },
@@ -627,7 +681,6 @@ def predict():
                 # Full structured report
                 'structured_report': structured_report,
             }
-
             return jsonify(response)
 
         except Exception as e:

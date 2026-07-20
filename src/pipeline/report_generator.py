@@ -32,30 +32,42 @@ def generate_structured_report(
     grade_label,
     confidence,
     overlay_b64="",
-    original_img_b64=""
+    original_img_b64="",
+    insufficient_mask_data=False
 ):
     """
     Assemble the complete structured radiology report.
-    
-    Args:
-        patient_meta: dict — {name, case_id, age (optional), sex (optional)}
-        scan_meta: dict — from preprocessing.extract_metadata_*()
-        detection_result: dict — {is_tumor, confidence, final_class}
-        mask_stats: dict — from segmentation.get_mask_stats()
-        measurements: dict — {volume_ml, diameter_mm, perpendicular_mm, bounding_box}
-        growth_data: dict — from measurement.compute_growth_change() or None
-        radiomics: dict — from radiomics.extract_all_radiomics()
-        risk_data: dict — from risk_scoring.compute_risk_score()
-        grade_label: str
-        confidence: float
-        overlay_b64: str — base64 overlay image
-        original_img_b64: str — base64 original slice
-    
-    Returns:
-        Complete report dict ready for JSON serialization and storage
     """
     report_id = str(uuid.uuid4())
     timestamp = datetime.datetime.now().isoformat()
+    
+    # Calculate pipeline stage status
+    preprocessing_status = "fail" if scan_meta.get('warning') and "failed" in str(scan_meta.get('warning')).lower() else "pass"
+    
+    is_tumor = detection_result.get('is_tumor', False)
+    if not is_tumor:
+        segmentation_status = "skipped"
+        radiomics_status = "skipped"
+        risk_scoring_status = "skipped"
+        grading_status = "skipped"
+    elif insufficient_mask_data:
+        segmentation_status = "fail"
+        radiomics_status = "skipped"
+        risk_scoring_status = "skipped"
+        grading_status = "skipped"
+    else:
+        segmentation_status = "pass"
+        radiomics_status = "pass" if radiomics else "fail"
+        risk_scoring_status = "pass" if risk_data else "fail"
+        grading_status = "pass" if grade_label and grade_label != "—" and grade_label != "N/A" else "fail"
+        
+    pipeline_stages = {
+        'preprocessing': preprocessing_status,
+        'segmentation': segmentation_status,
+        'radiomics': radiomics_status,
+        'risk_scoring': risk_scoring_status,
+        'grading': grading_status
+    }
     
     # ── Section 1: Header ──
     header = {
@@ -63,8 +75,10 @@ def generate_structured_report(
         'timestamp': timestamp,
         'date_formatted': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
         'report_version': '2.0',
+        'model_version': '2.0',
         'ai_system': 'NeuroScan AI — Hybrid CNN-Transformer v2.0',
         'report_type': 'AI-Assisted MRI Brain Tumor Analysis',
+        'pipeline_stages': pipeline_stages
     }
 
     # ── Section 2: Patient Information ──
@@ -91,7 +105,6 @@ def generate_structured_report(
     }
 
     # ── Section 4: Detection Result ──
-    is_tumor = detection_result.get('is_tumor', False)
     detection = {
         'finding': 'POSITIVE — Space-Occupying Lesion (SOL) Identified' if is_tumor
                    else 'NEGATIVE — No Radiological Anomaly Detected',
@@ -112,7 +125,7 @@ def generate_structured_report(
         'volume_cm3': vol_ml,  # mL == cm³
         'longest_diameter_mm': diam_mm,
         'perpendicular_diameter_mm': perp_mm,
-        'rano_criteria': f'{diam_mm:.1f} × {perp_mm:.1f} mm (longest × perpendicular)',
+        'rano_criteria': f'{diam_mm:.1f} × {perp_mm:.1f} mm (longest × perpendicular)' if not insufficient_mask_data else '—',
         'voxel_count': measurements.get('voxel_count', 0),
         'bounding_box': measurements.get('bounding_box', {}),
         'growth_tracking': growth_data,
@@ -155,7 +168,7 @@ def generate_structured_report(
     }
 
     # ── Section 8: AI-Generated Clinical Impression ──
-    impression = _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label)
+    impression = _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label) if not insufficient_mask_data else "Analysis Incomplete — Manual Review Required"
 
     # ── Section 9: Images ──
     images = {
@@ -175,20 +188,22 @@ def generate_structured_report(
         'clinical_impression': impression,
         'images': images,
         'disclaimer': AI_DISCLAIMER,
-        # Flat fields for backward compatibility with existing save_report / archive
         'id': report_id,
         'timestamp': timestamp,
         'case_id': patient['case_id'],
         'patient_name': patient['name'],
         'diagnosis': detection['finding'],
         'confidence': confidence,
-        'tumor_size': f"{vol_ml:.2f} mL (diameter: {diam_mm:.1f}mm)",
-        'tumor_loc': radiomics_summary['anatomical_location'],
+        'tumor_size': f"{vol_ml:.2f} mL (diameter: {diam_mm:.1f}mm)" if not insufficient_mask_data else "—",
+        'tumor_loc': radiomics_summary['anatomical_location'] if not insufficient_mask_data else "—",
         'impression': impression,
-        'risk_level': risk['risk_level'],
-        'risk_score': risk['composite_score'],
+        'risk_level': risk['risk_level'] if not insufficient_mask_data else "N/A",
+        'risk_score': risk['composite_score'] if not insufficient_mask_data else 0,
         'image_b64': original_img_b64,
         'overlay_b64': overlay_b64,
+        'model_version': '2.0',
+        'pipeline_stages': pipeline_stages,
+        'insufficient_mask_data': insufficient_mask_data
     }
 
     return report

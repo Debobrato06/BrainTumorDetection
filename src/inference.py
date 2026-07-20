@@ -52,7 +52,7 @@ def predict(args):
     except:
         model = BrainTumorClassifier(input_channels=4, num_classes=2)
         
-    model.load_state_dict(torch.load(args.model_path, map_location=device))
+    model.load_state_dict(torch.load(args.model_path, map_location=device), strict=False)
     model.to(device)
     model.eval()
     
