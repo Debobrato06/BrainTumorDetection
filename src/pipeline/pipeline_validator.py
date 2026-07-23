@@ -22,7 +22,7 @@ from typing import Optional, Any
 # ─── Constants ────────────────────────────────────────────────────────────────
 
 DETECTION_CONFIDENCE_THRESHOLD = 0.60   # Rule 2 & 5: below → Indeterminate
-SEGMENTATION_QUALITY_THRESHOLD = 0.50   # Rule 2: below → gate downstream
+SEGMENTATION_QUALITY_THRESHOLD = 0.15   # Rule 2: below → gate downstream (lowered from 0.50 to prevent false cascading skips)
 OOD_CONFIDENCE_CAP = 0.70              # Rule 4: cap confidence for OOD inputs
 SUPPORTED_MODALITIES = ["MRI", "NIfTI", "MRI-T1", "MRI-T2", "MRI-FLAIR"]
 

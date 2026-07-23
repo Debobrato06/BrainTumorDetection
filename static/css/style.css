@@ -3200,4 +3200,57 @@ body {
     padding: 12px 0;
     text-align: center;
 }
+
+/* ── Print Report Button ─────────────────────────────────────────────────── */
+.btn-print-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.7rem 1.4rem;
+    background: linear-gradient(135deg, #0984e3, #6c5ce7);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(108, 92, 231, 0.30);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-print-report::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.08);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.btn-print-report:hover::before {
+    opacity: 1;
+}
+
+.btn-print-report:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108, 92, 231, 0.45);
+}
+
+.btn-print-report:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.25);
+}
+
+/* Ensure action bar supports 3 buttons properly */
+.report-action-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
 

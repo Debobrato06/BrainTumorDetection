@@ -214,12 +214,24 @@ def process_2d_image(image_path, target_size=(64, 64, 64)):
     if TORCH_AVAILABLE:
         resize = transforms.Resize((target_size[1], target_size[2]))
         img_tensor = transforms.ToTensor()(resize(img))
+        
+        # Zero-mean unit-variance normalization (Z-score) matching model training distribution
+        mean = img_tensor.mean()
+        std = img_tensor.std()
+        img_tensor = (img_tensor - mean) / (std + 1e-8)
+        
         vol_tensor = img_tensor.unsqueeze(1).repeat(1, target_size[0], 1, 1)
         vol_tensor = vol_tensor.repeat(4, 1, 1, 1)
         return vol_tensor.unsqueeze(0)
     else:
         img = img.resize((target_size[2], target_size[1]))
-        img_np = np.array(img).astype(np.float32) / 255.0
+        img_np = np.array(img).astype(np.float32)
+        
+        # Zero-mean unit-variance normalization (Z-score)
+        mean = np.mean(img_np)
+        std = np.std(img_np)
+        img_np = (img_np - mean) / (std + 1e-8)
+        
         vol = np.zeros((4, target_size[0], target_size[1], target_size[2]), dtype=np.float32)
         for c in range(4):
             for d in range(target_size[0]):
@@ -549,6 +561,23 @@ def predict():
                 except Exception as e:
                     print(f"Risk scoring failed: {e}")
 
+            # ── Step 9b: MC-Dropout Uncertainty & Mass Effect Midline Shift ───────
+            uncertainty_score = None
+            mass_effect_data = None
+            if PIPELINE_AVAILABLE and is_tumor and not insufficient_mask:
+                try:
+                    from pipeline.mass_effect import compute_midline_shift
+                    mass_effect_data = compute_midline_shift(vol_np, binary_mask, px, py)
+                except Exception as e:
+                    print(f"Midline shift calculation failed: {e}")
+
+                if TORCH_AVAILABLE and model is not None and input_tensor is not None:
+                    try:
+                        from pipeline.uncertainty import estimate_uncertainty
+                        _, _, uncertainty_score = estimate_uncertainty(model, input_tensor, num_samples=15)
+                    except Exception as e:
+                        print(f"Uncertainty estimation failed: {e}")
+
             # ── Step 10: Build Measurements dict (null-safe) ────────────────────
             # Rule 3: Use None not 0.0 for uncomputed fields — JS handles rendering
             measurements = {
@@ -593,7 +622,9 @@ def predict():
                         confidence=final_conf,
                         overlay_b64=overlay_b64,
                         original_img_b64=final_img_b64,
-                        insufficient_mask_data=insufficient_mask
+                        insufficient_mask_data=insufficient_mask,
+                        uncertainty_score=uncertainty_score,
+                        mass_effect=mass_effect_data
                     )
                 except Exception as e:
                     print(f"Report generation failed: {e}")
@@ -627,6 +658,11 @@ def predict():
                 'reliability_reduced': reliability_reduced,
                 'seg_quality_score': round(seg_quality_score, 3),
 
+                # Uncertainty and Mass Effect
+                'uncertainty_score': uncertainty_score,
+                'midline_shift_mm': mass_effect_data.get('midline_shift_mm') if mass_effect_data else None,
+                'mass_effect': mass_effect_data,
+
                 # Rule 8: Top-level fail-loud alert
                 'alert': alert,
 
@@ -658,6 +694,7 @@ def predict():
                     'edema': radiomics_data.get('edema', {}) if radiomics_data else {},
                     'shape': radiomics_data.get('shape', {}) if radiomics_data else {},
                     'texture': radiomics_data.get('texture', {}) if radiomics_data else {},
+                    'vasari': radiomics_data.get('vasari', {}) if (radiomics_data and 'vasari' in radiomics_data) else {},
                 } if (radiomics_data and gates.get('run_radiomics')) else {},
 
                 # Risk scoring (null-safe)

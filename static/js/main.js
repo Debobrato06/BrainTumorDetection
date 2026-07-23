@@ -306,13 +306,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateInferenceUI(data) {
         // ── Determine pipeline state (Rules 2, 5, 8) ──────────────────────────
-        const isIndeterminate    = data.is_indeterminate === true;
-        const isTumor            = !isIndeterminate && data.label && data.label.includes('POSITIVE');
-        const insufficientMask   = data.insufficient_mask_data === true;
+        const isIndeterminate = data.is_indeterminate === true;
+        const isTumor = !isIndeterminate && data.label && data.label.includes('POSITIVE');
+        const insufficientMask = data.insufficient_mask_data === true;
         const reliabilityReduced = data.reliability_reduced === true;
-        const oodDetected        = data.ood_detected === true;
-        const alert              = data.alert || { level: 'none', title: '', message: '', show_results: true };
-        const pipeStatus         = data.pipeline_status || {};
+        const oodDetected = data.ood_detected === true;
+        const alert = data.alert || { level: 'none', title: '', message: '', show_results: true };
+        const pipeStatus = data.pipeline_status || {};
 
         // Helper: render '—' for null/undefined, format number otherwise
         const fmt = (val, decimals, suffix) =>
@@ -326,8 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // ── Scan Metadata Strip ────────────────────────────────────────────────
         const sm = data.scan_meta || {};
         if (metaType) metaType.textContent = sm.modality_label || sm.orientation || '\u2014';
-        if (metaPx)   metaPx.textContent   = sm.pixel_spacing_x ? `${sm.pixel_spacing_x}mm \u00d7 ${sm.pixel_spacing_y}mm` : '\u2014';
-        if (metaSt)   metaSt.textContent   = sm.slice_thickness  ? `${sm.slice_thickness}mm` : '\u2014';
+        if (metaPx) metaPx.textContent = sm.pixel_spacing_x ? `${sm.pixel_spacing_x}mm \u00d7 ${sm.pixel_spacing_y}mm` : '\u2014';
+        if (metaSt) metaSt.textContent = sm.slice_thickness ? `${sm.slice_thickness}mm` : '\u2014';
 
         // ── Rule 8: Top-Level Fail-Loud Alert Banner ───────────────────────────
         renderAlertBanner(alert, pipeStatus, oodDetected, reliabilityReduced);
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── Metadata Warning (secondary, subordinate to alert banner) ──────────
         const warnBanner = document.getElementById('meta-warning-banner');
-        const warnText   = document.getElementById('meta-warning-text');
+        const warnText = document.getElementById('meta-warning-text');
         if (sm.warning && warnBanner && warnText && alert.level !== 'critical') {
             warnText.textContent = sm.warning;
             warnBanner.classList.remove('hidden');
@@ -346,12 +346,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── Rule 5: Detection Hero Card (3 states) ────────────────────────────
-        const heroCard      = document.getElementById('detection-hero-card');
+        const heroCard = document.getElementById('detection-hero-card');
         const detectionText = document.getElementById('detection-text');
         const detectionIcon = document.getElementById('detection-icon');
-        const confVal       = document.getElementById('confidence-val');
-        const confBarFill   = document.getElementById('conf-bar-fill');
-        const confCaveat    = document.getElementById('conf-caveat');
+        const confVal = document.getElementById('confidence-val');
+        const confBarFill = document.getElementById('conf-bar-fill');
+        const confCaveat = document.getElementById('conf-caveat');
 
         if (heroCard) {
             heroCard.classList.remove('tumor', 'healthy', 'indeterminate');
@@ -370,8 +370,8 @@ document.addEventListener('DOMContentLoaded', () => {
             detectionIcon.innerHTML = isIndeterminate
                 ? '<i class="fa-solid fa-circle-question"></i>'
                 : isTumor
-                ? '<i class="fa-solid fa-circle-exclamation"></i>'
-                : '<i class="fa-solid fa-circle-check"></i>';
+                    ? '<i class="fa-solid fa-circle-exclamation"></i>'
+                    : '<i class="fa-solid fa-circle-check"></i>';
         }
         const confPct = ((data.confidence || 0) * 100).toFixed(1);
         if (confVal) confVal.textContent = confPct + '%' + (reliabilityReduced ? '*' : '');
@@ -387,17 +387,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const meas = data.measurements || {};
         const measActive = isTumor && !insufficientMask;
 
-        setText('vol-val',  measActive ? fmt(meas.volume_ml,  2, ' mL') : '\u2014');
+        setText('vol-val', measActive ? fmt(meas.volume_ml, 2, ' mL') : '\u2014');
         setText('diam-val', measActive ? fmt(meas.diameter_mm, 1, ' mm') : '\u2014');
         setText('perp-val', measActive ? fmt(meas.perpendicular_mm, 1, ' mm') : '\u2014');
 
-        ['vol-card','diam-card','perp-card'].forEach(function(id) {
+        ['vol-card', 'diam-card', 'perp-card'].forEach(function (id) {
             var el = document.getElementById(id);
             if (el) el.classList.toggle('state-na', !measActive);
         });
 
         // ── Rule 3: Grade (never stale \u2014 always server-sanitized) ─────────────
-        const gradeEl   = document.getElementById('grade-val');
+        const gradeEl = document.getElementById('grade-val');
         const gradeCard = document.getElementById('grade-card');
         if (gradeEl) {
             var g = data.grade || '\u2014';
@@ -407,10 +407,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── Risk Gauge ────────────────────────────────────────────────────────
-        const risk       = data.risk || {};
-        const riskScore  = (risk.total_score != null) ? risk.total_score : 0;
-        const riskLevel  = risk.risk_level || null;
-        const riskColor  = risk.risk_color || '#888888';
+        const risk = data.risk || {};
+        const riskScore = (risk.total_score != null) ? risk.total_score : 0;
+        const riskLevel = risk.risk_level || null;
+        const riskColor = risk.risk_color || '#888888';
         const riskActive = isTumor && !insufficientMask && riskLevel != null;
 
         animateGauge(riskActive ? riskScore : 0, riskActive ? riskColor : '#4b5563');
@@ -510,9 +510,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Rule 3: No stale radiomics data shown
             var naMsg = insufficientMask ? 'Segmentation insufficient \u2014 not computed.' : '\u2014';
-            ['rad-location','rad-enhancement','rad-edema','rad-shape','rad-texture','rad-surgical-risk',
-             'rad-eloquent','rad-ring','rad-edema-ratio','rad-sphericity','rad-homogeneity','rad-depth'
-            ].forEach(function(id) { setText(id, naMsg); });
+            ['rad-location', 'rad-enhancement', 'rad-edema', 'rad-shape', 'rad-texture', 'rad-surgical-risk',
+                'rad-eloquent', 'rad-ring', 'rad-edema-ratio', 'rad-sphericity', 'rad-homogeneity', 'rad-depth'
+            ].forEach(function (id) { setText(id, naMsg); });
         }
 
         // ── Rule 7: Pipeline Status Block ─────────────────────────────────────
@@ -541,10 +541,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 var noDataMsg = isIndeterminate
                     ? 'Indeterminate scan \u2014 risk scoring not performed.'
                     : insufficientMask
-                    ? 'Segmentation insufficient \u2014 risk scoring not computed.'
-                    : isTumor
-                    ? 'Risk scoring unavailable for this scan.'
-                    : 'No tumor detected \u2014 risk scoring not applicable.';
+                        ? 'Segmentation insufficient \u2014 risk scoring not computed.'
+                        : isTumor
+                            ? 'Risk scoring unavailable for this scan.'
+                            : 'No tumor detected \u2014 risk scoring not applicable.';
                 factorsList.innerHTML = '<p class="no-data-msg">' + noDataMsg + '</p>';
             }
         }
@@ -583,8 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
             banner.classList.add('hidden');
             return;
         }
-        var levelClass  = { critical: 'alert-critical', warning: 'alert-warning', info: 'alert-info' };
-        var levelIcon   = { critical: '\uD83D\uDEA8', warning: '\u26A0\uFE0F', info: '\u2139\uFE0F' };
+        var levelClass = { critical: 'alert-critical', warning: 'alert-warning', info: 'alert-info' };
+        var levelIcon = { critical: '\uD83D\uDEA8', warning: '\u26A0\uFE0F', info: '\u2139\uFE0F' };
         var effectiveLevel = alertData.level !== 'none' ? alertData.level : reliabilityReduced ? 'warning' : 'info';
         banner.className = 'pipeline-alert ' + (levelClass[effectiveLevel] || 'alert-warning');
         banner.innerHTML =
@@ -632,15 +632,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         var stages = [
-            { key: 'detection_stage',    label: 'Detection'    },
+            { key: 'detection_stage', label: 'Detection' },
             { key: 'segmentation_stage', label: 'Segmentation' },
-            { key: 'radiomics_stage',    label: 'Radiomics'    },
-            { key: 'grading_stage',      label: 'Grading'      },
-            { key: 'risk_scoring_stage', label: 'Risk Score'   },
+            { key: 'radiomics_stage', label: 'Radiomics' },
+            { key: 'grading_stage', label: 'Grading' },
+            { key: 'risk_scoring_stage', label: 'Risk Score' },
         ];
-        var iconMap  = { completed: '\u2713', failed: '\u2717', not_run: '\u25CB', skipped: '\u2014' };
+        var iconMap = { completed: '\u2713', failed: '\u2717', not_run: '\u25CB', skipped: '\u2014' };
         var colorMap = { completed: '#22c55e', failed: '#ef4444', not_run: '#6b7280', skipped: '#9ca3af' };
-        container.innerHTML = stages.map(function(s) {
+        container.innerHTML = stages.map(function (s) {
             var status = pipeStatus[s.key] || 'not_run';
             return '<div class="ps-item" title="' + s.label + ': ' + status + '">'
                 + '<span class="ps-icon" style="color:' + (colorMap[status] || '#6b7280') + '">' + (iconMap[status] || '\u25CB') + '</span>'
@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ─── Overlay Toggle ───────────────────────────────────────────────────────
-    window.showOverlay = function() {
+    window.showOverlay = function () {
         const ov = document.getElementById('overlay-img');
         const or = document.getElementById('original-img');
         const b1 = document.getElementById('btn-show-overlay');
@@ -686,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (b1) b1.classList.add('active');
         if (b2) b2.classList.remove('active');
     };
-    window.showOriginal = function() {
+    window.showOriginal = function () {
         const ov = document.getElementById('overlay-img');
         const or = document.getElementById('original-img');
         const b1 = document.getElementById('btn-show-overlay');
@@ -765,7 +765,237 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ─── Print Report ─────────────────────────────────────────────────────────
+    const printReportBtn = document.getElementById('print-report-btn');
+    if (printReportBtn) {
+        printReportBtn.addEventListener('click', () => {
+            if (!currentAnalysisData) {
+                alert("No analysis data. Please run a scan first.");
+                return;
+            }
+            printMedicalReport(currentAnalysisData);
+        });
+    }
+
+    function printMedicalReport(data) {
+        const pName = (patientNameInput && patientNameInput.value) || 'Anonymous';
+        const cId = (caseIdInput && caseIdInput.value) || 'N/A';
+        const now = new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const reportId = 'RPT-' + Date.now().toString(36).toUpperCase();
+
+        const isIndeterminate = data.is_indeterminate === true;
+        const isTumor = !isIndeterminate && data.label && data.label.includes('POSITIVE');
+        const insufficientMask = data.insufficient_mask_data === true;
+        const confPct = ((data.confidence || 0) * 100).toFixed(1);
+
+        const meas = data.measurements || {};
+        const risk = data.risk || {};
+        const rad = data.radiomics || {};
+        const loc = rad.location || {};
+        const enh = rad.enhancement || {};
+        const edema = rad.edema || {};
+        const shape = rad.shape || {};
+        const tex = rad.texture || {};
+        const sm = data.scan_meta || {};
+        const measActive = isTumor && !insufficientMask;
+
+        const fmt = (v, d, suf) => (v == null) ? '—' : parseFloat(v).toFixed(d || 2) + (suf || '');
+
+        const detectionLabel = isIndeterminate
+            ? 'INDETERMINATE — MANUAL REVIEW REQUIRED'
+            : isTumor ? 'POSITIVE: SPACE-OCCUPYING LESION IDENTIFIED'
+                : 'NEGATIVE: NO RADIOLOGICAL ANOMALY DETECTED';
+
+        const detectionColor = isIndeterminate ? '#f59e0b' : isTumor ? '#ef4444' : '#22c55e';
+
+        const impression = (data.structured_report && data.structured_report.clinical_impression)
+            || (data.details && data.details.impression)
+            || (risk.clinical_summary)
+            || 'No clinical impression available.';
+
+        const rfRows = (risk.factor_breakdown || []).map(f =>
+            `<tr>
+                <td>${f.factor || ''}</td>
+                <td><div style="background:#e5e7eb;border-radius:4px;height:10px;width:140px;display:inline-block;vertical-align:middle;"><div style="background:${f.color || '#6b7280'};width:${f.percent || 0}%;height:100%;border-radius:4px;"></div></div></td>
+                <td style="text-align:right;font-weight:600;">${f.score}/${f.max}</td>
+            </tr>`
+        ).join('');
+
+        const scanImgSrc = data.overlay_b64
+            ? 'data:image/png;base64,' + data.overlay_b64
+            : (data.image_b64 ? 'data:image/jpeg;base64,' + data.image_b64 : '');
+
+        const printHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NeuroScanAI — Medical Report | ${cId}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter','Segoe UI',sans-serif;font-size:11pt;color:#1a1a2e;background:#fff;line-height:1.5;}
+.page{max-width:800px;margin:0 auto;padding:28px 32px;}
+.report-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #1a1a2e;padding-bottom:14px;margin-bottom:16px;}
+.logo-area{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:42px;height:42px;background:#1a1a2e;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#a78bfa;font-size:20px;font-weight:700;}
+.logo-text h1{font-size:17pt;font-weight:700;color:#1a1a2e;}
+.logo-text p{font-size:8pt;color:#6b7280;letter-spacing:1px;text-transform:uppercase;}
+.report-badge{background:#fef3c7;border:1.5px solid #f59e0b;color:#92400e;padding:5px 12px;border-radius:6px;font-size:8pt;font-weight:700;letter-spacing:0.5px;text-align:right;}
+.report-badge .rpt-id,.report-badge .rpt-date{font-size:7pt;color:#78716c;margin-top:2px;}
+.patient-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin-bottom:16px;}
+.pi-item .pi-label{font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#94a3b8;}
+.pi-item .pi-value{font-size:10pt;font-weight:600;color:#1e293b;margin-top:2px;}
+.section{margin-bottom:16px;}
+.section-title{display:flex;align-items:center;gap:8px;font-size:10pt;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.6px;border-left:3px solid #6c5ce7;padding-left:8px;margin-bottom:10px;}
+.section-title .num{background:#6c5ce7;color:#fff;width:20px;height:20px;border-radius:50%;font-size:8pt;display:inline-flex;align-items:center;justify-content:center;}
+.detection-box{border:2px solid ${detectionColor};border-radius:10px;padding:14px 18px;background:${detectionColor}18;display:flex;align-items:center;gap:16px;}
+.det-indicator{width:52px;height:52px;border-radius:50%;background:${detectionColor}22;border:2px solid ${detectionColor};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.det-label{font-size:12pt;font-weight:700;color:${detectionColor};}
+.det-conf{margin-top:4px;font-size:9pt;color:#4b5563;}
+.det-grade{margin-top:2px;font-size:9pt;color:#6b7280;}
+.conf-bar-wrap{margin-top:6px;display:flex;align-items:center;gap:8px;}
+.conf-bar-bg{background:#e5e7eb;border-radius:4px;height:7px;width:140px;}
+.conf-bar-fill{background:${detectionColor};height:100%;border-radius:4px;width:${confPct}%;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.metric-card{border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;}
+.metric-card h4{font-size:8pt;text-transform:uppercase;letter-spacing:0.8px;color:#64748b;margin-bottom:8px;}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.metric-item .m-label{font-size:7.5pt;color:#94a3b8;}
+.metric-item .m-value{font-size:11pt;font-weight:700;color:#1e293b;}
+.metric-item .m-unit{font-size:7.5pt;color:#94a3b8;margin-left:2px;}
+table{width:100%;border-collapse:collapse;font-size:9.5pt;}
+th{background:#f1f5f9;padding:7px 10px;text-align:left;font-weight:600;color:#374151;font-size:8.5pt;}
+td{padding:6px 10px;border-bottom:1px solid #f1f5f9;color:#374151;}
+tr:last-child td{border-bottom:none;}
+.scan-img-box{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;min-height:220px;}
+.scan-img-box img{width:100%;max-height:240px;object-fit:contain;}
+.scan-img-box .no-img{color:#6b7280;font-size:9pt;text-align:center;padding:40px;}
+.rad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.rad-cell{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.rad-cell .rc-label{font-size:7.5pt;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;}
+.rad-cell .rc-value{font-size:10pt;font-weight:600;color:#1e293b;margin-top:2px;}
+.rad-cell .rc-sub{font-size:7.5pt;color:#6b7280;margin-top:1px;}
+.impression-box{background:#f8fafc;border-left:3px solid #6c5ce7;border-radius:0 6px 6px 0;padding:12px 14px;font-size:9.5pt;color:#374151;line-height:1.6;}
+.disclaimer{background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:8pt;color:#78350f;margin-bottom:16px;}
+.disclaimer strong{display:block;margin-bottom:4px;font-size:8.5pt;}
+.report-footer{border-top:1px solid #e2e8f0;margin-top:16px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:7.5pt;color:#94a3b8;}
+.sig-line{border-bottom:1px solid #374151;width:180px;margin-bottom:3px;}
+.print-action{position:fixed;top:20px;right:20px;display:flex;gap:10px;z-index:999;}
+.print-action button{padding:10px 20px;border:none;border-radius:8px;font-family:inherit;font-size:10pt;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.btn-print{background:#6c5ce7;color:#fff;}
+.btn-close{background:#e5e7eb;color:#374151;}
+@media print{.print-action{display:none!important;}body{background:#fff;}.page{padding:14px 18px;}}
+</style>
+</head>
+<body>
+<div class="print-action">
+    <button class="btn-print" onclick="window.print()">🖨 Print / Save PDF</button>
+    <button class="btn-close" onclick="window.close()">✕ Close</button>
+</div>
+<div class="page">
+    <div class="report-header">
+        <div class="logo-area">
+            <div class="logo-icon">Nv</div>
+            <div class="logo-text"><h1>NeuroScanAI Diagnostics</h1><p>AI-Assisted Neuroimaging Report</p></div>
+        </div>
+        <div class="report-badge">⚠ PRELIMINARY · AI-GENERATED<div class="rpt-id">Report #: ${reportId}</div><div class="rpt-date">Generated: ${now}</div></div>
+    </div>
+    <div class="patient-bar">
+        <div class="pi-item"><div class="pi-label">Patient ID</div><div class="pi-value">${cId}</div></div>
+        <div class="pi-item"><div class="pi-label">Study Date</div><div class="pi-value">${now.split(',')[0]}</div></div>
+        <div class="pi-item"><div class="pi-label">Modality</div><div class="pi-value">${sm.modality_label || sm.orientation || 'MR / Brain'}</div></div>
+        <div class="pi-item"><div class="pi-label">Reporting Model</div><div class="pi-value">Hybrid CNN-Tx v2.0</div></div>
+    </div>
+    <div class="section">
+        <div class="section-title"><span class="num">1</span> Clinical Indication</div>
+        <p style="font-size:9.5pt;color:#374151;line-height:1.6;">AI-assisted diagnostic scan submitted for automated tumor-detection pipeline analysis. Patient: <strong>${pName}</strong> | Case Reference: <strong>${cId}</strong>. Values below illustrate detected findings and AI-generated assessment.</p>
+    </div>
+    <div class="section">
+        <div class="section-title"><span class="num">2</span> Imaging Findings</div>
+        <div class="two-col">
+            <div class="scan-img-box">${scanImgSrc ? `<img src="${scanImgSrc}" alt="MRI Scan">` : `<div class="no-img">📷 No scan image available</div>`}</div>
+            <table>
+                <tr><th>Parameter</th><th>Value</th></tr>
+                <tr><td>Location</td><td>${measActive ? (loc.full_location || loc.region || '—') : '—'}</td></tr>
+                <tr><td>Laterality</td><td>${measActive ? (loc.laterality || '—') : '—'}</td></tr>
+                <tr><td>Shape / Margin</td><td>${measActive ? (shape.shape_label || '—') : '—'}</td></tr>
+                <tr><td>Signal Pattern</td><td>${measActive ? (enh.enhancement_pattern || '—') : '—'}</td></tr>
+                <tr><td>Est. Volume</td><td>${measActive ? fmt(meas.volume_ml, 2, ' mL') : '—'}</td></tr>
+                <tr><td>Edema Signal</td><td>${measActive ? (edema.edema_label || '—') : '—'}</td></tr>
+                <tr><td>Mass Effect</td><td>${measActive ? (loc.surgical_risk || 'Not assessed') : 'Not assessed'}</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title"><span class="num">3</span> Impression</div>
+        <div class="detection-box">
+            <div class="det-indicator">${isIndeterminate ? '❓' : isTumor ? '⚠' : '✅'}</div>
+            <div>
+                <div class="det-label">${detectionLabel}</div>
+                <div class="det-conf">AI Confidence: <div class="conf-bar-wrap"><div class="conf-bar-bg"><div class="conf-bar-fill"></div></div><strong>${confPct}%</strong></div></div>
+                <div class="det-grade">Grade Indicator: ${data.grade || '—'}</div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title"><span class="num">4</span> Model Confidence &amp; Metrics</div>
+        <div class="two-col">
+            <div class="metric-card">
+                <h4>Measurements</h4>
+                <div class="metric-grid">
+                    <div class="metric-item"><div class="m-label">Volume</div><div class="m-value">${measActive ? fmt(meas.volume_ml, 2) : '—'}<span class="m-unit">${measActive && meas.volume_ml != null ? 'mL' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Diameter (RANO)</div><div class="m-value">${measActive ? fmt(meas.diameter_mm, 1) : '—'}<span class="m-unit">${measActive && meas.diameter_mm != null ? 'mm' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Perpendicular</div><div class="m-value">${measActive ? fmt(meas.perpendicular_mm, 1) : '—'}<span class="m-unit">${measActive && meas.perpendicular_mm != null ? 'mm' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Risk Level</div><div class="m-value" style="color:${risk.risk_color || '#6b7280'};">${risk.risk_level || '—'}</div></div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <h4>Scan Parameters</h4>
+                <div class="metric-grid">
+                    <div class="metric-item"><div class="m-label">Pixel Spacing X</div><div class="m-value">${sm.pixel_spacing_x != null ? sm.pixel_spacing_x : '—'}<span class="m-unit">${sm.pixel_spacing_x != null ? 'mm' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Pixel Spacing Y</div><div class="m-value">${sm.pixel_spacing_y != null ? sm.pixel_spacing_y : '—'}<span class="m-unit">${sm.pixel_spacing_y != null ? 'mm' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Slice Thickness</div><div class="m-value">${sm.slice_thickness != null ? sm.slice_thickness : '—'}<span class="m-unit">${sm.slice_thickness != null ? 'mm' : ''}</span></div></div>
+                    <div class="metric-item"><div class="m-label">Orientation</div><div class="m-value" style="font-size:9pt;">${sm.orientation || '—'}</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="section-title"><span class="num">5</span> Radiomics Features</div>
+        <div class="rad-grid">
+            <div class="rad-cell"><div class="rc-label">Location</div><div class="rc-value">${measActive ? (loc.full_location || '—') : '—'}</div><div class="rc-sub">${measActive && loc.is_eloquent ? '⚠ Eloquent Area' : (measActive ? loc.depth_category || '' : '')}</div></div>
+            <div class="rad-cell"><div class="rc-label">Enhancement</div><div class="rc-value">${measActive ? (enh.enhancement_pattern || '—') : '—'}</div><div class="rc-sub">${measActive && enh.is_ring_enhancement ? '⚠ Ring Enhancement' : (measActive ? 'Ratio: ' + (enh.enhancement_ratio || 0).toFixed(2) : '')}</div></div>
+            <div class="rad-cell"><div class="rc-label">Peritumoral Edema</div><div class="rc-value">${measActive ? (edema.edema_label || '—') : '—'}</div><div class="rc-sub">${measActive && edema.edema_ratio ? 'Ratio: ' + edema.edema_ratio.toFixed(2) : ''}</div></div>
+            <div class="rad-cell"><div class="rc-label">Shape</div><div class="rc-value">${measActive ? (shape.shape_label || '—') : '—'}</div><div class="rc-sub">${measActive && shape.sphericity ? 'Sphericity: ' + shape.sphericity.toFixed(3) : ''}</div></div>
+            <div class="rad-cell"><div class="rc-label">Texture (GLCM)</div><div class="rc-value">${measActive ? (tex.texture_label || '—') : '—'}</div><div class="rc-sub">${measActive && tex.homogeneity ? 'Homogeneity: ' + tex.homogeneity.toFixed(3) : ''}</div></div>
+            <div class="rad-cell"><div class="rc-label">Surgical Risk</div><div class="rc-value">${measActive ? (loc.surgical_risk || '—') : '—'}</div><div class="rc-sub">${measActive && loc.depth_category ? 'Depth: ' + loc.depth_category : ''}</div></div>
+        </div>
+    </div>
+    <div class="disclaimer"><strong>⚠ LIMITATIONS &amp; DISCLOSURE</strong>This report is AI-generated and has <u>not</u> been reviewed by a radiologist. It is a demonstration built from imaging data; no diagnostic conclusion should be drawn from it. In a real deployment, this section would state the model's training dataset, validated sensitivity/specificity, intended use population, and regulatory status (e.g. CE/FDA clearance), per standard AI-in-radiology transparency requirements.</div>
+    ${rfRows ? `<div class="section"><div class="section-title"><span class="num">6</span> Risk Factor Breakdown</div><table><tr><th>Factor</th><th>Score Distribution</th><th style="text-align:right;">Score</th></tr>${rfRows}</table></div>` : ''}
+    <div class="section">
+        <div class="section-title"><span class="num">7</span> Recommendation</div>
+        <div class="impression-box">${impression}</div>
+    </div>
+    <div class="report-footer">
+        <div><div style="font-size:8pt;color:#374151;margin-bottom:4px;">Reviewing Radiologist</div><div class="sig-line"></div><div>Signature &amp; Date — <em>pending</em></div></div>
+        <div style="text-align:right;"><div>NeuroVision Diagnostics — prototype report template</div><div>Non-clinical sample record &nbsp;·&nbsp; Page 1 of 1</div></div>
+    </div>
+</div>
+</body>
+</html>`;
+
+        const printWin = window.open('', '_blank', 'width=940,height=720');
+        if (!printWin) {
+            alert('Pop-up blocked! Please allow pop-ups for this site and try again.');
+            return;
+        }
+        printWin.document.write(printHTML);
+        printWin.document.close();
+    }
+
     // ─── Clinical Case Archive ────────────────────────────────────────────────
+
     const refreshReportsBtn = document.getElementById('refresh-reports-btn');
     const reportsTableBody = document.getElementById('reports-table-body');
     const totalCountEl = document.getElementById('total-reports-count');
@@ -799,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (isTumor) tumorCount++; else healthyCount++;
 
                         const date = r.timestamp
-                            ? new Date(r.timestamp).toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })
+                            ? new Date(r.timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
                             : 'N/A';
                         const rl = r.risk_level || 'N/A';
                         const rc = RISK_COLORS[rl] || '#6b7280';
@@ -815,8 +1045,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <td>${vol}</td>
                             <td>
                                 <div class="confidence-cell">
-                                    <span>${((r.confidence || 0)*100).toFixed(1)}%</span>
-                                    <div class="confidence-bar-mini"><div class="fill" style="width:${(r.confidence||0)*100}%"></div></div>
+                                    <span>${((r.confidence || 0) * 100).toFixed(1)}%</span>
+                                    <div class="confidence-bar-mini"><div class="fill" style="width:${(r.confidence || 0) * 100}%"></div></div>
                                 </div>
                             </td>
                             <td style="text-align:right">
@@ -892,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const gpu = document.getElementById('setting-gpu'); if (gpu) gpu.checked = s.gpu_acceleration !== false;
             const heur = document.getElementById('setting-heuristic'); if (heur) heur.checked = s.heuristic_fallback !== false;
             const prec = document.getElementById('setting-precision'); if (prec) prec.value = s.inference_precision || 'fp32';
-        }).catch(() => {});
+        }).catch(() => { });
 
     const saveSettingsBtn = document.querySelector('.btn-save-settings');
     if (saveSettingsBtn) {

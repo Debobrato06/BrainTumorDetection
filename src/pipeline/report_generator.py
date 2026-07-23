@@ -33,7 +33,9 @@ def generate_structured_report(
     confidence,
     overlay_b64="",
     original_img_b64="",
-    insufficient_mask_data=False
+    insufficient_mask_data=False,
+    uncertainty_score=None,
+    mass_effect=None,
 ):
     """
     Assemble the complete structured radiology report.
@@ -61,12 +63,17 @@ def generate_structured_report(
         risk_scoring_status = "pass" if risk_data else "fail"
         grading_status = "pass" if grade_label and grade_label != "—" and grade_label != "N/A" else "fail"
         
+    uncertainty_status = "pass" if uncertainty_score is not None else "skipped"
+    mass_effect_status = "pass" if mass_effect is not None else "skipped"
+
     pipeline_stages = {
-        'preprocessing': preprocessing_status,
-        'segmentation': segmentation_status,
-        'radiomics': radiomics_status,
-        'risk_scoring': risk_scoring_status,
-        'grading': grading_status
+        'preprocessing':  preprocessing_status,
+        'segmentation':   segmentation_status,
+        'radiomics':      radiomics_status,
+        'risk_scoring':   risk_scoring_status,
+        'grading':        grading_status,
+        'uncertainty':    uncertainty_status,
+        'mass_effect':    mass_effect_status,
     }
     
     # ── Section 1: Header ──
@@ -168,9 +175,37 @@ def generate_structured_report(
     }
 
     # ── Section 8: AI-Generated Clinical Impression ──
-    impression = _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label) if not insufficient_mask_data else "Analysis Incomplete — Manual Review Required"
+    impression = (
+        _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label,
+                             uncertainty_score=uncertainty_score, mass_effect=mass_effect)
+        if not insufficient_mask_data
+        else "Analysis Incomplete — Manual Review Required"
+    )
 
-    # ── Section 9: Images ──
+    # ── Section 9: Uncertainty (MC-Dropout) ──
+    uncertainty = None
+    if uncertainty_score is not None:
+        conf_level = (
+            "High Confidence"   if uncertainty_score < 0.02 else
+            "Moderate Confidence" if uncertainty_score < 0.06 else
+            "Low Confidence — Manual Review Recommended"
+        )
+        uncertainty = {
+            "score":         round(float(uncertainty_score), 5),
+            "confidence_level": conf_level,
+            "mc_samples":    20,
+            "method":        "Monte Carlo Dropout (variance of segmentation mask)",
+        }
+
+    # ── Section 10: Mass Effect ──
+    mass_eff = mass_effect if mass_effect else {
+        "midline_shift_mm":        None,
+        "herniation_risk":         "Not assessed",
+        "ventricular_compression": "Not assessed",
+        "mass_effect_label":       "Mass effect analysis not performed",
+    }
+
+    # ── Section 11: Images ──
     images = {
         'original_slice_b64': original_img_b64,
         'segmentation_overlay_b64': overlay_b64,
@@ -202,14 +237,18 @@ def generate_structured_report(
         'image_b64': original_img_b64,
         'overlay_b64': overlay_b64,
         'model_version': '2.0',
-        'pipeline_stages': pipeline_stages,
-        'insufficient_mask_data': insufficient_mask_data
+        'pipeline_stages':     pipeline_stages,
+        'insufficient_mask_data': insufficient_mask_data,
+        'uncertainty':         uncertainty,
+        'mass_effect':         mass_eff,
+        'uncertainty_score':   round(float(uncertainty_score), 5) if uncertainty_score is not None else None,
+        'midline_shift_mm':    mass_eff.get('midline_shift_mm'),
     }
 
     return report
 
 
-def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label):
+def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label, uncertainty_score=None, mass_effect=None):
     """Generate a structured clinical impression paragraph."""
     if not is_tumor:
         return (
@@ -246,14 +285,26 @@ def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label):
         f" AI grade indicator: {grade_label} (NOTE: WHO grade requires histopathological confirmation)."
     ) if grade_label and grade_label != 'N/A' else ""
 
+    mass_note = ""
+    if mass_effect and mass_effect.get('midline_shift_mm', 0) > 0:
+        shift = mass_effect['midline_shift_mm']
+        direction = mass_effect.get('shift_direction', 'None')
+        dir_text = f" to the {direction}" if direction != 'None' else ""
+        risk_h = mass_effect.get('herniation_risk', 'Low')
+        mass_note = f" Associated midline shift of {shift} mm{dir_text} is noted (herniation risk: {risk_h.lower()})."
+
+    uncertainty_note = ""
+    if uncertainty_score is not None:
+        uncertainty_note = f" Model uncertainty score is {uncertainty_score:.5f} (MC-Dropout estimation)."
+
     return (
         f"Analysis reveals a focal intracranial lesion in the {loc}, "
         f"measuring approximately {vol:.1f}mL (longest diameter {diam:.1f}mm). "
         f"Enhancement pattern: {enh}.{ring_note} "
         f"Peritumoral edema: {edema}. "
         f"Shape characteristics: {shape}. "
-        f"Texture analysis: {texture}. "
-        f"Composite AI risk score: {risk_score}/100 ({risk_level} risk).{eloquent_note} "
+        f"Texture analysis: {texture}.{mass_note} "
+        f"Composite AI risk score: {risk_score}/100 ({risk_level} risk).{eloquent_note}{uncertainty_note} "
         f"Differential diagnosis includes primary glial neoplasm, metastatic lesion, "
         f"or demyelinating process. Correlation with clinical history, contrast MRI, "
         f"MR spectroscopy, and tissue sampling is strongly recommended.{grade_note}"

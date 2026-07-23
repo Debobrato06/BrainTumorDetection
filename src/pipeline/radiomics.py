@@ -347,62 +347,10 @@ ELOQUENT_REGIONS = {
 def infer_anatomical_location(binary_mask, volume_shape):
     """
     Infer approximate anatomical location from tumor mask centroid.
-    Maps 3D centroid coordinates to anatomical regions using simplified atlas.
-    
-    Args:
-        binary_mask: numpy bool (D, H, W)
-        volume_shape: tuple (D, H, W) — full volume dimensions
-    
-    Returns:
-        dict with:
-            - region: anatomical region name
-            - laterality: 'Left' | 'Right' | 'Midline'
-            - is_eloquent: bool (surgical risk indicator)
-            - depth_category: 'Cortical' | 'Subcortical' | 'Deep'
+    Delegates to the upgraded lookup_anatomical_region in atlas.py.
     """
-    if not binary_mask.any():
-        return _default_location()
-
-    try:
-        indices = np.argwhere(binary_mask)
-        centroid = indices.mean(axis=0)  # [D, H, W]
-
-        D, H, W = volume_shape[-3], volume_shape[-2], volume_shape[-1]
-
-        # Normalized centroid [0, 1]
-        norm_d = centroid[0] / max(D - 1, 1)  # Superior-Inferior
-        norm_h = centroid[1] / max(H - 1, 1)  # Anterior-Posterior
-        norm_w = centroid[2] / max(W - 1, 1)  # Left-Right
-
-        # Laterality
-        if norm_w < 0.4:
-            laterality = 'Right'   # In standard MRI orientation
-        elif norm_w > 0.6:
-            laterality = 'Left'
-        else:
-            laterality = 'Midline'
-
-        # Depth category (based on distance from surface approximation)
-        depth_category = _infer_depth(norm_d, norm_h, norm_w)
-
-        # Region mapping (simplified atlas based on normalized coordinates)
-        region = _map_to_region(norm_d, norm_h, norm_w)
-
-        is_eloquent = region in ELOQUENT_REGIONS
-
-        return {
-            'region': region,
-            'laterality': laterality,
-            'full_location': f'{laterality} {region}' if laterality != 'Midline' else region,
-            'is_eloquent': is_eloquent,
-            'depth_category': depth_category,
-            'surgical_risk': 'High' if is_eloquent or depth_category == 'Deep' else 'Moderate' if depth_category == 'Subcortical' else 'Lower',
-            'centroid_norm': [round(norm_d, 3), round(norm_h, 3), round(norm_w, 3)]
-        }
-
-    except Exception as e:
-        print(f"[Radiomics] Location inference failed: {e}")
-        return _default_location()
+    from src.pipeline.atlas import lookup_anatomical_region
+    return lookup_anatomical_region(binary_mask, volume_shape)
 
 
 def _map_to_region(norm_d, norm_h, norm_w):
@@ -575,18 +523,104 @@ def _default_texture():
     }
 
 
-# ─── Main Feature Bundle ──────────────────────────────────────────────────────
+# ─── Main Feature Bundle ────────────────────────────────────────────
 
 def extract_all_radiomics(volume_np, binary_mask):
     """
     Run the full radiomics pipeline and return all features in one dict.
     Safe to call even if individual features fail (graceful degradation).
+    Includes VASARI-standard feature mapping for research-grade reporting.
     """
     volume_shape = volume_np.shape
+    shape_feats  = compute_shape_features(binary_mask)
+    enh_feats    = estimate_enhancement_pattern(volume_np, binary_mask)
+    edema_feats  = estimate_edema_extent(binary_mask, volume_np)
+    loc_feats    = infer_anatomical_location(binary_mask, volume_shape)
+    tex_feats    = compute_texture_features(volume_np, binary_mask)
     return {
-        'shape': compute_shape_features(binary_mask),
-        'enhancement': estimate_enhancement_pattern(volume_np, binary_mask),
-        'edema': estimate_edema_extent(binary_mask, volume_np),
-        'location': infer_anatomical_location(binary_mask, volume_shape),
-        'texture': compute_texture_features(volume_np, binary_mask)
+        "shape":       shape_feats,
+        "enhancement": enh_feats,
+        "edema":       edema_feats,
+        "location":    loc_feats,
+        "texture":     tex_feats,
+        "vasari":      to_vasari(shape_feats, enh_feats, edema_feats, loc_feats, tex_feats),
+    }
+
+
+# ─── VASARI Standard Feature Mapping ──────────────────────────────────────────
+
+def to_vasari(shape: dict, enhancement: dict, edema: dict, location: dict, texture: dict) -> dict:
+    """
+    Map internal feature keys to VASARI (Visually AcceSsible Rembrandt Images) standard.
+    Reference: Gutman et al. (2013) doi:10.1371/journal.pone.0070966
+    """
+    sph       = shape.get("sphericity", 0.0)
+    irr       = shape.get("irregularity", 0.0)
+    enh_ratio = enhancement.get("enhancement_ratio", 0.0)
+    ring_enh  = enhancement.get("is_ring_enhancement", False)
+    enh_sev   = enhancement.get("severity", "low")
+    edema_rat = edema.get("edema_ratio", 0.0)
+    is_eloquent = location.get("is_eloquent", False)
+    depth     = location.get("depth_category", "Unknown")
+    homog     = texture.get("homogeneity", 0.0)
+
+    # F5: Tumor margin
+    if sph >= 0.80 and irr < 0.25:
+        f5 = "1 - Well-defined / Smooth"
+    elif sph >= 0.60:
+        f5 = "2 - Moderately irregular"
+    else:
+        f5 = "3 - Highly irregular / infiltrative"
+
+    # F7: Contrast enhancement quality
+    if ring_enh:
+        f7 = "4 - Ring enhancement"
+    elif enh_ratio >= 2.5:
+        f7 = "3 - Avid / marked"
+    elif enh_ratio >= 1.5:
+        f7 = "2 - Mild / moderate"
+    else:
+        f7 = "1 - No / minimal"
+
+    # F8: Proportion enhancing
+    f8 = ">67%" if enh_sev == "high" else ("34-67%" if enh_sev == "moderate" else "<33%")
+
+    # F9: Edema
+    if edema_rat >= 3.0:
+        f9 = "4 - Extensive"
+    elif edema_rat >= 1.5:
+        f9 = "3 - Moderate"
+    elif edema_rat >= 0.5:
+        f9 = "2 - Mild"
+    else:
+        f9 = "1 - None"
+
+    # F14: Necrosis
+    f14 = "Present" if ring_enh else "Absent"
+
+    # F22: Cortical involvement
+    f22 = "Yes" if depth == "Cortical" else ("Partial" if depth == "Subcortical" else "No")
+
+    # Extended texture
+    tex_v = ("3 - Highly heterogeneous" if homog < 0.40
+             else ("2 - Moderately heterogeneous" if homog < 0.65
+                   else "1 - Homogeneous"))
+
+    return {
+        "F5_tumorMargin":           f5,
+        "F7_contrastEnhancement":   f7,
+        "F8_proportionEnhancing":   f8,
+        "F9_edema":                 f9,
+        "F10_eloquentBrain":        "Yes" if is_eloquent else "No",
+        "F14_necrosisPresence":     f14,
+        "F16_multifocal":           "Cannot determine",
+        "F22_corticalInvolvement":  f22,
+        "EXT_textureHeterogeneity": tex_v,
+        "EXT_ringEnhancement":      "Yes" if ring_enh else "No",
+        "EXT_sphericity":           round(sph, 3),
+        "EXT_glcmHomogeneity":      round(homog, 4),
+        "EXT_edemaRatio":           round(edema_rat, 2),
+        "EXT_enhancementRatio":     round(enh_ratio, 3),
+        "EXT_locationLabel":        location.get("full_location", "N/A"),
+        "EXT_surgicalRisk":         location.get("surgical_risk", "Unknown"),
     }
