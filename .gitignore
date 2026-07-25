@@ -5,6 +5,7 @@ __pycache__/
 lightning_logs/
 checkpoints/
 *.pth
+.venv/
 venv/
 .idea/
 .vscode/
