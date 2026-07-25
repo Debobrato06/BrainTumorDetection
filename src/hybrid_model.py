@@ -123,11 +123,14 @@ class HybridTumorModel(nn.Module):
             nn.ReLU()
         )
         
-        # --- Heads ---
-        # 1. Segmentation Head
-        self.seg_head = nn.Conv3d(32, 1, kernel_size=1) 
+        # 1. Sequence Squeeze-and-Excitation Channel Attention
+        self.input_se = SqueezeAndExcitation3D(in_channels, reduction=2) if 'SqueezeAndExcitation3D' in globals() else None
+
+        # 2. Heads
+        # a) BraTS Sub-region Segmentation Head: 3 channels (ET, TC, WT)
+        self.seg_head = nn.Conv3d(32, 3, kernel_size=1) 
         
-        # 2. Classification Head (from Transformer bottleneck)
+        # b) Binary Classification Head
         self.cls_head = nn.Sequential(
             nn.Linear(embed_dim, 128),
             nn.ReLU(),
@@ -135,16 +138,31 @@ class HybridTumorModel(nn.Module):
             nn.Linear(128, num_classes)
         )
 
-        # 3. WHO GRADING HEAD (Professional Innovation)
-        # Estimates High-Grade Glioma (HGG) vs Low-Grade Glioma (LGG)
+        # c) WHO GRADING HEAD (LGG vs HGG)
         self.grade_head = nn.Sequential(
             nn.Linear(embed_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 2) # [LGG, HGG]
         )
+
+        # d) Tumor Type Classification Head
+        self.type_head = nn.Sequential(
+            nn.Linear(embed_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, 5) # [Glioma, Meningioma, Metastasis, Medulloblastoma, Healthy]
+        )
         
     def forward(self, x, mask_ratio=0.0, return_attention=False):
         # x: (B, C, 64, 64, 64)
+        seq_weights = None
+        if hasattr(self, 'input_se') and self.input_se is not None:
+            x, seq_weights_tensor = self.input_se(x)
+            seq_weights = {
+                'T1': float(seq_weights_tensor[0, 0].item()),
+                'T1c': float(seq_weights_tensor[0, 1].item()) if seq_weights_tensor.shape[1] > 1 else 0.5,
+                'T2': float(seq_weights_tensor[0, 2].item()) if seq_weights_tensor.shape[1] > 2 else 0.5,
+                'FLAIR': float(seq_weights_tensor[0, 3].item()) if seq_weights_tensor.shape[1] > 3 else 0.5
+            }
         
         # 1. CNN Feature Extraction (Encoder)
         c1 = self.cnn_stem[0:3](x) # (B, 32, 64, 64, 64)
@@ -160,15 +178,16 @@ class HybridTumorModel(nn.Module):
         z_mean = z.mean(dim=1) # Global latent vector
         cls_logits = self.cls_head(z_mean)
         grade_logits = self.grade_head(z_mean)
+        type_logits = self.type_head(z_mean)
         
         # 4. Decoding (Spatial Reconstruction)
         dec1 = self.conv_up1(torch.cat([c2, c2], dim=1)) # Simulating skip 64+64
         dec2 = self.conv_up2(torch.cat([self.up2(dec1), c1], dim=1))
         
-        seg_logits = self.seg_head(dec2)
+        seg_logits = self.seg_head(dec2)  # (B, 3, 64, 64, 64)
         
         if return_attention:
-            return cls_logits, seg_logits, grade_logits, attns
+            return cls_logits, seg_logits, grade_logits, type_logits, seq_weights or attns
         return cls_logits, seg_logits, grade_logits
 
     def get_uncertainty_map(self, x, num_samples=5):

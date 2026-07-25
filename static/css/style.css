@@ -3253,4 +3253,190 @@ body {
     align-items: center;
 }
 
+/* ── WHO CNS5 & BraTS SE-Attention Panel Styles ── */
+.cns5-analysis-panel {
+    background: rgba(18, 24, 38, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.cns5-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+.cns5-card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1.2rem;
+}
+.cns5-card.span-2 {
+    grid-column: span 2;
+}
+.cns5-card-header {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.se-weights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.se-weight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.seq-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    width: 170px;
+    color: #94a3b8;
+}
+.se-bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.se-bar-fill {
+    height: 100%;
+    background: #818cf8;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+.se-bar-fill.t1c-fill { background: #ef4444; }
+.se-bar-fill.t2-fill { background: #f59e0b; }
+.se-bar-fill.flair-fill { background: #10b981; }
+.se-pct {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    width: 40px;
+    text-align: right;
+}
+
+.subregions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+.sr-badge-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.sr-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    display: inline-block;
+}
+.sr-dot.red { background: #ef4444; box-shadow: 0 0 8px #ef444488; }
+.sr-dot.yellow { background: #f59e0b; box-shadow: 0 0 8px #f59e0b88; }
+.sr-dot.green { background: #10b981; box-shadow: 0 0 8px #10b98188; }
+.sr-name {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    flex: 1;
+}
+.sr-vol {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+.indicators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+.ind-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.ind-label {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.ind-val {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+.ind-val.highlight {
+    color: #a78bfa;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.dual-risk-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+}
+.dual-risk-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.dual-risk-card.bio-risk {
+    border-left: 4px solid #ef4444;
+}
+.dual-risk-card.surg-risk {
+    border-left: 4px solid #f59e0b;
+}
+.dr-icon {
+    font-size: 1.6rem;
+    color: #94a3b8;
+}
+.bio-risk .dr-icon { color: #ef4444; }
+.surg-risk .dr-icon { color: #f59e0b; }
+.dr-info {
+    display: flex;
+    flex-direction: column;
+}
+.dr-title {
+    font-size: 0.76rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+.dr-score {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+.dr-level {
+    font-size: 0.78rem;
+    color: #cbd5e1;
+}
+
+
 

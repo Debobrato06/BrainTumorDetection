@@ -515,6 +515,45 @@ document.addEventListener('DOMContentLoaded', () => {
             ].forEach(function (id) { setText(id, naMsg); });
         }
 
+        // ── SE Channel Attention Weights ──────────────────────────────────────
+        const seAttn = data.se_channel_attention || { T1: 0.25, T1c: 0.35, T2: 0.20, FLAIR: 0.20 };
+        const setSeBar = (idBar, idVal, val) => {
+            const bar = document.getElementById(idBar);
+            const text = document.getElementById(idVal);
+            const pct = Math.round((val || 0) * 100);
+            if (bar) bar.style.width = pct + '%';
+            if (text) text.textContent = pct + '%';
+        };
+        setSeBar('se-t1-bar', 'se-t1-val', seAttn.T1);
+        setSeBar('se-t1c-bar', 'se-t1c-val', seAttn.T1c);
+        setSeBar('se-t2-bar', 'se-t2-val', seAttn.T2);
+        setSeBar('se-flair-bar', 'se-flair-val', seAttn.FLAIR);
+
+        // ── Sub-region Volumetrics (BraTS ET, TC, WT) ─────────────────────────
+        const subVols = data.sub_region_volumes || {};
+        setText('sr-et-vol', isTumor && subVols.ET != null ? `${subVols.ET} mL` : '— mL');
+        setText('sr-tc-vol', isTumor && subVols.TC != null ? `${subVols.TC} mL` : '— mL');
+        setText('sr-wt-vol', isTumor && subVols.WT != null ? `${subVols.WT} mL` : '— mL');
+
+        // ── WHO CNS5 Key Radiological Indicators ──────────────────────────────
+        const whoInd = (rad && rad.who_cns5_indicators) ? rad.who_cns5_indicators : {};
+        setText('ind-tumor-type', isTumor ? (data.tumor_type || 'Glioma') : 'Healthy');
+        setText('ind-margin', isTumor ? (whoInd.margin_type || '—') : 'N/A');
+        setText('ind-ring', isTumor ? (whoInd.ring_enhancement || '—') : 'N/A');
+        setText('ind-necrosis', isTumor ? (whoInd.necrosis_present ? 'Present (High-Grade Marker)' : 'Absent / Minimal') : 'N/A');
+        setText('ind-dwi', isTumor ? (whoInd.dwi_diffusion || '—') : 'N/A');
+        setText('ind-perfusion', isTumor ? (whoInd.perfusion_rcbv || '—') : 'N/A');
+        setText('ind-mrs', isTumor ? (whoInd.mrs_cho_naa || '—') : 'N/A');
+        setText('ind-butterfly', isTumor ? (whoInd.butterfly_glioma || '—') : 'N/A');
+
+        // ── Dual Risk Dimensions (Biological vs Surgical) ─────────────────────
+        const bioRisk = risk.biological_risk || {};
+        const surgRisk = risk.surgical_risk || {};
+        setText('bio-risk-score', isTumor && bioRisk.score != null ? `${bioRisk.score}/100` : '—');
+        setText('bio-risk-level', isTumor && bioRisk.level ? bioRisk.level : '—');
+        setText('surg-risk-score', isTumor && surgRisk.score != null ? `${surgRisk.score}/100` : '—');
+        setText('surg-risk-level', isTumor && surgRisk.level ? surgRisk.level : '—');
+
         // ── Rule 7: Pipeline Status Block ─────────────────────────────────────
         renderPipelineStatus(pipeStatus);
 

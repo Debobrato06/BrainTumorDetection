@@ -123,16 +123,26 @@ def generate_structured_report(
     }
 
     # ── Section 5: Quantitative Measurements ──
-    vol_ml = measurements.get('volume_ml', 0.0)
-    diam_mm = measurements.get('diameter_mm', 0.0)
-    perp_mm = measurements.get('perpendicular_mm', 0.0)
+    vol_ml = measurements.get('volume_ml')
+    diam_mm = measurements.get('diameter_mm')
+    perp_mm = measurements.get('perpendicular_mm')
+
+    vol_val_safe = float(vol_ml) if vol_ml is not None else 0.0
+    diam_val_safe = float(diam_mm) if diam_mm is not None else 0.0
+    perp_val_safe = float(perp_mm) if perp_mm is not None else 0.0
+
+    rano_str = (
+        f'{diam_val_safe:.1f} × {perp_val_safe:.1f} mm (longest × perpendicular)'
+        if (diam_mm is not None and perp_mm is not None and not insufficient_mask_data)
+        else '—'
+    )
 
     meas = {
         'volume_ml': vol_ml,
         'volume_cm3': vol_ml,  # mL == cm³
         'longest_diameter_mm': diam_mm,
         'perpendicular_diameter_mm': perp_mm,
-        'rano_criteria': f'{diam_mm:.1f} × {perp_mm:.1f} mm (longest × perpendicular)' if not insufficient_mask_data else '—',
+        'rano_criteria': rano_str,
         'voxel_count': measurements.get('voxel_count', 0),
         'bounding_box': measurements.get('bounding_box', {}),
         'growth_tracking': growth_data,
@@ -212,6 +222,12 @@ def generate_structured_report(
     }
 
     # ── Assemble Full Report ──
+    tumor_size_str = (
+        f"{vol_val_safe:.2f} mL (diameter: {diam_val_safe:.1f}mm)"
+        if (vol_ml is not None and diam_mm is not None and not insufficient_mask_data)
+        else "—"
+    )
+
     report = {
         'header': header,
         'patient': patient,
@@ -229,7 +245,7 @@ def generate_structured_report(
         'patient_name': patient['name'],
         'diagnosis': detection['finding'],
         'confidence': confidence,
-        'tumor_size': f"{vol_ml:.2f} mL (diameter: {diam_mm:.1f}mm)" if not insufficient_mask_data else "—",
+        'tumor_size': tumor_size_str,
         'tumor_loc': radiomics_summary['anatomical_location'] if not insufficient_mask_data else "—",
         'impression': impression,
         'risk_level': risk['risk_level'] if not insufficient_mask_data else "N/A",
@@ -260,8 +276,8 @@ def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label, u
         )
 
     loc = radiomics_summary.get('anatomical_location', 'undetermined region')
-    vol = meas.get('volume_ml', 0)
-    diam = meas.get('longest_diameter_mm', 0)
+    vol = meas.get('volume_ml') or 0.0
+    diam = meas.get('longest_diameter_mm') or 0.0
     enh = radiomics_summary.get('enhancement_pattern', 'undetermined')
     ring = radiomics_summary.get('ring_enhancement', False)
     edema = radiomics_summary.get('edema_label', 'undetermined')

@@ -100,6 +100,19 @@ def compute_risk_score(
     raw_total = sum(factor_scores.values())
     total_score = max(0, min(100, int(round(raw_total))))
 
+    # ── Separate Dual Risk Dimensions (Biological vs Surgical/Functional) ──────
+    # 1. Biological Risk (Malignancy & WHO CNS5 Grade)
+    bio_enh = factor_scores.get('enhancement', 0)
+    bio_edema = factor_scores.get('edema', 0)
+    bio_shape = factor_scores.get('shape', 0)
+    bio_grade = factor_scores.get('grade', 0)
+    bio_score = min(100, int(round((bio_enh * 1.5 + bio_edema * 1.5 + bio_shape * 2.0 + bio_grade * 3.0) * 1.2)))
+
+    # 2. Surgical / Functional Risk (Eloquent area, Resectability, Mass Effect)
+    surg_vol = factor_scores.get('volume_size', 0)
+    surg_loc = factor_scores.get('location', 0)
+    surg_score = min(100, int(round((surg_vol * 1.8 + surg_loc * 2.5))))
+
     # ── Classify Risk Level ──
     risk_level, risk_color, risk_css, clinical_note = _classify_risk(total_score)
 
@@ -117,6 +130,14 @@ def compute_risk_score(
         'risk_level': risk_level,
         'risk_color': risk_color,
         'risk_css_class': risk_css,
+        'biological_risk': {
+            'score': bio_score,
+            'level': 'High Biological Malignancy' if bio_score > 60 else ('Moderate' if bio_score > 30 else 'Low')
+        },
+        'surgical_risk': {
+            'score': surg_score,
+            'level': 'High Surgical/Functional Risk' if surg_score > 60 else ('Moderate' if surg_score > 30 else 'Lower Risk')
+        },
         'factor_scores': factor_scores,
         'factor_breakdown': factor_breakdown,
         'clinical_summary': clinical_summary,

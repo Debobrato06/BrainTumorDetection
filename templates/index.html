@@ -563,6 +563,123 @@
                         </div>
                     </div>
 
+                    <!-- Row 2.5: SE-Attention, BraTS Sub-regions & WHO CNS5 Diagnostic Analysis -->
+                    <div class="cns5-analysis-panel">
+                        <div class="panel-header">
+                            <i class="fa-solid fa-brain"></i>
+                            <h3>BraTS SE-Attention U-Net & WHO CNS5 Classification</h3>
+                        </div>
+                        <div class="cns5-grid">
+                            <!-- SE Channel Attention Weights -->
+                            <div class="cns5-card">
+                                <div class="cns5-card-header"><i class="fa-solid fa-sliders" style="color:#818cf8"></i> Sequence Channel Attention (SE Block)</div>
+                                <div class="se-weights-list">
+                                    <div class="se-weight-item">
+                                        <span class="seq-tag t1">T1 (Anatomy Baseline)</span>
+                                        <div class="se-bar-track"><div class="se-bar-fill" id="se-t1-bar" style="width:25%"></div></div>
+                                        <span class="se-pct" id="se-t1-val">25%</span>
+                                    </div>
+                                    <div class="se-weight-item">
+                                        <span class="seq-tag t1c">T1c (Enhancement / BBB)</span>
+                                        <div class="se-bar-track"><div class="se-bar-fill t1c-fill" id="se-t1c-bar" style="width:35%"></div></div>
+                                        <span class="se-pct" id="se-t1c-val">35%</span>
+                                    </div>
+                                    <div class="se-weight-item">
+                                        <span class="seq-tag t2">T2 (Pathology / Edema)</span>
+                                        <div class="se-bar-track"><div class="se-bar-fill t2-fill" id="se-t2-bar" style="width:20%"></div></div>
+                                        <span class="se-pct" id="se-t2-val">20%</span>
+                                    </div>
+                                    <div class="se-weight-item">
+                                        <span class="seq-tag flair">FLAIR (CSF-Suppressed Edema)</span>
+                                        <div class="se-bar-track"><div class="se-bar-fill flair-fill" id="se-flair-bar" style="width:20%"></div></div>
+                                        <span class="se-pct" id="se-flair-val">20%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BraTS Sub-region Volumes -->
+                            <div class="cns5-card">
+                                <div class="cns5-card-header"><i class="fa-solid fa-cubes" style="color:#34d399"></i> Sub-Region Volumetrics (BraTS Labels)</div>
+                                <div class="subregions-grid">
+                                    <div class="sr-badge-card et-card">
+                                        <span class="sr-dot red"></span>
+                                        <span class="sr-name">Enhancing Tumor (ET)</span>
+                                        <span class="sr-vol" id="sr-et-vol">— mL</span>
+                                    </div>
+                                    <div class="sr-badge-card tc-card">
+                                        <span class="sr-dot yellow"></span>
+                                        <span class="sr-name">Tumor Core (TC)</span>
+                                        <span class="sr-vol" id="sr-tc-vol">— mL</span>
+                                    </div>
+                                    <div class="sr-badge-card wt-card">
+                                        <span class="sr-dot green"></span>
+                                        <span class="sr-name">Whole Tumor (WT / Edema)</span>
+                                        <span class="sr-vol" id="sr-wt-vol">— mL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- WHO CNS5 Key Imaging Indicators -->
+                            <div class="cns5-card span-2">
+                                <div class="cns5-card-header"><i class="fa-solid fa-microscope" style="color:#f472b6"></i> WHO CNS5 Radiological Key Indicators</div>
+                                <div class="indicators-grid">
+                                    <div class="ind-item">
+                                        <span class="ind-label">Tumor Type:</span>
+                                        <span class="ind-val highlight" id="ind-tumor-type">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">Margin:</span>
+                                        <span class="ind-val" id="ind-margin">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">Enhancement Signature:</span>
+                                        <span class="ind-val" id="ind-ring">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">Necrosis (Grade 4):</span>
+                                        <span class="ind-val" id="ind-necrosis">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">DWI / ADC Restriction:</span>
+                                        <span class="ind-val" id="ind-dwi">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">Perfusion rCBV:</span>
+                                        <span class="ind-val" id="ind-perfusion">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">MRS Choline/NAA:</span>
+                                        <span class="ind-val" id="ind-mrs">—</span>
+                                    </div>
+                                    <div class="ind-item">
+                                        <span class="ind-label">Butterfly Glioma Spread:</span>
+                                        <span class="ind-val" id="ind-butterfly">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dual Risk Dimension Cards -->
+                        <div class="dual-risk-row">
+                            <div class="dual-risk-card bio-risk">
+                                <div class="dr-icon"><i class="fa-solid fa-dna"></i></div>
+                                <div class="dr-info">
+                                    <span class="dr-title">Biological Malignancy Risk</span>
+                                    <span class="dr-score" id="bio-risk-score">—</span>
+                                    <span class="dr-level" id="bio-risk-level">—</span>
+                                </div>
+                            </div>
+                            <div class="dual-risk-card surg-risk">
+                                <div class="dr-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                                <div class="dr-info">
+                                    <span class="dr-title">Functional / Surgical Risk</span>
+                                    <span class="dr-score" id="surg-risk-score">—</span>
+                                    <span class="dr-level" id="surg-risk-level">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Row 3: Risk Factor Breakdown -->
                     <div class="risk-breakdown-panel">
                         <div class="panel-header"><i class="fa-solid fa-chart-bar"></i><h3>Risk Factor Breakdown</h3></div>

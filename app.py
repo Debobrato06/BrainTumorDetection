@@ -94,6 +94,8 @@ app = Flask(__name__)
 # ─── Custom JSON Encoder / Provider for Numpy compatibility ───────────────────
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
+        if TORCH_AVAILABLE and torch is not None and isinstance(obj, torch.Tensor):
+            return obj.item() if obj.numel() == 1 else obj.detach().cpu().numpy().tolist()
         if isinstance(obj, (np.integer, np.floating, np.bool_)):
             return obj.item()
         if isinstance(obj, np.ndarray):
@@ -106,6 +108,8 @@ try:
     from flask.json.provider import DefaultJSONProvider
     class CustomJSONProvider(DefaultJSONProvider):
         def default(self, o):
+            if TORCH_AVAILABLE and torch is not None and isinstance(o, torch.Tensor):
+                return o.item() if o.numel() == 1 else o.detach().cpu().numpy().tolist()
             if isinstance(o, (np.integer, np.floating, np.bool_)):
                 return o.item()
             if isinstance(o, np.ndarray):
@@ -416,21 +420,43 @@ def predict():
             predicted_class = 0
             raw_confidence = 0.5
             grade_label_raw = "N/A"
+            tumor_type_label_raw = "Glioma"
+            se_channel_attention = {'T1': 0.25, 'T1c': 0.35, 'T2': 0.20, 'FLAIR': 0.20}
 
             if TORCH_AVAILABLE and model is not None:
                 with torch.no_grad():
-                    outputs = model(input_tensor)
-                    cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
+                    try:
+                        outputs = model(input_tensor, return_attention=True)
+                        if len(outputs) == 5:
+                            cls_logits, seg_logits, grade_logits, type_logits, se_channel_attention = outputs
+                        elif len(outputs) == 4:
+                            cls_logits, seg_logits, grade_logits, type_logits = outputs
+                        else:
+                            cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
+                            type_logits = None
 
-                    # Temperature Scaling (T=1.45) — reduces overconfidence (Rule 4)
-                    T = 1.45
-                    probs = torch.softmax(cls_logits / T, dim=1)
-                    predicted_class = torch.argmax(probs, dim=1).item()
-                    raw_confidence = float(probs[0][predicted_class].item())
+                        # Temperature Scaling (T=1.45) — reduces overconfidence
+                        T = 1.45
+                        probs = torch.softmax(cls_logits / T, dim=1)
+                        predicted_class = torch.argmax(probs, dim=1).item()
+                        raw_confidence = float(probs[0][predicted_class].item())
 
-                    grade_probs = torch.softmax(grade_logits, dim=1)
-                    grade_idx = torch.argmax(grade_probs, dim=1).item()
-                    grade_label_raw = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
+                        grade_probs = torch.softmax(grade_logits, dim=1)
+                        grade_idx = torch.argmax(grade_probs, dim=1).item()
+                        grade_label_raw = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
+
+                        if 'type_logits' in locals() and type_logits is not None:
+                            type_types = ["Glioma", "Meningioma", "Metastasis", "Medulloblastoma", "Healthy"]
+                            type_probs = torch.softmax(type_logits, dim=1)
+                            type_idx = torch.argmax(type_probs, dim=1).item()
+                            tumor_type_label_raw = type_types[min(type_idx, len(type_types)-1)]
+                    except Exception as e:
+                        print(f"Model forward pass fallback: {e}")
+                        outputs = model(input_tensor)
+                        cls_logits, seg_logits = outputs[0], outputs[1]
+                        probs = torch.softmax(cls_logits, dim=1)
+                        predicted_class = torch.argmax(probs, dim=1).item()
+                        raw_confidence = float(probs[0][predicted_class].item())
 
             # ── Heuristic Check (fallback only) ─────────────────────────────────
             heuristic_tumor, h_conf, avg_asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
@@ -446,23 +472,25 @@ def predict():
                 or scan_meta.get('warning') is not None
             )
 
-            # ── Step 4: Segmentation → Binary Mask ──────────────────────────────
+            # ── Step 4: Segmentation → Binary Mask & BraTS Sub-regions ─────────
             vol_np = tensor_to_numpy_volume(input_tensor)
             binary_mask = None
             prob_map = None
+            sub_masks = None
             overlay_b64 = ""
             seg_quality_score = 1.0
             binary_mask_has_voxels = False
 
             if PIPELINE_AVAILABLE and vol_np is not None:
                 if seg_logits is not None:
-                    binary_mask, prob_map = apply_threshold(seg_logits, threshold=threshold)
-                    # Pre-zero the mask for healthy predictions before gating
-                    # (actual gating happens via validator below)
+                    binary_mask, prob_map, sub_masks = apply_threshold(seg_logits, threshold=threshold)
                     if predicted_class == 0:
                         binary_mask = np.zeros_like(binary_mask)
+                        if sub_masks:
+                            for k in sub_masks:
+                                sub_masks[k] = np.zeros_like(sub_masks[k])
                 else:
-                    binary_mask, prob_map = extract_tumor_mask_from_heuristic(
+                    binary_mask, prob_map, sub_masks = extract_tumor_mask_from_heuristic(
                         vol_np, peak_asym, avg_asym, predicted_class == 1
                     )
 
@@ -476,7 +504,7 @@ def predict():
                 }
 
             # ════════════════════════════════════════════════════════════════════
-            # ── VALIDATION LAYER: All 8 Rules enforced here ─────────────────────
+            # ── VALIDATION LAYER ───────────────────────────────────────────────
             # ════════════════════════════════════════════════════════════════════
             from src.pipeline.pipeline_validator import validate_pipeline
 
@@ -495,16 +523,16 @@ def predict():
             is_tumor           = vld['is_tumor']
             is_indeterminate   = vld['is_indeterminate']
             final_conf         = vld['final_confidence']
-            grade_label        = vld['grade_label']          # Rule 3: stale-proof
+            grade_label        = vld['grade_label']
             gates              = vld['gates']
             insufficient_mask  = vld['insufficient_mask_data']
             status_block       = vld['status_block']
             alert              = vld['alert']
             reliability_reduced = vld['reliability_reduced']
 
-            # ── Step 5: Generate segmentation overlay (only if gate passed) ──────
+            # ── Step 5: Generate multi-color segmentation overlay ───────────────
             if is_tumor and binary_mask_has_voxels and gates.get('segmentation_passed') and vol_np is not None:
-                overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0)
+                overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0, sub_masks=sub_masks)
 
             # ── Step 6: Measurements (gate: segmentation must have passed) ───────
             px = scan_meta.get('pixel_spacing_x', 1.0)
@@ -643,13 +671,34 @@ def predict():
             if radiomics_data and radiomics_data.get('location') and gates.get('run_radiomics'):
                 tumor_loc = radiomics_data['location'].get('full_location')
 
+            # Extract sub-region volumes (ET, TC, WT)
+            sub_region_volumes = {'ET': None, 'TC': None, 'WT': None}
+            if PIPELINE_AVAILABLE and sub_masks and is_tumor and not insufficient_mask:
+                try:
+                    px_v = scan_meta.get('pixel_spacing_x', 1.0)
+                    py_v = scan_meta.get('pixel_spacing_y', 1.0)
+                    st_v = scan_meta.get('slice_thickness', 5.0)
+                    if 'ET' in sub_masks and sub_masks['ET'].any():
+                        sub_region_volumes['ET'] = round(float(compute_volume_ml(sub_masks['ET'], px_v, py_v, st_v)[0]), 2)
+                    if 'TC' in sub_masks and sub_masks['TC'].any():
+                        sub_region_volumes['TC'] = round(float(compute_volume_ml(sub_masks['TC'], px_v, py_v, st_v)[0]), 2)
+                    if 'WT' in sub_masks and sub_masks['WT'].any():
+                        sub_region_volumes['WT'] = round(float(compute_volume_ml(sub_masks['WT'], px_v, py_v, st_v)[0]), 2)
+                except Exception as e:
+                    print(f"Sub-region volume computation failed: {e}")
+
             response = {
                 # Core detection result
                 'label': result_label,
                 'confidence': round(final_conf, 4),
                 'grade': grade_label,           # Rule 3: sanitized, never stale
+                'tumor_type': tumor_type_label_raw if is_tumor else "Healthy / No Anomaly",
                 'image_b64': final_img_b64,
                 'overlay_b64': overlay_b64,
+
+                # SE-Attention Sequence Weights & BraTS Sub-regions
+                'se_channel_attention': se_channel_attention,
+                'sub_region_volumes': sub_region_volumes,
 
                 # Rule 2/3/5: Pipeline state flags
                 'insufficient_mask_data': insufficient_mask,
@@ -694,13 +743,17 @@ def predict():
                     'edema': radiomics_data.get('edema', {}) if radiomics_data else {},
                     'shape': radiomics_data.get('shape', {}) if radiomics_data else {},
                     'texture': radiomics_data.get('texture', {}) if radiomics_data else {},
+                    'who_cns5_indicators': radiomics_data.get('who_cns5_indicators', {}) if radiomics_data else {},
                     'vasari': radiomics_data.get('vasari', {}) if (radiomics_data and 'vasari' in radiomics_data) else {},
                 } if (radiomics_data and gates.get('run_radiomics')) else {},
 
                 # Risk scoring (null-safe)
                 'risk': {
+                    'total_score': risk_data.get('total_score', 0) if risk_data else 0,
                     'risk_level': risk_data.get('risk_level', 'N/A') if risk_data else 'N/A',
                     'risk_color': risk_data.get('risk_color', '#888') if risk_data else '#888',
+                    'biological_risk': risk_data.get('biological_risk', {}) if risk_data else {},
+                    'surgical_risk': risk_data.get('surgical_risk', {}) if risk_data else {},
                     'factor_breakdown': risk_data.get('factor_breakdown', []) if risk_data else [],
                     'clinical_note': risk_data.get('clinical_note', '') if risk_data else '',
                     'confidence_adjusted_score': risk_data.get('confidence_adjusted_score', 0) if risk_data else 0,
