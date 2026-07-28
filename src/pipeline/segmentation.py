@@ -92,65 +92,125 @@ def apply_threshold(seg_logits, threshold=DEFAULT_THRESHOLD):
 
 def extract_tumor_mask_from_heuristic(volume_np, asym_peak, avg_asym, is_tumor):
     """
-    Fallback: Generate an approximate tumor mask from heuristic metrics
-    when model seg output is unavailable (PyTorch not loaded).
-    Uses intensity thresholding + asymmetry weighting.
+    Generate an image-adaptive tumor mask and BraTS sub-region masks (ET, TC, WT)
+    directly from image intensity distribution and spatial asymmetry.
     """
+    if volume_np.ndim == 4:
+        shape = volume_np.shape[1:]
+        img_3d = volume_np[min(3, volume_np.shape[0] - 1)]
+    else:
+        shape = volume_np.shape
+        img_3d = volume_np
+
     if not is_tumor:
-        if volume_np.ndim == 4:
-            shape = volume_np.shape[1:]
-        else:
-            shape = volume_np.shape
         empty_mask = np.zeros(shape, dtype=bool)
         empty_prob = np.zeros(shape, dtype=np.float32)
         return empty_mask, empty_prob, {'ET': empty_mask, 'TC': empty_mask, 'WT': empty_mask}
 
     try:
-        from skimage import filters, exposure, morphology as morph
-        if volume_np.ndim == 4:
-            img = volume_np[min(3, volume_np.shape[0] - 1)]
-        else:
-            img = volume_np
-
-        D, H, W = img.shape
+        from skimage import filters, exposure, morphology as morph, measure
+        D, H, W = img_3d.shape
         prob_map = np.zeros((D, H, W), dtype=np.float32)
         binary_mask = np.zeros((D, H, W), dtype=bool)
 
         center_d = D // 2
-        for d_off in range(-8, 9):
-            d = center_d + d_off
-            if d < 0 or d >= D:
-                continue
-            sl = img[d]
-            try:
-                sl_enh = exposure.equalize_adapthist(sl, clip_limit=0.04)
-                thresh_hi = np.percentile(sl_enh, 85)
-                thresh_lo = np.percentile(sl_enh, 15)
-                anomaly = (sl_enh > thresh_hi) | (sl_enh < thresh_lo)
-                weight = min(1.0, asym_peak * 2.0)
-                prob_map[d][anomaly] = weight * 0.8
-                binary_mask[d] = (prob_map[d] > 0.4)
-            except Exception:
-                pass
+        slice_indices = range(max(0, center_d - 6), min(D, center_d + 7))
 
+        for d in slice_indices:
+            sl = img_3d[d].copy()
+            s_min, s_max = sl.min(), sl.max()
+            if s_max <= s_min:
+                continue
+            sl_norm = (sl - s_min) / (s_max - s_min + 1e-8)
+            sl_norm = np.clip(sl_norm, 0.0, 1.0)
+
+            # Brain tissue mask (exclude dark background)
+            bg_thresh = np.percentile(sl_norm, 20)
+            brain_mask = sl_norm > bg_thresh
+
+            if not np.any(brain_mask):
+                continue
+
+            try:
+                sl_enh = exposure.equalize_adapthist(sl_norm, clip_limit=0.04)
+            except Exception:
+                sl_enh = sl_norm
+
+            brain_pixels = sl_enh[brain_mask]
+            p85 = np.percentile(brain_pixels, 85)
+            p95 = np.percentile(brain_pixels, 95)
+
+            # Identify hyperintense anomaly region (typical SOL/lesion behavior)
+            lesion_candidates = (sl_enh >= p85) & brain_mask
+
+            # Measure spatial asymmetry to focus on the anomalous side
+            mid_w = W // 2
+            left = sl_enh[:, :mid_w]
+            right = np.fliplr(sl_enh[:, W - mid_w:])
+            w_min = min(left.shape[1], right.shape[1])
+            asym_map = np.abs(left[:, :w_min] - right[:, :w_min])
+
+            asym_full = np.zeros_like(sl_enh)
+            asym_full[:, :w_min] += asym_map
+            asym_full[:, W - w_min:] += np.fliplr(asym_map)
+
+            asym_thresh = np.percentile(asym_full[brain_mask], 75) if np.any(brain_mask) else 0.2
+            lesion_mask_2d = lesion_candidates & (asym_full >= asym_thresh)
+
+            if not np.any(lesion_mask_2d):
+                lesion_mask_2d = (sl_enh >= p95) & brain_mask
+
+            # Keep largest connected components (actual lesion)
+            labeled = measure.label(lesion_mask_2d)
+            if labeled.max() > 0:
+                regions = measure.regionprops(labeled)
+                regions.sort(key=lambda r: r.area, reverse=True)
+                valid_mask = np.zeros_like(lesion_mask_2d, dtype=bool)
+                for r in regions[:2]:  # Keep top 2 lesion components
+                    if r.area >= 15:
+                        valid_mask[labeled == r.label] = True
+                lesion_mask_2d = valid_mask
+
+            binary_mask[d] = lesion_mask_2d
+            prob_map[d] = (sl_enh * 0.7) + (asym_full * 0.3)
+
+        # 3D Post-processing: cleanup small noise
         if SKIMAGE_AVAILABLE and binary_mask.any():
             try:
-                binary_mask = morph.remove_small_objects(binary_mask, min_size=10)
+                binary_mask = morph.remove_small_objects(binary_mask, min_size=15)
             except Exception:
                 pass
 
+        # Build realistic sub-region masks (ET inside TC inside WT)
+        wt_mask = binary_mask.copy()
+        tc_mask = np.zeros_like(wt_mask)
+        et_mask = np.zeros_like(wt_mask)
+
+        if wt_mask.any():
+            try:
+                for d in range(D):
+                    if wt_mask[d].any():
+                        tc_mask[d] = morph.binary_erosion(wt_mask[d], morph.disk(1))
+                        et_mask[d] = morph.binary_erosion(wt_mask[d], morph.disk(2))
+            except Exception:
+                tc_mask = wt_mask.copy()
+                et_mask = wt_mask.copy()
+
+        # Ensure non-empty sub-masks if WT exists
+        if wt_mask.any() and not tc_mask.any():
+            tc_mask = wt_mask.copy()
+        if wt_mask.any() and not et_mask.any():
+            et_mask = tc_mask.copy()
+
         sub_masks = {
-            'ET': binary_mask,
-            'TC': binary_mask,
-            'WT': binary_mask
+            'ET': et_mask,
+            'TC': tc_mask,
+            'WT': wt_mask
         }
         return binary_mask, prob_map, sub_masks
 
-    except Exception:
-        if volume_np.ndim == 4:
-            shape = volume_np.shape[1:]
-        else:
-            shape = volume_np.shape
+    except Exception as e:
+        print(f"[Heuristic Mask] Exception during extraction: {e}")
         empty_mask = np.zeros(shape, dtype=bool)
         empty_prob = np.zeros(shape, dtype=np.float32)
         return empty_mask, empty_prob, {'ET': empty_mask, 'TC': empty_mask, 'WT': empty_mask}

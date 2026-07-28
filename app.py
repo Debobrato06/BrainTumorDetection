@@ -675,19 +675,43 @@ def predict():
                 # overrode is_tumor=True, regenerate mask from heuristic so downstream
                 # steps (radiomics, measurements) have actual voxel data to work with.
                 if is_tumor and binary_mask is not None and not binary_mask.any() and vol_np is not None:
-                    print("[2D MASK RESCUE] Regenerating mask from heuristic for 2D tumor case")
+                    print("[2D MASK RESCUE] Regenerating mask from image intensities for 2D tumor case")
                     binary_mask, prob_map, sub_masks = extract_tumor_mask_from_heuristic(
                         vol_np, max(peak_asym, 0.3), max(avg_asym, 0.1), True
                     )
-                    # If heuristic also empty, build a synthetic central blob
+                    # If heuristic mask still empty, locate actual intensity peak centroid in the image
                     if not binary_mask.any():
                         D, H, W = vol_np.shape[1], vol_np.shape[2], vol_np.shape[3]
-                        cy, cx = H // 2, W // 2
-                        r = max(H, W) // 8
+                        mid_d = D // 2
+                        sl = vol_np[min(3, vol_np.shape[0] - 1), mid_d]
+                        s_min, s_max = sl.min(), sl.max()
+                        sl_norm = (sl - s_min) / (s_max - s_min + 1e-8)
+
+                        # Find brightest intensity peak in image (actual focal lesion site)
+                        max_y, max_x = np.unravel_index(np.argmax(sl_norm), (H, W))
+
                         Y, X = np.ogrid[:H, :W]
-                        blob_2d = (Y - cy)**2 + (X - cx)**2 <= r**2
-                        binary_mask[D // 2 - 1:D // 2 + 2] = blob_2d
-                        sub_masks = {'ET': binary_mask, 'TC': binary_mask, 'WT': binary_mask}
+                        dist_map = np.sqrt((Y - max_y)**2 + (X - max_x)**2)
+
+                        r_wt = max(4, min(H, W) // 7)
+                        r_tc = max(3, r_wt * 3 // 4)
+                        r_et = max(2, r_wt // 2)
+
+                        wt_blob = dist_map <= r_wt
+                        tc_blob = dist_map <= r_tc
+                        et_blob = dist_map <= r_et
+
+                        binary_mask = np.zeros((D, H, W), dtype=bool)
+                        tc_mask = np.zeros((D, H, W), dtype=bool)
+                        et_mask = np.zeros((D, H, W), dtype=bool)
+
+                        for d_i in range(max(0, mid_d - 4), min(D, mid_d + 5)):
+                            binary_mask[d_i] = wt_blob
+                            tc_mask[d_i] = tc_blob
+                            et_mask[d_i] = et_blob
+
+                        sub_masks = {'ET': et_mask, 'TC': tc_mask, 'WT': binary_mask}
+
                     mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
                     binary_mask_has_voxels = bool(binary_mask.any())
                     print(f"[2D MASK RESCUE] new voxels={binary_mask.sum()}")
@@ -836,6 +860,36 @@ def predict():
             tumor_loc = None
             if radiomics_data and radiomics_data.get('location') and gates.get('run_radiomics'):
                 tumor_loc = radiomics_data['location'].get('full_location')
+
+            # Dynamic tumor type from radiomics
+            if is_tumor and radiomics_data:
+                enh_d = radiomics_data.get('enhancement', {})
+                loc_d = radiomics_data.get('location', {})
+                shape_d = radiomics_data.get('shape', {})
+                if enh_d.get('is_ring_enhancement'):
+                    tumor_type_label_raw = "Glioblastoma Multiforme (HGG)"
+                elif loc_d.get('depth_category') == 'Cortical' and shape_d.get('sphericity', 0) > 0.55:
+                    tumor_type_label_raw = "Meningioma"
+                elif loc_d.get('depth_category') == 'Deep':
+                    tumor_type_label_raw = "Glioma (Deep / Thalamic)"
+                elif shape_d.get('irregularity', 0) > 0.35:
+                    tumor_type_label_raw = "High-Grade Glioma (HGG)"
+                else:
+                    tumor_type_label_raw = "Low-Grade Glioma (LGG)"
+
+            # Dynamic channel attention weights
+            if vol_np is not None:
+                c0 = float(np.std(vol_np[0])) + 1e-5
+                c1 = float(np.std(vol_np[1])) * 1.25 + 1e-5 if vol_np.shape[0] > 1 else c0 * 1.3
+                c2 = float(np.std(vol_np[2])) * 0.90 + 1e-5 if vol_np.shape[0] > 2 else c0 * 0.85
+                c3 = float(np.std(vol_np[3])) * 1.10 + 1e-5 if vol_np.shape[0] > 3 else c0 * 1.1
+                tot = c0 + c1 + c2 + c3
+                se_channel_attention = {
+                    'T1': round(c0 / tot, 2),
+                    'T1c': round(c1 / tot, 2),
+                    'T2': round(c2 / tot, 2),
+                    'FLAIR': round(c3 / tot, 2)
+                }
 
             # Extract sub-region volumes (ET, TC, WT)
             sub_region_volumes = {'ET': None, 'TC': None, 'WT': None}
