@@ -92,8 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
             stopBtn.disabled = false;
             startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Initializing...';
             logsContainer.innerHTML = '<div class="log-line system">> Connecting to Neural Engine...</div>';
-            statusBadge.classList.add('active');
-            statusBadge.querySelector('.status-label').innerText = 'Engine Active';
+            if (statusBadge) {
+                statusBadge.classList.add('active');
+                const lbl = statusBadge.querySelector('.status-label');
+                if (lbl) lbl.innerText = 'Engine Active';
+            }
 
             fetch('/start_training', {
                 method: 'POST',
@@ -127,8 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
         startBtn.disabled = false;
         stopBtn.disabled = true;
         startBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Launch Engine';
-        statusBadge.classList.remove('active');
-        statusBadge.querySelector('.status-label').innerText = 'Engine Standby';
+        if (statusBadge) {
+            statusBadge.classList.remove('active');
+            const lbl = statusBadge.querySelector('.status-label');
+            if (lbl) lbl.innerText = 'Engine Standby';
+        }
         if (pollInterval) clearInterval(pollInterval);
     }
 
@@ -1049,7 +1055,8 @@ tr:last-child td{border-bottom:none;}
 
     function loadReports() {
         if (!reportsTableBody) return;
-        if (refreshReportsBtn) refreshReportsBtn.querySelector('i').classList.add('fa-spin');
+        const spinIcon = refreshReportsBtn ? refreshReportsBtn.querySelector('i') : null;
+        if (spinIcon) spinIcon.classList.add('fa-spin');
         reportsTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:3rem;opacity:0.5;">Synchronizing with Archive...</td></tr>';
 
         fetch('/get_reports')
@@ -1106,7 +1113,7 @@ tr:last-child td{border-bottom:none;}
                 reportsTableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--danger)">Error: ${e}</td></tr>`;
             })
             .finally(() => {
-                if (refreshReportsBtn) refreshReportsBtn.querySelector('i').classList.remove('fa-spin');
+                if (spinIcon) spinIcon.classList.remove('fa-spin');
             });
     }
 

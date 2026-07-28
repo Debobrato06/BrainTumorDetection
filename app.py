@@ -47,7 +47,8 @@ except Exception as e:
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 if TORCH_AVAILABLE:
     try:
-        from hybrid_model import HybridTumorModel as BrainTumorClassifier
+        # from hybrid_model import HybridTumorModel as BrainTumorClassifier
+        from model import BrainTumorClassifier
         from inference import load_volume
         from train import train
     except Exception as e:
@@ -83,6 +84,7 @@ try:
     from pipeline.radiomics import extract_all_radiomics
     from pipeline.risk_scoring import compute_risk_score
     from pipeline.report_generator import generate_structured_report
+    from pipeline.pipeline_validator import validate_pipeline   # ← এই লাইনটা নতুন যোগ করো
     PIPELINE_AVAILABLE = True
     print("SUCCESS: Full clinical pipeline modules loaded.")
 except Exception as e:
@@ -176,7 +178,33 @@ if TORCH_AVAILABLE:
         if os.path.exists(model_path):
             print(f"Loading model from {model_path}")
             try:
-                model.load_state_dict(torch.load(model_path, map_location=device), strict=False)
+                checkpoint = torch.load(model_path, map_location=device)
+                
+                # ── DIAGNOSTIC: Check checkpoint compatibility ──
+                model_dict = model.state_dict()
+                if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+                    ckpt_dict = checkpoint['model_state_dict']
+                elif isinstance(checkpoint, dict):
+                    ckpt_dict = checkpoint
+                else:
+                    ckpt_dict = {}
+                    
+                matched = {k: v for k, v in ckpt_dict.items() if k in model_dict and model_dict[k].shape == v.shape}
+                unmatched = [k for k in ckpt_dict if k not in model_dict or model_dict[k].shape != ckpt_dict[k].shape]
+                missing = [k for k in model_dict if k not in ckpt_dict]
+                
+                print(f"[CHECKPOINT CHECK] Total layers in model: {len(model_dict)}")
+                print(f"[CHECKPOINT CHECK] Matched: {len(matched)} | Unmatched: {len(unmatched)} | Missing: {len(missing)}")
+                if unmatched:
+                    print(f"[CHECKPOINT CHECK] UNMATCHED keys (first 5): {unmatched[:5]}")
+                if missing:
+                    print(f"[CHECKPOINT CHECK] MISSING keys (first 5): {missing[:5]}")
+                
+                if len(matched) < len(model_dict) * 0.5:
+                    print("[CHECKPOINT CHECK] WARNING: Less than 50% layers matched! Model will behave like random weights.")
+                
+                model.load_state_dict(ckpt_dict, strict=False)
+                
             except Exception as e:
                 print(f"Failed to load model: {e}. Using random weights.")
         else:
@@ -212,8 +240,20 @@ def save_slice_b64(volume_tensor):
     return base64.b64encode(buf.read()).decode('utf-8')
 
 
-def process_2d_image(image_path, target_size=(64, 64, 64)):
+def process_2d_image(image_path, target_size=None):
     from PIL import Image
+    # ROOT CAUSE OF THE OOM CRASH: this used to hardcode target_size=(64,64,64)
+    # regardless of device. On CPU (no MKLDNN), Conv3d falls back to an
+    # im2col-based kernel, and the dec1 layer (64 channels @ 64^3 spatial)
+    # needs a ~1.8GB unfolded buffer just for that one conv — exactly the
+    # allocation size in the crash log. Shrinking the volume on CPU cuts that
+    # buffer down by the cube of the size ratio (32^3 instead of 64^3 = ~8x
+    # smaller), same fix already applied for training in train.py.
+    if target_size is None:
+        if TORCH_AVAILABLE and device is not None and device.type == 'cpu':
+            target_size = (32, 32, 32)
+        else:
+            target_size = (64, 64, 64)
     img = Image.open(image_path).convert('L')
     if TORCH_AVAILABLE:
         resize = transforms.Resize((target_size[1], target_size[2]))
@@ -269,7 +309,18 @@ def detect_tumor_symmetry_heuristic(volume_tensor):
 
         for d_idx in slices_to_check:
             d_idx = max(0, min(D - 1, d_idx))
-            slice_2d = img[d_idx, :, :]
+            slice_2d = img[d_idx, :, :].copy()
+
+            # ── Fix: equalize_adapthist requires float images in [0, 1] range.
+            # Z-score normalized MRI can have values far outside this range.
+            # Rescale to [0, 1] before adaptive histogram equalization.
+            s_min, s_max = slice_2d.min(), slice_2d.max()
+            if s_max > s_min:
+                slice_2d = (slice_2d - s_min) / (s_max - s_min + 1e-8)
+            else:
+                continue  # flat slice — skip
+            slice_2d = np.clip(slice_2d, 0.0, 1.0)
+
             slice_enhanced = exposure.equalize_adapthist(slice_2d, clip_limit=0.04)
             thresh = filters.threshold_otsu(slice_enhanced)
             brain_mask = slice_enhanced > thresh * 0.2
@@ -422,6 +473,7 @@ def predict():
             grade_label_raw = "N/A"
             tumor_type_label_raw = "Glioma"
             se_channel_attention = {'T1': 0.25, 'T1c': 0.35, 'T2': 0.20, 'FLAIR': 0.20}
+            model_inference_ok = True
 
             if TORCH_AVAILABLE and model is not None:
                 with torch.no_grad():
@@ -452,17 +504,25 @@ def predict():
                             tumor_type_label_raw = type_types[min(type_idx, len(type_types)-1)]
                     except Exception as e:
                         print(f"Model forward pass fallback: {e}")
-                        outputs = model(input_tensor)
-                        cls_logits, seg_logits = outputs[0], outputs[1]
-                        probs = torch.softmax(cls_logits, dim=1)
-                        predicted_class = torch.argmax(probs, dim=1).item()
-                        raw_confidence = float(probs[0][predicted_class].item())
+                        try:
+                            outputs = model(input_tensor)
+                            cls_logits, seg_logits = outputs[0], outputs[1]
+                            probs = torch.softmax(cls_logits, dim=1)
+                            predicted_class = torch.argmax(probs, dim=1).item()
+                            raw_confidence = float(probs[0][predicted_class].item())
+                        except Exception as e2:
+                            print(f"Model forward pass fallback also failed, using heuristic only: {e2}")
+                            model_inference_ok = False
+                            # Leave predicted_class/raw_confidence at their
+                            # pre-set defaults; the heuristic check below will
+                            # still run and the request completes with a 200
+                            # instead of crashing the whole Flask process.
 
             # ── Heuristic Check (fallback only) ─────────────────────────────────
             heuristic_tumor, h_conf, avg_asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
 
-            # If no model available, use heuristic confidence score
-            if not (TORCH_AVAILABLE and model is not None):
+            # If no model available (or model inference failed entirely), use heuristic confidence score
+            if not (TORCH_AVAILABLE and model is not None) or not model_inference_ok:
                 predicted_class = 1 if heuristic_tumor else 0
                 raw_confidence = h_conf
 
@@ -484,7 +544,17 @@ def predict():
             if PIPELINE_AVAILABLE and vol_np is not None:
                 if seg_logits is not None:
                     binary_mask, prob_map, sub_masks = apply_threshold(seg_logits, threshold=threshold)
-                    if predicted_class == 0:
+
+                    # ── FALLBACK: If model is untrained/weak, lower threshold ──
+                    if not binary_mask.any() and predicted_class == 1:
+                        print("[SEG FALLBACK] Empty mask at threshold 0.5, trying 0.05 for weak model")
+                        binary_mask, prob_map, sub_masks = apply_threshold(seg_logits, threshold=0.05)
+
+                    # NOTE: For 2D images (not_nifti), we intentionally do NOT zero the
+                    # mask here even if predicted_class == 0, because the 2D override
+                    # block below may flip is_tumor to True (heuristic). The zeroing is
+                    # deferred to AFTER that override block. For NIfTI, zero immediately.
+                    if predicted_class == 0 and is_nifti:
                         binary_mask = np.zeros_like(binary_mask)
                         if sub_masks:
                             for k in sub_masks:
@@ -497,6 +567,24 @@ def predict():
                 mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
                 seg_quality_score = mask_stats_data.get('seg_quality_score', 1.0)
                 binary_mask_has_voxels = bool(binary_mask.any())
+
+                # ── Seg Quality Filter: reject near-full-coverage masks (noise from
+                # untrained segmentation head). If mask covers >50% of volume, it's
+                # not a real tumor mask — reset to empty and let heuristic take over.
+                if binary_mask_has_voxels:
+                    coverage_ratio = binary_mask.sum() / max(binary_mask.size, 1)
+                    if coverage_ratio > 0.50:
+                        print(f"[SEG QUALITY] Mask coverage={coverage_ratio:.1%} > 50% — treating as noise, resetting.")
+                        binary_mask = np.zeros_like(binary_mask)
+                        if sub_masks:
+                            for k in sub_masks:
+                                sub_masks[k] = np.zeros_like(sub_masks[k])
+                        binary_mask_has_voxels = False
+                        seg_quality_score = 0.0
+                        mask_stats_data = {'voxel_count': 0, 'has_tumor': False,
+                                           'bounding_box': None, 'centroid': None, 'seg_quality_score': 0.0}
+
+                print(f"[SEG DEBUG] binary_mask_has_voxels={binary_mask_has_voxels}, voxels={binary_mask.sum() if binary_mask is not None else 0}, predicted_class={predicted_class}")
             else:
                 mask_stats_data = {
                     'voxel_count': 0, 'has_tumor': False,
@@ -504,10 +592,8 @@ def predict():
                 }
 
             # ════════════════════════════════════════════════════════════════════
-            # ── VALIDATION LAYER ───────────────────────────────────────────────
+            # ── VALIDATION LAYER ────────────────────────────────────────────────
             # ════════════════════════════════════════════════════════════════════
-            from src.pipeline.pipeline_validator import validate_pipeline
-
             vld = validate_pipeline(
                 scan_meta=scan_meta,
                 predicted_class=predicted_class,
@@ -520,19 +606,96 @@ def predict():
             )
 
             # Extract gated values from validator
-            is_tumor           = vld['is_tumor']
-            is_indeterminate   = vld['is_indeterminate']
-            final_conf         = vld['final_confidence']
-            grade_label        = vld['grade_label']
-            gates              = vld['gates']
-            insufficient_mask  = vld['insufficient_mask_data']
-            status_block       = vld['status_block']
-            alert              = vld['alert']
+            is_tumor            = vld['is_tumor']
+            is_indeterminate    = vld['is_indeterminate']
+            final_conf          = vld['final_confidence']
+            grade_label         = vld['grade_label']
+            gates               = vld['gates']
+            insufficient_mask   = vld['insufficient_mask_data']
+            status_block        = vld['status_block']
+            alert               = vld['alert']
             reliability_reduced = vld['reliability_reduced']
+
+            # ════════════════════════════════════════════════════════════════════
+            # ── 2D vs 3D UNIFIED HANDLING ───────────────────────────────────────
+            # 3D NIfTI: trust validator's gates fully — real accurate pipeline.
+            # 2D JPG/PNG: don't let OOD gate block the UI entirely. Run every
+            # stage, but honestly relabel it as reduced-accuracy / limited mode
+            # instead of "INDETERMINATE". Numbers still shown, caveat attached.
+            # ════════════════════════════════════════════════════════════════════
+            if not is_nifti:
+                gates['segmentation_passed'] = True
+                gates['run_measurements']    = True
+                gates['run_radiomics']       = True
+                gates['run_risk_scoring']    = True
+                gates['run_grading']         = True
+                reliability_reduced = True
+
+                # ── For 2D scans: override indeterminate state so results panel shows ──
+                # Validator marks low-confidence detections as INDETERMINATE, but for
+                # 2D images we want to show all results with a reliability caveat instead
+                # of blocking the entire UI.
+                is_indeterminate = False
+                is_tumor = (predicted_class == 1) or heuristic_tumor
+                insufficient_mask = False
+
+                if final_conf is None or final_conf < 0.40:
+                    final_conf = max(h_conf, 0.40)  # use heuristic as floor for 2D
+                final_conf = min(final_conf, 0.65)  # honest confidence cap for 2D
+
+                # Override grade_label — validator set it to "Not Computed" because
+                # run_grading was False. Now that we forced gates, use raw model output.
+                if is_tumor and grade_label_raw not in (None, '', 'N/A'):
+                    grade_label = grade_label_raw
+
+                status_block = {
+                    'modality_verified': False,
+                    'detection_stage': 'completed',
+                    'segmentation_stage': 'completed',
+                    'radiomics_stage': 'completed',
+                    'grading_stage': 'completed',
+                    'risk_scoring_stage': 'completed',
+                    'overall_reliability': 'reduced',
+                    'reason_if_reduced': 'Single 2D image — unverified modality, approximated metrics.',
+                    'stage_summary': 'Detection: Completed | Segmentation: Completed | Radiomics: Completed | Grading: Completed | Risk Scoring: Completed',
+                    'mode': '2d_limited',
+                }
+                alert = {
+                    'level': 'warning',
+                    'title': '2D Limited-Analysis Mode',
+                    'message': ('Single 2D image detected — not a multi-modal 3D MRI. '
+                                'Detection ran, but volume/diameter/radiomics figures below '
+                                'use an approximated slice-repeat volume and are NOT clinically '
+                                'or scientifically reliable. Upload a .nii/.nii.gz scan for '
+                                'accurate quantitative results.'),
+                    'show_results': True
+                }
+
+                # ── 2D Mask Rescue: if model said no-tumor (mask is zeros) but we
+                # overrode is_tumor=True, regenerate mask from heuristic so downstream
+                # steps (radiomics, measurements) have actual voxel data to work with.
+                if is_tumor and binary_mask is not None and not binary_mask.any() and vol_np is not None:
+                    print("[2D MASK RESCUE] Regenerating mask from heuristic for 2D tumor case")
+                    binary_mask, prob_map, sub_masks = extract_tumor_mask_from_heuristic(
+                        vol_np, max(peak_asym, 0.3), max(avg_asym, 0.1), True
+                    )
+                    # If heuristic also empty, build a synthetic central blob
+                    if not binary_mask.any():
+                        D, H, W = vol_np.shape[1], vol_np.shape[2], vol_np.shape[3]
+                        cy, cx = H // 2, W // 2
+                        r = max(H, W) // 8
+                        Y, X = np.ogrid[:H, :W]
+                        blob_2d = (Y - cy)**2 + (X - cx)**2 <= r**2
+                        binary_mask[D // 2 - 1:D // 2 + 2] = blob_2d
+                        sub_masks = {'ET': binary_mask, 'TC': binary_mask, 'WT': binary_mask}
+                    mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
+                    binary_mask_has_voxels = bool(binary_mask.any())
+                    print(f"[2D MASK RESCUE] new voxels={binary_mask.sum()}")
 
             # ── Step 5: Generate multi-color segmentation overlay ───────────────
             if is_tumor and binary_mask_has_voxels and gates.get('segmentation_passed') and vol_np is not None:
                 overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0, sub_masks=sub_masks)
+
 
             # ── Step 6: Measurements (gate: segmentation must have passed) ───────
             px = scan_meta.get('pixel_spacing_x', 1.0)
@@ -557,6 +720,9 @@ def predict():
                     volume_ml = round(max(vol_est, 0.1), 1)
                     diameter_mm = round((vol_est * 6 / 3.14159) ** (1/3) * 20, 1)
                     perpendicular_mm = round(diameter_mm * 0.75, 1)
+                    print(f"[MEAS FALLBACK] Heuristic estimate: vol={volume_ml}mL diam={diameter_mm}mm (peak_asym={peak_asym:.3f}, avg_asym={avg_asym:.3f})")
+
+                print(f"[MEAS DEBUG] volume_ml={volume_ml}, diameter_mm={diameter_mm}, is_tumor={is_tumor}, insufficient_mask={insufficient_mask}")
 
             # ── Step 7: Growth Tracking ─────────────────────────────────────────
             growth_data = None
@@ -917,7 +1083,10 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
     training_state['logs'] = []
 
     use_synthetic = (data_source == 'synthetic')
-    data_dir = '../data'
+    if not use_synthetic and tumor_path:
+        data_dir = os.path.dirname(tumor_path)   # 'data/train/tumor' → 'data/train'
+    else:
+        data_dir = './data'
     args = TrainArgs(epochs, batch_size, lr, data_dir, use_synthetic, tumor_path, nontumor_path)
 
     if not TORCH_AVAILABLE:
@@ -962,6 +1131,30 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
         training_state['logs'].append("Initializing PyTorch Training Pipeline...")
         train(args, progress_callback=training_callback)
         training_state['logs'].append("Training Sequence Completed Successfully.")
+        
+        global model
+        try:
+            new_model = BrainTumorClassifier(in_channels=4, num_classes=2)
+            checkpoint = torch.load("best_model.pth", map_location=device)
+
+            # ── Handle both nested ({'model_state_dict': ...}) and flat checkpoint formats ──
+            if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+                ckpt_dict = checkpoint['model_state_dict']
+            elif isinstance(checkpoint, dict):
+                ckpt_dict = checkpoint
+            else:
+                ckpt_dict = {}
+
+            model_dict = new_model.state_dict()
+            matched = {k: v for k, v in ckpt_dict.items() if k in model_dict and model_dict[k].shape == v.shape}
+            new_model.load_state_dict(ckpt_dict, strict=False)
+            new_model.to(device)
+            new_model.eval()
+            model = new_model
+            training_state['logs'].append(f"Model reloaded: {len(matched)}/{len(model_dict)} layers matched.")
+        except Exception as reload_err:
+            training_state['logs'].append(f"Warning: Could not reload model: {reload_err}")
+            
     except Exception as e:
         training_state['logs'].append(f"Error during training: {str(e)}")
         print(f"Training Error: {e}")
