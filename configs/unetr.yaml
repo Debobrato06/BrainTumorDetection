@@ -1,0 +1,29 @@
+experiment: unetr
+data:
+  cache_root: data/brats2021_cache      # created by scripts/prepare_brats.py
+  splits_csv: splits/brats2021_splits.csv
+  crop_size: [128, 128, 128]
+  fg_prob: 0.66
+model:
+  name: unetr
+loss:
+  w_seg: 1.0
+  w_cls: 0.0
+  w_grade: 0.0
+  tversky_alpha: 0.3
+  tversky_beta: 0.7
+train:
+  epochs: 300
+  batch_size: 2
+  lr: 0.0001
+  weight_decay: 0.0001
+  warmup_epochs: 10
+  precision: 16-mixed
+  num_workers: 4
+  seed: 42
+  val_every: 10
+  grad_clip: 1.0
+  mask_ratio: 0.75
+eval:
+  sw_overlap: 0.5
+  sw_batch_size: 2

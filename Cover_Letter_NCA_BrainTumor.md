@@ -1,3 +1,5 @@
+> **DRAFT — NOT FOR SUBMISSION** until the manuscript results are filled in.
+
 # COVER LETTER
 
 **To:**
@@ -36,9 +38,9 @@ Our manuscript presents **BrainHybridNet**, a unified framework that directly ad
 
 This work makes the following **original contributions** that, to the best of our knowledge, have not been previously reported in combination:
 
-1. **Hybrid CNN-Transformer Architecture**: A ResNet-style CNN stem extracts high-resolution local texture features, while a Vision Transformer (ViT) bottleneck captures long-range volumetric context — achieving a superior local-global feature fusion.
+1. **Hybrid CNN-Transformer Architecture**: A ResNet-style CNN stem extracts high-resolution local texture features, while a Vision Transformer (ViT) bottleneck captures long-range volumetric context.
 
-2. **Self-Supervised Pre-training (MAE)**: The encoder is pre-trained using a Masked Autoencoder (MAE) strategy on unlabeled MRI volumes, enabling robust feature learning without full annotation — a critical advantage in data-scarce clinical environments.
+2. **Self-Supervised Pre-training (Masked Image Modeling)**: The encoder is pre-trained with 3D masked image modeling on unlabeled MRI volumes, enabling robust feature learning without full annotation — a critical advantage in data-scarce clinical environments.
 
 3. **Joint Multi-Task Inference**: A single forward pass simultaneously produces (a) binary tumor detection classification, (b) voxel-level segmentation masks, and (c) WHO-grade prediction (LGG vs. HGG) — reducing inference time compared to running separate models.
 
@@ -50,19 +52,7 @@ This work makes the following **original contributions** that, to the best of ou
 
 ## Performance Summary
 
-Evaluated on the **BraTS 2021 benchmark** (multi-modal MRI: T1, T1ce, T2, FLAIR; 1,251 subjects), our method achieves:
-
-| Metric | BrainHybridNet (Ours) | U-Net Baseline | TransUNet | SwinUNETR |
-|---|---|---|---|---|
-| Dice (Whole Tumor) | **0.891** | 0.853 | 0.872 | 0.884 |
-| Dice (Tumor Core) | **0.842** | 0.798 | 0.821 | 0.836 |
-| Dice (Enhancing Tumor) | **0.803** | 0.752 | 0.779 | 0.791 |
-| Classification Accuracy | **94.3%** | 89.1% | 91.5% | 93.1% |
-| WHO Grade Accuracy | **88.7%** | — | — | 85.2% |
-| Parameters (M) | **12.4** | 31.2 | 87.5 | 62.2 |
-| Inference Time (ms/vol) | **38** | 112 | 245 | 189 |
-
-Our model is **~2.5× more parameter-efficient** than SwinUNETR while achieving superior segmentation Dice on all three sub-regions.
+[TBD: fill only after the experiments, copying numbers from the manuscript's Table 1, which comes from `src/stats.py`. Baselines: 3D U-Net, SegResNet, UNETR, SwinUNETR and nnU-Net, re-trained on identical splits.]
 
 ---
 
@@ -70,7 +60,7 @@ Our model is **~2.5× more parameter-efficient** than SwinUNETR while achieving 
 
 This manuscript is directly aligned with the scope of *Neural Computing and Applications*, which publishes work at the intersection of neural networks, hybrid learning systems, and real-world applications. Our work bridges:
 
-- **Deep learning theory**: Transformer self-attention, MAE pre-training, Tversky loss
+- **Deep learning theory**: Transformer self-attention, masked image modeling pre-training, Tversky loss
 - **Clinical application**: Brain tumor grading, segmentation, interpretability
 - **Computational efficiency**: Lightweight design for clinical deployment
 

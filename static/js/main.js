@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (confBarFill) confBarFill.style.width = confPct + '%';
         if (confCaveat) {
             confCaveat.textContent = reliabilityReduced
-                ? '* Confidence capped \u2014 unverified modality or out-of-distribution scan'
+                ? '* Reduced reliability \u2014 single 2D image or unverified scan type'
                 : '';
             confCaveat.classList.toggle('hidden', !reliabilityReduced);
         }
@@ -522,13 +522,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ── SE Channel Attention Weights ──────────────────────────────────────
-        const seAttn = data.se_channel_attention || { T1: 0.25, T1c: 0.35, T2: 0.20, FLAIR: 0.20 };
+        // null for 2D uploads: a single image has no MRI sequences to weight
+        const seAttn = data.se_channel_attention || {};
         const setSeBar = (idBar, idVal, val) => {
             const bar = document.getElementById(idBar);
             const text = document.getElementById(idVal);
-            const pct = Math.round((val || 0) * 100);
+            const hasVal = typeof val === 'number';
+            const pct = hasVal ? Math.round(val * 100) : 0;
             if (bar) bar.style.width = pct + '%';
-            if (text) text.textContent = pct + '%';
+            if (text) text.textContent = hasVal ? pct + '%' : 'N/A';
         };
         setSeBar('se-t1-bar', 'se-t1-val', seAttn.T1);
         setSeBar('se-t1c-bar', 'se-t1c-val', seAttn.T1c);
@@ -543,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── WHO CNS5 Key Radiological Indicators ──────────────────────────────
         const whoInd = (rad && rad.who_cns5_indicators) ? rad.who_cns5_indicators : {};
-        setText('ind-tumor-type', isTumor ? (data.tumor_type || 'Glioma') : 'Healthy');
+        setText('ind-tumor-type', isTumor ? (data.tumor_type || 'Not determined') : 'Healthy');
         setText('ind-margin', isTumor ? (whoInd.margin_type || '—') : 'N/A');
         setText('ind-ring', isTumor ? (whoInd.ring_enhancement || '—') : 'N/A');
         setText('ind-necrosis', isTumor ? (whoInd.necrosis_present ? 'Present (High-Grade Marker)' : 'Absent / Minimal') : 'N/A');
@@ -949,7 +951,7 @@ tr:last-child td{border-bottom:none;}
         <div class="pi-item"><div class="pi-label">Patient ID</div><div class="pi-value">${cId}</div></div>
         <div class="pi-item"><div class="pi-label">Study Date</div><div class="pi-value">${now.split(',')[0]}</div></div>
         <div class="pi-item"><div class="pi-label">Modality</div><div class="pi-value">${sm.modality_label || sm.orientation || 'MR / Brain'}</div></div>
-        <div class="pi-item"><div class="pi-label">Reporting Model</div><div class="pi-value">Hybrid CNN-Tx v2.0</div></div>
+        <div class="pi-item"><div class="pi-label">Reporting Model</div><div class="pi-value">SE 3D U-Net + ResNet34 U-Net (2D)</div></div>
     </div>
     <div class="section">
         <div class="section-title"><span class="num">1</span> Clinical Indication</div>

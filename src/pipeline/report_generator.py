@@ -47,8 +47,15 @@ def generate_structured_report(
     preprocessing_status = "fail" if scan_meta.get('warning') and "failed" in str(scan_meta.get('warning')).lower() else "pass"
     
     is_tumor = detection_result.get('is_tumor', False)
+    has_mask = bool(measurements.get('voxel_count'))
     if not is_tumor:
         segmentation_status = "skipped"
+        radiomics_status = "skipped"
+        risk_scoring_status = "skipped"
+        grading_status = "skipped"
+    elif not has_mask and not insufficient_mask_data:
+        # The model has no trained segmentation: detection only, nothing to measure
+        segmentation_status = "not_available"
         radiomics_status = "skipped"
         risk_scoring_status = "skipped"
         grading_status = "skipped"
@@ -83,7 +90,7 @@ def generate_structured_report(
         'date_formatted': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
         'report_version': '2.0',
         'model_version': '2.0',
-        'ai_system': 'NeuroScan AI — Hybrid CNN-Transformer v2.0',
+        'ai_system': 'NeuroScan AI — ' + detection_result.get('method', 'SE 3D U-Net'),
         'report_type': 'AI-Assisted MRI Brain Tumor Analysis',
         'pipeline_stages': pipeline_stages
     }
@@ -187,7 +194,8 @@ def generate_structured_report(
     # ── Section 8: AI-Generated Clinical Impression ──
     impression = (
         _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label,
-                             uncertainty_score=uncertainty_score, mass_effect=mass_effect)
+                             uncertainty_score=uncertainty_score, mass_effect=mass_effect,
+                             has_mask=has_mask)
         if not insufficient_mask_data
         else "Analysis Incomplete — Manual Review Required"
     )
@@ -264,15 +272,21 @@ def generate_structured_report(
     return report
 
 
-def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label, uncertainty_score=None, mass_effect=None):
-    """Generate a structured clinical impression paragraph."""
+def _generate_impression(is_tumor, meas, radiomics_summary, risk, grade_label, uncertainty_score=None,
+                         mass_effect=None, has_mask=True):
+    """Impression paragraph. It states only what the model predicted: the detection model
+    outputs tumor / no tumor, and nothing about other findings (hemorrhage, ventricles, ...)."""
     if not is_tumor:
         return (
-            "No space-occupying lesions or midline shift identified. "
-            "Gray-white matter differentiation is preserved. "
-            "Ventricular system and subarachnoid spaces are within normal limits for age. "
-            "No evidence of acute intracranial hemorrhage or territorial infarction. "
-            "Follow-up recommended as clinically indicated."
+            "The AI detection model did not identify a tumor on this image. "
+            "This is not proof that no tumor is present, and other findings are not assessed. "
+            "Review by a radiologist is required."
+        )
+    if not has_mask:
+        return (
+            "The AI detection model classified this image as containing a tumor. "
+            "This model does not predict tumor location, size, type or grade. "
+            "Review by a radiologist is required."
         )
 
     loc = radiomics_summary.get('anatomical_location', 'undetermined region')

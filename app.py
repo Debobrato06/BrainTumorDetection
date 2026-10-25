@@ -71,7 +71,6 @@ try:
     )
     from pipeline.segmentation import (
         apply_threshold,
-        extract_tumor_mask_from_heuristic,
         generate_segmentation_overlay,
         get_mask_stats
     )
@@ -92,6 +91,7 @@ except Exception as e:
     PIPELINE_AVAILABLE = False
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 512 * 1024 * 1024  # largest accepted upload (a 4-sequence NIfTI fits)
 
 # ─── Custom JSON Encoder / Provider for Numpy compatibility ───────────────────
 class NumpyEncoder(json.JSONEncoder):
@@ -169,6 +169,20 @@ training_thread = None
 # ─── Initialize Model ─────────────────────────────────────────────────────────
 model = None
 device = None
+# Heads that received a training loss, and the softmax temperature fitted on the
+# validation set (src/train.py stores both). Older checkpoints only trained the
+# detection head and have no fitted temperature.
+MODEL_TRAINED_HEADS = {'cls'}
+MODEL_TEMPERATURE = 1.0
+MODEL_IMG_SIZE = (64, 64, 64)
+
+
+def read_checkpoint_meta(checkpoint):
+    heads, temperature = {'cls'}, 1.0
+    if isinstance(checkpoint, dict):
+        heads = set(checkpoint.get('trained_heads', heads))
+        temperature = float(checkpoint.get('temperature', temperature))
+    return heads, temperature
 
 if TORCH_AVAILABLE:
     try:
@@ -204,7 +218,11 @@ if TORCH_AVAILABLE:
                     print("[CHECKPOINT CHECK] WARNING: Less than 50% layers matched! Model will behave like random weights.")
                 
                 model.load_state_dict(ckpt_dict, strict=False)
-                
+                MODEL_TRAINED_HEADS, MODEL_TEMPERATURE = read_checkpoint_meta(checkpoint)
+                if isinstance(checkpoint, dict) and 'img_size' in checkpoint:
+                    MODEL_IMG_SIZE = tuple(checkpoint['img_size'])
+                print(f"[CHECKPOINT CHECK] trained heads: {sorted(MODEL_TRAINED_HEADS)}, temperature: {MODEL_TEMPERATURE}")
+
             except Exception as e:
                 print(f"Failed to load model: {e}. Using random weights.")
         else:
@@ -214,6 +232,23 @@ if TORCH_AVAILABLE:
     except Exception as e:
         print(f"Error initializing model: {e}")
         TORCH_AVAILABLE = False
+
+# ─── 2D tumor segmentation + type model (src/seg2d.py, trained by src/train_seg2d.py) ──
+# Gives the tumor outline on JPG/PNG slices, from which size, side, depth and the risk
+# estimate are computed (src/pipeline/analysis_2d.py).
+SEG2D_MODEL, SEG2D_META, CLASSES_2D = None, {}, None
+SEG2D_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'seg2d_best.pth')
+if TORCH_AVAILABLE and os.path.exists(SEG2D_PATH):
+    try:
+        from seg2d import load_seg2d, CLASSES as CLASSES_2D
+        SEG2D_MODEL, SEG2D_META = load_seg2d(SEG2D_PATH, device)
+        print(f"[SEG2D] loaded {SEG2D_PATH} (epoch {SEG2D_META.get('epoch')}, "
+              f"val Dice {SEG2D_META.get('val_dice')})")
+    except Exception as e:
+        print(f"[SEG2D] could not load {SEG2D_PATH}: {e}")
+        SEG2D_MODEL = None
+else:
+    print("[SEG2D] no 2D segmentation model found; 2D uploads get detection only.")
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -281,6 +316,166 @@ def process_2d_image(image_path, target_size=None):
             for d in range(target_size[0]):
                 vol[c, d] = img_np
         return vol
+
+
+def model_input_2d(image_path):
+    """Classifier input for a 2D image, built exactly as in training (dataset.Image2DDataset:
+    grayscale, resized, scaled to [0, 1], copied over depth and the 4 channels). Z-scoring
+    this input instead made every image look tumor-free to the model (sensitivity 0 on the
+    Kaggle test set, see AUDIT_REPORT.md)."""
+    from dataset import image_to_volume
+    with Image.open(image_path) as img:
+        return image_to_volume(img, MODEL_IMG_SIZE).unsqueeze(0)
+
+
+def load_nifti_for_app(path, img_size=None):
+    """NIfTI -> ((1, 4, D, H, W) tensor, grid spacing). Axes are arranged the way the rest of
+    the pipeline assumes: D = axial slices (inferior -> superior), H = anterior -> posterior,
+    W = patient right -> left (radiological view). Each channel is z-scored on non-zero voxels
+    and resized to the model grid; the returned spacing is the mm size of one grid voxel, so
+    volumes and diameters measured on the resized mask are in real units.
+
+    Accepts a 4D file with 4 sequences in the last axis (T1, T1ce, T2, FLAIR) or a 3D file
+    (copied into all 4 channels, which the model was never trained on)."""
+    import nibabel as nib
+    from brats_dataset import zscore_nonzero
+    img_size = tuple(img_size or MODEL_IMG_SIZE)
+    img = nib.load(path)
+    if img.ndim == 4 and img.shape[-1] != 4:
+        raise ValueError(f"Expected 4 sequences in the last axis of a 4D NIfTI, got shape {img.shape}.")
+    if img.ndim not in (3, 4):
+        raise ValueError(f"Expected a 3D or 4D NIfTI volume, got shape {img.shape}.")
+    img = nib.as_closest_canonical(img)                  # RAS+: axes = (L->R, P->A, I->S)
+    data = img.get_fdata(dtype=np.float32)
+    data = np.moveaxis(data, -1, 0) if data.ndim == 4 else np.stack([data] * 4)
+    if not np.isfinite(data).all() or not np.any(data):
+        raise ValueError("NIfTI volume is empty or contains non-finite values.")
+    sx, sy, sz = (float(z) for z in img.header.get_zooms()[:3])
+    X, Y, Z = data.shape[1:]
+    data = np.ascontiguousarray(data.transpose(0, 3, 2, 1)[:, :, ::-1, ::-1])   # (C, Z, Y, X), flipped
+    data = np.stack([zscore_nonzero(c) for c in data])
+    tensor = torch.nn.functional.interpolate(torch.from_numpy(data).unsqueeze(0), size=img_size,
+                                             mode='trilinear', align_corners=False)
+    D, H, W = img_size
+    spacing = {'slice_thickness': sz * Z / D, 'pixel_spacing_y': sy * Y / H, 'pixel_spacing_x': sx * X / W}
+    return tensor, spacing
+
+
+def localize_2d(image_path, pixel_spacing_mm=None, threshold=0.5):
+    """Run the 2D segmentation/type model on an uploaded slice and measure the tumor.
+    pixel_spacing_mm (mm per pixel of the uploaded image) is optional; without it the scale is
+    estimated from the head width. Returns the analyze_slice() dict plus 'info'."""
+    from seg2d import prepare_slice, predict_slice, CLASSES, INPUT_SIZE
+    from pipeline.analysis_2d import analyze_slice, risk_estimate_2d, render_overlay
+    with Image.open(image_path) as img:
+        img.load()
+        sl, info = prepare_slice(img)
+        prob, cls_p = predict_slice(SEG2D_MODEL, sl, device)
+        sp = pixel_spacing_mm * info['orig_px_per_input_px'] if pixel_spacing_mm else None
+        a = analyze_slice(sl, prob, cls_p, CLASSES, threshold=threshold, pixel_spacing_mm=sp)
+        a['info'] = info
+        if a['tumor_found']:
+            a['risk'] = risk_estimate_2d(a)
+            a['overlay_b64'] = render_overlay(img, a, info, INPUT_SIZE)
+    return a
+
+
+# Mean tumor probability inside the outline below this -> the outline is flagged as uncertain.
+# On figshare val+test slices it flagged 15 of 39 outlines that missed the expert mask
+# (Dice < 0.1) and 11 of 579 that matched it.
+LOW_OUTLINE_CONFIDENCE = 0.8
+
+TYPICAL_GRADE = {
+    'Glioma': 'Needs biopsy (gliomas range WHO grade 1-4)',
+    'Meningioma': 'Needs biopsy (most meningiomas are WHO grade 1)',
+    'Pituitary tumor': 'Needs biopsy (most pituitary adenomas are benign)',
+}
+
+
+def build_2d_report(a, tumor_prob):
+    """Response fields for a 2D slice with a segmented tumor (overrides the detection-only
+    defaults). Sizes are from one slice with an estimated scale, so they are approximate."""
+    t, tconf = a['type_label'], a['type_confidence']
+    type_text = f"{t} (model confidence {tconf:.0%})" if tconf >= 0.6 else f"Uncertain (most likely {t}, {tconf:.0%})"
+    if a.get('mm_per_px') is None:
+        scale_note = 'Size could not be estimated (head outline not found).'
+    elif a['scale_source'] == 'provided':
+        scale_note = 'Sizes use the pixel spacing you provided.'
+    else:
+        scale_note = (f"No pixel spacing in a JPG/PNG: the mm scale is estimated from the head width "
+                      f"(typical error about ±{a['scale_rel_error']:.0%}).")
+    side = a.get('side', 'Not determined')
+    depth = a.get('depth_category', 'Unknown')
+    band = a.get('vertical_band')
+    view = {'axial_or_coronal': 'axial/coronal', 'sagittal': 'sagittal', 'uncertain': 'uncertain view'}.get(a['view'], 'unknown view')
+    region = f"{side}, {band} part of the slice" if band else side
+    if t == 'Pituitary tumor' and tconf >= 0.6:
+        region += ' (sellar / pituitary region)'
+    L, P, V = a.get('longest_mm'), a.get('perpendicular_mm'), a.get('volume_est_ml')
+    risk = a['risk']
+    ring = a.get('ring_like')
+    solidity = a.get('solidity', 1.0)
+    shape_label = 'Irregular margin' if solidity < 0.8 else ('Lobulated' if solidity < 0.9 else 'Well-circumscribed / round')
+
+    low_conf = (a.get('mean_prob') or 0) < LOW_OUTLINE_CONFIDENCE
+    size_txt = (f"about {L:.0f} x {P:.0f} mm (longest x perpendicular), estimated volume ~{V:.1f} mL"
+                if L is not None else "size not measurable")
+    impression = (
+        ("CAUTION: low outline confidence — the outlined region may not be the tumor, so location and "
+         "size may be wrong. " if low_conf else "") +
+        f"AI finding: a tumor-like lesion is outlined on this {view} slice — {region}. "
+        f"Size {size_txt}. Most likely type: {type_text}. "
+        f"Depth: {depth.lower()}."
+        + (" Rim brighter than the centre (ring-like pattern), which can indicate a necrotic core." if ring else "")
+        + (" The lesion crosses the midline." if a.get('crosses_midline') else "")
+        + f" Rule-based concern level: {risk['risk_level']} ({risk['total_score']}/100). {risk['clinical_note']} "
+        f"{scale_note} One 2D slice cannot show the full 3D extent; volume assumes an ellipsoid. "
+        "Research prototype — not a diagnosis; a radiologist must review the scan."
+    )
+    location = {
+        'full_location': region, 'region': region, 'laterality': side,
+        'depth_category': depth, 'is_eloquent': False,
+        'surgical_risk': risk['surgical_risk']['level'] + ' (estimate)',
+    }
+    radiomics = {
+        'location': location,
+        'enhancement': {'enhancement_pattern': 'Ring-like rim' if ring else 'Solid / no ring',
+                        'is_ring_enhancement': bool(ring), 'enhancement_ratio': a.get('ring_ratio') or 0.0},
+        'edema': {'edema_label': 'Not assessable from one image'},
+        'shape': {'shape_label': shape_label, 'irregularity': round(1 - solidity, 3)},
+        'texture': {},
+        'who_cns5_indicators': {
+            'margin_type': shape_label,
+            'ring_enhancement': 'Ring-like rim present' if ring else 'Not seen',
+            'necrosis_present': bool(ring),
+            'dwi_diffusion': 'Needs DWI sequence', 'perfusion_rcbv': 'Needs perfusion MRI',
+            'mrs_cho_naa': 'Needs MR spectroscopy',
+            'butterfly_glioma': 'Crosses midline' if a.get('crosses_midline') else 'No',
+        },
+        'vasari': {},
+    }
+    measurements = {
+        'volume_ml': V, 'diameter_mm': L, 'perpendicular_mm': P,
+        'rano_criteria': f'{L:.1f} × {P:.1f} mm' if L is not None else None,
+        'voxel_count': a.get('area_px'), 'bounding_box': {},
+        'area_mm2': a.get('area_mm2'), 'estimated': a['scale_source'] != 'provided',
+    }
+    risk_out = dict(risk, clinical_summary=impression)
+    return {
+        'tumor_type': type_text, 'grade': TYPICAL_GRADE.get(t, 'Needs biopsy'),
+        'overlay_b64': a['overlay_b64'], 'measurements': measurements, 'radiomics': radiomics,
+        'risk': risk_out, 'impression': impression, 'location_text': region,
+        'tumor_analysis_2d': {
+            'side': side, 'region': region, 'view': a['view'], 'depth': depth,
+            'longest_diameter_mm': L, 'perpendicular_diameter_mm': P, 'area_mm2': a.get('area_mm2'),
+            'estimated_volume_ml': V, 'mm_per_pixel_input': a.get('mm_per_px'),
+            'scale_source': a['scale_source'], 'scale_relative_error': a.get('scale_rel_error'),
+            'tumor_type': t, 'type_probabilities': a['type_probs'], 'tumor_probability': tumor_prob,
+            'ring_like': bool(ring), 'crosses_midline': a.get('crosses_midline'),
+            'risk_level': risk['risk_level'], 'risk_score': risk['total_score'],
+            'mean_mask_probability': a.get('mean_prob'), 'outline_low_confidence': low_conf,
+        },
+    }
 
 
 def detect_tumor_symmetry_heuristic(volume_tensor):
@@ -407,14 +602,38 @@ def predict():
             previous_volume_ml = float(prev_vol_str)
     except Exception:
         pass
+    # Optional: mm per pixel of an uploaded 2D image (e.g. from the DICOM header). Without it
+    # the 2D size estimate uses the head width as the scale.
+    pixel_spacing_mm = None
+    try:
+        ps = float(request.form.get('pixel_spacing_mm', '') or 0)
+        pixel_spacing_mm = ps if 0.05 <= ps <= 5 else None
+    except ValueError:
+        pass
 
     if file:
         filename = file.filename.lower()
         is_nifti = filename.endswith('.nii') or filename.endswith('.nii.gz')
-        temp_filename = 'temp_upload.nii.gz' if is_nifti else 'temp_upload.png'
-        temp_path = os.path.join('data', temp_filename)
-        os.makedirs('data', exist_ok=True)
+        if not (is_nifti or filename.endswith(('.jpg', '.jpeg', '.png'))):
+            return jsonify({'error': 'Unsupported file type. Upload a .jpg/.jpeg/.png MRI slice or a .nii/.nii.gz volume.'}), 400
+        # One file per request: the server is threaded, so a shared name could mix up uploads
+        ext = ('.nii.gz' if filename.endswith('.gz') else '.nii') if is_nifti else os.path.splitext(filename)[1]
+        temp_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', f'temp_upload_{uuid.uuid4().hex}{ext}')
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
         file.save(temp_path)
+
+        if not is_nifti:
+            try:
+                with Image.open(temp_path) as probe:
+                    probe.verify()
+                with Image.open(temp_path) as probe:
+                    w_px, h_px = probe.size
+                if min(w_px, h_px) < 32:
+                    raise ValueError(f'image is only {w_px}x{h_px} pixels')
+            except Exception as e:
+                os.remove(temp_path)
+                reason = str(e) if isinstance(e, ValueError) else 'not a readable image file'
+                return jsonify({'error': f'Could not read the image ({reason}). Upload an uncorrupted MRI slice.'}), 400
 
         try:
             threshold = float(SYSTEM_SETTINGS.get('segmentation_threshold', 0.5))
@@ -452,11 +671,17 @@ def predict():
                     display_img_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
 
             # ── Step 2: Process for Model (64×64×64 volume) ────────────────────
+            # The model, the mask and every measurement share this one grid.
+            grid_spacing = None
             if is_nifti:
-                if load_volume is not None:
-                    input_tensor = load_volume(temp_path)
-                else:
+                if not TORCH_AVAILABLE:
                     return jsonify({'error': 'NIfTI processing requires PyTorch.'}), 500
+                try:
+                    input_tensor, grid_spacing = load_nifti_for_app(temp_path)
+                except Exception as e:
+                    return jsonify({'error': f'Could not read the NIfTI file: {e}'}), 400
+            elif TORCH_AVAILABLE and model is not None:
+                input_tensor = model_input_2d(temp_path)
             else:
                 input_tensor = process_2d_image(temp_path)
 
@@ -467,18 +692,31 @@ def predict():
                     input_tensor = torch.from_numpy(input_tensor).to(device)
 
             # ── Step 3: Model Inference ─────────────────────────────────────────
+            # The segmentation head is used only if the checkpoint says it was trained.
+            # best_model.pth trains the detection head only; its untrained decoder marks
+            # 75-90% of the volume, and the old fallbacks (lower threshold, intensity
+            # heuristic, a disk around the brightest pixel) drew "tumors" on the skull.
+            seg_head_trained = 'seg' in MODEL_TRAINED_HEADS
             seg_logits = None
             predicted_class = 0
             raw_confidence = 0.5
             grade_label_raw = "N/A"
-            tumor_type_label_raw = "Glioma"
-            se_channel_attention = {'T1': 0.25, 'T1c': 0.35, 'T2': 0.20, 'FLAIR': 0.20}
+            tumor_type_label_raw = "Not determined"
+            se_channel_attention = None
             model_inference_ok = True
+            det_prob_tumor = None   # detection model's P(tumor)
 
             if TORCH_AVAILABLE and model is not None:
                 with torch.no_grad():
                     try:
-                        outputs = model(input_tensor, return_attention=True)
+                        model_in = input_tensor
+                        if seg_head_trained:
+                            outputs = model(model_in, return_attention=True)
+                        else:
+                            # The untrained decoder is not used, so do not run it (it needs GBs of RAM on CPU)
+                            cls_logits, grade_logits, type_logits, w = model.forward_heads(model_in)
+                            outputs = (cls_logits, None, grade_logits, type_logits,
+                                       dict(zip(['T1', 'T1c', 'T2', 'FLAIR'], w[0].tolist())))
                         if len(outputs) == 5:
                             cls_logits, seg_logits, grade_logits, type_logits, se_channel_attention = outputs
                         elif len(outputs) == 4:
@@ -487,17 +725,22 @@ def predict():
                             cls_logits, seg_logits, grade_logits = outputs[0], outputs[1], outputs[2]
                             type_logits = None
 
-                        # Temperature Scaling (T=1.45) — reduces overconfidence
-                        T = 1.45
-                        probs = torch.softmax(cls_logits / T, dim=1)
+                        # Temperature scaling with the value fitted on the validation set (1.0 if none)
+                        probs = torch.softmax(cls_logits / MODEL_TEMPERATURE, dim=1)
                         predicted_class = torch.argmax(probs, dim=1).item()
                         raw_confidence = float(probs[0][predicted_class].item())
+                        det_prob_tumor = float(probs[0][1].item())
 
-                        grade_probs = torch.softmax(grade_logits, dim=1)
-                        grade_idx = torch.argmax(grade_probs, dim=1).item()
-                        grade_label_raw = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
+                        if 'grade' in MODEL_TRAINED_HEADS:
+                            grade_probs = torch.softmax(grade_logits, dim=1)
+                            grade_idx = torch.argmax(grade_probs, dim=1).item()
+                            grade_label_raw = "High-Grade (HGG)" if grade_idx == 1 else "Low-Grade (LGG)"
 
-                        if 'type_logits' in locals() and type_logits is not None:
+                        # SE weights describe MRI sequences; a 2D JPG copied into 4 channels has none
+                        if not is_nifti:
+                            se_channel_attention = None
+
+                        if 'type' in MODEL_TRAINED_HEADS and type_logits is not None:
                             type_types = ["Glioma", "Meningioma", "Metastasis", "Medulloblastoma", "Healthy"]
                             type_probs = torch.softmax(type_logits, dim=1)
                             type_idx = torch.argmax(type_probs, dim=1).item()
@@ -505,11 +748,12 @@ def predict():
                     except Exception as e:
                         print(f"Model forward pass fallback: {e}")
                         try:
-                            outputs = model(input_tensor)
-                            cls_logits, seg_logits = outputs[0], outputs[1]
-                            probs = torch.softmax(cls_logits, dim=1)
+                            cls_logits = model.forward_heads(model_in)[0]
+                            seg_logits = None
+                            probs = torch.softmax(cls_logits / MODEL_TEMPERATURE, dim=1)
                             predicted_class = torch.argmax(probs, dim=1).item()
                             raw_confidence = float(probs[0][predicted_class].item())
+                            det_prob_tumor = float(probs[0][1].item())
                         except Exception as e2:
                             print(f"Model forward pass fallback also failed, using heuristic only: {e2}")
                             model_inference_ok = False
@@ -521,10 +765,38 @@ def predict():
             # ── Heuristic Check (fallback only) ─────────────────────────────────
             heuristic_tumor, h_conf, avg_asym, peak_asym = detect_tumor_symmetry_heuristic(input_tensor)
 
-            # If no model available (or model inference failed entirely), use heuristic confidence score
-            if not (TORCH_AVAILABLE and model is not None) or not model_inference_ok:
+            # If no model available (or model inference failed entirely), use heuristic confidence score.
+            # The heuristic flags most tumor-free images as tumor (AUDIT_REPORT.md), so the
+            # validator treats this case as "model unavailable" -> INDETERMINATE.
+            model_ok = TORCH_AVAILABLE and model is not None and model_inference_ok
+            if not model_ok:
                 predicted_class = 1 if heuristic_tumor else 0
                 raw_confidence = h_conf
+
+            # ── 2D slices: tumor outline, type and size from the 2D segmentation model ──
+            loc2d = None
+            if not is_nifti and SEG2D_MODEL is not None:
+                try:
+                    loc2d = localize_2d(temp_path, pixel_spacing_mm, threshold=threshold)
+                except Exception as e:
+                    traceback.print_exc()
+                    print(f"[SEG2D] analysis failed: {e}")
+            if loc2d is not None:
+                # Tumor decision from the 2D model (P(tumor) = 1 - P(no tumor)). On the Kaggle
+                # Testing split it is more accurate alone (0.998) than the 3D detection model (0.937)
+                # or the mean of both (0.986), see runs/seg2d_eval/summary.json.
+                p_seg2d = 1.0 - float(loc2d['type_probs'][CLASSES_2D[0]])
+                tumor_prob_2d = p_seg2d
+                predicted_class = int(tumor_prob_2d >= 0.5)
+                raw_confidence = tumor_prob_2d if predicted_class == 1 else 1.0 - tumor_prob_2d
+                model_ok = True
+                if predicted_class == 1 and not loc2d['tumor_found']:
+                    # Tumor predicted but nothing above the mask threshold: retry at a lower one
+                    try:
+                        loc2d = localize_2d(temp_path, pixel_spacing_mm, threshold=0.3)
+                    except Exception as e:
+                        print(f"[SEG2D] low-threshold retry failed: {e}")
+
 
             # ── OOD Detection ────────────────────────────────────────────────────
             ood_detected = (
@@ -542,27 +814,12 @@ def predict():
             binary_mask_has_voxels = False
 
             if PIPELINE_AVAILABLE and vol_np is not None:
-                if seg_logits is not None:
+                if seg_logits is not None and seg_head_trained and model_ok and predicted_class == 1:
                     binary_mask, prob_map, sub_masks = apply_threshold(seg_logits, threshold=threshold)
-
-                    # ── FALLBACK: If model is untrained/weak, lower threshold ──
-                    if not binary_mask.any() and predicted_class == 1:
-                        print("[SEG FALLBACK] Empty mask at threshold 0.5, trying 0.05 for weak model")
-                        binary_mask, prob_map, sub_masks = apply_threshold(seg_logits, threshold=0.05)
-
-                    # NOTE: For 2D images (not_nifti), we intentionally do NOT zero the
-                    # mask here even if predicted_class == 0, because the 2D override
-                    # block below may flip is_tumor to True (heuristic). The zeroing is
-                    # deferred to AFTER that override block. For NIfTI, zero immediately.
-                    if predicted_class == 0 and is_nifti:
-                        binary_mask = np.zeros_like(binary_mask)
-                        if sub_masks:
-                            for k in sub_masks:
-                                sub_masks[k] = np.zeros_like(sub_masks[k])
                 else:
-                    binary_mask, prob_map, sub_masks = extract_tumor_mask_from_heuristic(
-                        vol_np, peak_asym, avg_asym, predicted_class == 1
-                    )
+                    empty = np.zeros(vol_np.shape[1:], dtype=bool)
+                    binary_mask, prob_map = empty, None
+                    sub_masks = {'ET': empty, 'TC': empty, 'WT': empty}
 
                 mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
                 seg_quality_score = mask_stats_data.get('seg_quality_score', 1.0)
@@ -598,7 +855,7 @@ def predict():
                 scan_meta=scan_meta,
                 predicted_class=predicted_class,
                 raw_confidence=raw_confidence,
-                model_available=(TORCH_AVAILABLE and model is not None),
+                model_available=model_ok,
                 seg_quality_score=seg_quality_score,
                 binary_mask_has_voxels=binary_mask_has_voxels,
                 ood_detected=ood_detected,
@@ -624,107 +881,95 @@ def predict():
             # instead of "INDETERMINATE". Numbers still shown, caveat attached.
             # ════════════════════════════════════════════════════════════════════
             if not is_nifti:
-                gates['segmentation_passed'] = True
-                gates['run_measurements']    = True
-                gates['run_radiomics']       = True
-                gates['run_risk_scoring']    = True
-                gates['run_grading']         = True
+                # Downstream stages need a real mask; none exists without a trained segmentation head.
+                seg_ok = binary_mask_has_voxels
+                gates['segmentation_passed'] = seg_ok
+                gates['run_measurements']    = seg_ok
+                gates['run_radiomics']       = seg_ok
+                gates['run_risk_scoring']    = seg_ok
+                gates['run_grading']         = seg_ok
                 reliability_reduced = True
 
-                # ── For 2D scans: override indeterminate state so results panel shows ──
-                # Validator marks low-confidence detections as INDETERMINATE, but for
-                # 2D images we want to show all results with a reliability caveat instead
-                # of blocking the entire UI.
-                is_indeterminate = False
-                is_tumor = (predicted_class == 1) or heuristic_tumor
+                # ── For 2D scans: show the model's decision with a reliability caveat ──
+                # (the validator's low-confidence INDETERMINATE state is not used for 2D).
+                # Without a working model the only signal is the asymmetry heuristic, which
+                # is not reliable, so that case stays INDETERMINATE.
+                is_indeterminate = not model_ok
+                is_tumor = model_ok and predicted_class == 1
                 insufficient_mask = False
 
-                if final_conf is None or final_conf < 0.40:
-                    final_conf = max(h_conf, 0.40)  # use heuristic as floor for 2D
-                final_conf = min(final_conf, 0.65)  # honest confidence cap for 2D
+                if final_conf is None:
+                    final_conf = raw_confidence
+                if loc2d is not None:
+                    final_conf = raw_confidence   # 2D model probability, ECE in runs/seg2d_eval
+                else:
+                    final_conf = min(final_conf, 0.65)  # cap: single 2D images give limited evidence
 
-                # Override grade_label — validator set it to "Not Computed" because
-                # run_grading was False. Now that we forced gates, use raw model output.
+                # Grade only from a trained grading head (grade_label_raw stays "N/A" otherwise)
                 if is_tumor and grade_label_raw not in (None, '', 'N/A'):
                     grade_label = grade_label_raw
 
+                det_stage = 'failed' if is_indeterminate else 'completed'
+                later_stage = 'completed' if seg_ok else 'not_run'
                 status_block = {
                     'modality_verified': False,
-                    'detection_stage': 'completed',
-                    'segmentation_stage': 'completed',
-                    'radiomics_stage': 'completed',
-                    'grading_stage': 'completed',
-                    'risk_scoring_stage': 'completed',
+                    'detection_stage': det_stage,
+                    'segmentation_stage': later_stage,
+                    'radiomics_stage': later_stage,
+                    'grading_stage': 'completed' if (is_tumor and 'grade' in MODEL_TRAINED_HEADS) else 'not_run',
+                    'risk_scoring_stage': later_stage,
                     'overall_reliability': 'reduced',
-                    'reason_if_reduced': 'Single 2D image — unverified modality, approximated metrics.',
-                    'stage_summary': 'Detection: Completed | Segmentation: Completed | Radiomics: Completed | Grading: Completed | Risk Scoring: Completed',
+                    'reason_if_reduced': 'Single 2D image — unverified modality.',
+                    'stage_summary': (f'Detection: {det_stage.replace("_", " ").title()} | Segmentation: {later_stage.replace("_", " ").title()} | '
+                                      f'Radiomics: {later_stage.replace("_", " ").title()} | Risk Scoring: {later_stage.replace("_", " ").title()}'),
                     'mode': '2d_limited',
                 }
-                alert = {
-                    'level': 'warning',
-                    'title': '2D Limited-Analysis Mode',
-                    'message': ('Single 2D image detected — not a multi-modal 3D MRI. '
-                                'Detection ran, but volume/diameter/radiomics figures below '
-                                'use an approximated slice-repeat volume and are NOT clinically '
-                                'or scientifically reliable. Upload a .nii/.nii.gz scan for '
-                                'accurate quantitative results.'),
-                    'show_results': True
-                }
-
-                # ── 2D Mask Rescue: if model said no-tumor (mask is zeros) but we
-                # overrode is_tumor=True, regenerate mask from heuristic so downstream
-                # steps (radiomics, measurements) have actual voxel data to work with.
-                if is_tumor and binary_mask is not None and not binary_mask.any() and vol_np is not None:
-                    print("[2D MASK RESCUE] Regenerating mask from image intensities for 2D tumor case")
-                    binary_mask, prob_map, sub_masks = extract_tumor_mask_from_heuristic(
-                        vol_np, max(peak_asym, 0.3), max(avg_asym, 0.1), True
-                    )
-                    # If heuristic mask still empty, locate actual intensity peak centroid in the image
-                    if not binary_mask.any():
-                        D, H, W = vol_np.shape[1], vol_np.shape[2], vol_np.shape[3]
-                        mid_d = D // 2
-                        sl = vol_np[min(3, vol_np.shape[0] - 1), mid_d]
-                        s_min, s_max = sl.min(), sl.max()
-                        sl_norm = (sl - s_min) / (s_max - s_min + 1e-8)
-
-                        # Find brightest intensity peak in image (actual focal lesion site)
-                        max_y, max_x = np.unravel_index(np.argmax(sl_norm), (H, W))
-
-                        Y, X = np.ogrid[:H, :W]
-                        dist_map = np.sqrt((Y - max_y)**2 + (X - max_x)**2)
-
-                        r_wt = max(4, min(H, W) // 7)
-                        r_tc = max(3, r_wt * 3 // 4)
-                        r_et = max(2, r_wt // 2)
-
-                        wt_blob = dist_map <= r_wt
-                        tc_blob = dist_map <= r_tc
-                        et_blob = dist_map <= r_et
-
-                        binary_mask = np.zeros((D, H, W), dtype=bool)
-                        tc_mask = np.zeros((D, H, W), dtype=bool)
-                        et_mask = np.zeros((D, H, W), dtype=bool)
-
-                        for d_i in range(max(0, mid_d - 4), min(D, mid_d + 5)):
-                            binary_mask[d_i] = wt_blob
-                            tc_mask[d_i] = tc_blob
-                            et_mask[d_i] = et_blob
-
-                        sub_masks = {'ET': et_mask, 'TC': tc_mask, 'WT': binary_mask}
-
-                    mask_stats_data = get_mask_stats(binary_mask, prob_map, threshold)
-                    binary_mask_has_voxels = bool(binary_mask.any())
-                    print(f"[2D MASK RESCUE] new voxels={binary_mask.sum()}")
+                if is_indeterminate:
+                    alert = {
+                        'level': 'critical',
+                        'title': 'INDETERMINATE — Detection Model Unavailable',
+                        'message': ('The trained detection model could not be run, so no reliable '
+                                    'tumor / no-tumor decision is available for this image.'),
+                        'show_results': True
+                    }
+                else:
+                    alert = {
+                        'level': 'warning',
+                        'title': '2D Limited-Analysis Mode',
+                        'message': ('Single 2D image — tumor / no-tumor detection only. '
+                                    + ('' if seg_ok else
+                                       'This model has no trained segmentation, so tumor location, '
+                                       'outline, volume, radiomics and risk score are not computed. ')
+                                    + 'A negative result does not rule out a tumor. Research prototype, '
+                                    'not for diagnosis.'),
+                        'show_results': True
+                    }
 
             # ── Step 5: Generate multi-color segmentation overlay ───────────────
             if is_tumor and binary_mask_has_voxels and gates.get('segmentation_passed') and vol_np is not None:
                 overlay_b64 = generate_segmentation_overlay(vol_np, binary_mask, channel=0, sub_masks=sub_masks)
 
 
+            if is_tumor and 'grade' not in MODEL_TRAINED_HEADS:
+                grade_label = "Not available (grading model not trained)"
+
+            # ── NIfTI with a detected lesion but no trained segmentation head ──
+            if is_nifti and is_tumor and not seg_head_trained:
+                alert = {
+                    'level': 'warning',
+                    'title': 'Detection Only — Segmentation Not Available',
+                    'message': ('This model has no trained segmentation, so tumor location, outline, '
+                                'volume, radiomics and risk score are not computed. The detection model '
+                                'was trained on 2D images and has not been validated on 3D NIfTI scans.'),
+                    'show_results': True
+                }
+
             # ── Step 6: Measurements (gate: segmentation must have passed) ───────
-            px = scan_meta.get('pixel_spacing_x', 1.0)
-            py = scan_meta.get('pixel_spacing_y', 1.0)
-            st = scan_meta.get('slice_thickness', 5.0)
+            # Measure on the model grid (the mask's grid), in mm per grid voxel.
+            spacing = grid_spacing or scan_meta
+            px = spacing.get('pixel_spacing_x', 1.0)
+            py = spacing.get('pixel_spacing_y', 1.0)
+            st = spacing.get('slice_thickness', 5.0)
             volume_ml = None        # Rule 3: explicit None = "not computed"
             diameter_mm = None
             perpendicular_mm = None
@@ -738,13 +983,10 @@ def predict():
                 diameter_mm = _diam if _diam > 0 else None
                 perpendicular_mm = _perp if _perp > 0 else None
 
-                # If segmentation gave zeros, heuristic estimate as last resort
-                if volume_ml is None and is_tumor:
-                    vol_est = (peak_asym * 15) + (avg_asym * 20) + 2.0
-                    volume_ml = round(max(vol_est, 0.1), 1)
-                    diameter_mm = round((vol_est * 6 / 3.14159) ** (1/3) * 20, 1)
-                    perpendicular_mm = round(diameter_mm * 0.75, 1)
-                    print(f"[MEAS FALLBACK] Heuristic estimate: vol={volume_ml}mL diam={diameter_mm}mm (peak_asym={peak_asym:.3f}, avg_asym={avg_asym:.3f})")
+                # A single 2D image has no slice thickness and no reliable pixel spacing,
+                # so volume and diameters cannot be measured from it.
+                if not is_nifti:
+                    volume_ml = diameter_mm = perpendicular_mm = None
 
                 print(f"[MEAS DEBUG] volume_ml={volume_ml}, diameter_mm={diameter_mm}, is_tumor={is_tumor}, insufficient_mask={insufficient_mask}")
 
@@ -782,14 +1024,14 @@ def predict():
             # ── Step 9b: MC-Dropout Uncertainty & Mass Effect Midline Shift ───────
             uncertainty_score = None
             mass_effect_data = None
-            if PIPELINE_AVAILABLE and is_tumor and not insufficient_mask:
+            if PIPELINE_AVAILABLE and is_tumor and not insufficient_mask and binary_mask_has_voxels:
                 try:
                     from pipeline.mass_effect import compute_midline_shift
                     mass_effect_data = compute_midline_shift(vol_np, binary_mask, px, py)
                 except Exception as e:
                     print(f"Midline shift calculation failed: {e}")
 
-                if TORCH_AVAILABLE and model is not None and input_tensor is not None:
+                if model_ok and seg_head_trained and input_tensor is not None:
                     try:
                         from pipeline.uncertainty import estimate_uncertainty
                         _, _, uncertainty_score = estimate_uncertainty(model, input_tensor, num_samples=15)
@@ -820,7 +1062,7 @@ def predict():
                 'confidence': final_conf,
                 'final_class': predicted_class,
                 'threshold': threshold,
-                'method': 'Hybrid CNN-Transformer v2.0 + Heuristic Fallback',
+                'method': 'SE 3D U-Net detection head' if model_ok else 'Asymmetry heuristic (model unavailable)',
                 'detection_state': vld['detection']['detection_state']
             }
 
@@ -861,43 +1103,28 @@ def predict():
             if radiomics_data and radiomics_data.get('location') and gates.get('run_radiomics'):
                 tumor_loc = radiomics_data['location'].get('full_location')
 
-            # Dynamic tumor type from radiomics
-            if is_tumor and radiomics_data:
+            # Rule-based tumor type from radiomics, only when no trained type head exists.
+            # These rules have not been validated against pathology.
+            if is_tumor and radiomics_data and 'type' not in MODEL_TRAINED_HEADS:
                 enh_d = radiomics_data.get('enhancement', {})
                 loc_d = radiomics_data.get('location', {})
                 shape_d = radiomics_data.get('shape', {})
                 if enh_d.get('is_ring_enhancement'):
-                    tumor_type_label_raw = "Glioblastoma Multiforme (HGG)"
+                    tumor_type_label_raw = "Glioblastoma Multiforme (HGG) (rule-based estimate, not validated)"
                 elif loc_d.get('depth_category') == 'Cortical' and shape_d.get('sphericity', 0) > 0.55:
-                    tumor_type_label_raw = "Meningioma"
+                    tumor_type_label_raw = "Meningioma (rule-based estimate, not validated)"
                 elif loc_d.get('depth_category') == 'Deep':
-                    tumor_type_label_raw = "Glioma (Deep / Thalamic)"
+                    tumor_type_label_raw = "Glioma (Deep / Thalamic) (rule-based estimate, not validated)"
                 elif shape_d.get('irregularity', 0) > 0.35:
-                    tumor_type_label_raw = "High-Grade Glioma (HGG)"
+                    tumor_type_label_raw = "High-Grade Glioma (HGG) (rule-based estimate, not validated)"
                 else:
-                    tumor_type_label_raw = "Low-Grade Glioma (LGG)"
-
-            # Dynamic channel attention weights
-            if vol_np is not None:
-                c0 = float(np.std(vol_np[0])) + 1e-5
-                c1 = float(np.std(vol_np[1])) * 1.25 + 1e-5 if vol_np.shape[0] > 1 else c0 * 1.3
-                c2 = float(np.std(vol_np[2])) * 0.90 + 1e-5 if vol_np.shape[0] > 2 else c0 * 0.85
-                c3 = float(np.std(vol_np[3])) * 1.10 + 1e-5 if vol_np.shape[0] > 3 else c0 * 1.1
-                tot = c0 + c1 + c2 + c3
-                se_channel_attention = {
-                    'T1': round(c0 / tot, 2),
-                    'T1c': round(c1 / tot, 2),
-                    'T2': round(c2 / tot, 2),
-                    'FLAIR': round(c3 / tot, 2)
-                }
+                    tumor_type_label_raw = "Low-Grade Glioma (LGG) (rule-based estimate, not validated)"
 
             # Extract sub-region volumes (ET, TC, WT)
             sub_region_volumes = {'ET': None, 'TC': None, 'WT': None}
-            if PIPELINE_AVAILABLE and sub_masks and is_tumor and not insufficient_mask:
+            if PIPELINE_AVAILABLE and sub_masks and is_tumor and not insufficient_mask and is_nifti:
                 try:
-                    px_v = scan_meta.get('pixel_spacing_x', 1.0)
-                    py_v = scan_meta.get('pixel_spacing_y', 1.0)
-                    st_v = scan_meta.get('slice_thickness', 5.0)
+                    px_v, py_v, st_v = px, py, st
                     if 'ET' in sub_masks and sub_masks['ET'].any():
                         sub_region_volumes['ET'] = round(float(compute_volume_ml(sub_masks['ET'], px_v, py_v, st_v)[0]), 2)
                     if 'TC' in sub_masks and sub_masks['TC'].any():
@@ -908,6 +1135,16 @@ def predict():
                     print(f"Sub-region volume computation failed: {e}")
 
             response = {
+                # Which model outputs come from trained heads; everything else in this
+                # response is rule-based and unvalidated (research prototype, not for diagnosis).
+                'model_status': {
+                    'trained_heads': sorted(MODEL_TRAINED_HEADS),
+                    'segmentation_available': seg_head_trained,
+                    'input_type': '3D NIfTI' if is_nifti else '2D image',
+                    # The detection head was trained and tested on 2D axial MRI images only.
+                    'input_validated': (not is_nifti) and model_ok,
+                    'disclaimer': 'Research prototype. Not validated for clinical use.',
+                },
                 # Core detection result
                 'label': result_label,
                 'confidence': round(final_conf, 4),
@@ -982,7 +1219,7 @@ def predict():
 
                 # Legacy / backward compat fields
                 'details': {
-                    'tumor_size': f"{volume_ml:.2f} mL" if (is_tumor and not insufficient_mask) else "—",
+                    'tumor_size': f"{volume_ml:.2f} mL" if (is_tumor and not insufficient_mask and volume_ml is not None) else "—",
                     'tumor_loc': tumor_loc if not insufficient_mask else "—",
                     'impression': structured_report.get('clinical_impression', '') if structured_report else '',
                     'peak_asymmetry': float(peak_asym),
@@ -991,6 +1228,64 @@ def predict():
                 # Full structured report
                 'structured_report': structured_report,
             }
+
+            # ── 2D slice with a segmented tumor: fill size / side / type / risk ──
+            if not is_nifti and loc2d is not None:
+                response['model_status']['segmentation_available'] = True
+                response['model_status']['seg2d_model'] = {
+                    'path': 'models/seg2d_best.pth', 'epoch': SEG2D_META.get('epoch'),
+                    'val_dice': SEG2D_META.get('val_dice')}
+                response['tumor_type_probabilities'] = loc2d['type_probs']
+                response['detector_probability_tumor'] = det_prob_tumor   # 3D detection model, for reference
+                if is_tumor and loc2d['tumor_found']:
+                    r2 = build_2d_report(loc2d, round(raw_confidence, 4))
+                    response.update({k: r2[k] for k in ('tumor_type', 'grade', 'overlay_b64', 'measurements',
+                                                        'radiomics', 'risk', 'tumor_analysis_2d')})
+                    response['details']['tumor_size'] = (
+                        f"{r2['measurements']['diameter_mm']:.0f} x {r2['measurements']['perpendicular_mm']:.0f} mm (approx.)"
+                        if r2['measurements']['diameter_mm'] is not None else '—')
+                    response['details']['tumor_loc'] = r2['location_text']
+                    response['details']['impression'] = r2['impression']
+                    if structured_report is not None:
+                        structured_report['clinical_impression'] = r2['impression']
+                    mm_px = loc2d.get('mm_per_px')
+                    if mm_px:
+                        px_orig = round(mm_px / loc2d['info']['orig_px_per_input_px'], 3)
+                        response['scan_meta'].update({
+                            'pixel_spacing_x': px_orig, 'pixel_spacing_y': px_orig, 'slice_thickness': None,
+                            'orientation': {'axial_or_coronal': 'Axial / coronal', 'sagittal': 'Sagittal'}.get(loc2d['view'], 'Uncertain'),
+                            'warning': ('2D image: no DICOM metadata. Pixel spacing ' +
+                                        ('provided by the user.' if loc2d['scale_source'] == 'provided' else
+                                         f"estimated from the head width ({px_orig} mm/pixel, about ±{loc2d['scale_rel_error']:.0%}).")),
+                        })
+                    response['pipeline_status'] = dict(response['pipeline_status'], **{
+                        'segmentation_stage': 'completed', 'radiomics_stage': 'completed',
+                        'risk_scoring_stage': 'completed',
+                        'stage_summary': 'Detection: Completed | Segmentation: Completed (2D) | '
+                                         'Measurements: Estimated | Risk Scoring: Rule-based'})
+                    low = r2['tumor_analysis_2d']['outline_low_confidence']
+                    response['alert'] = {
+                        'level': 'critical' if low else 'warning',
+                        'title': (f"Tumor detected — outline uncertain ({r2['tumor_analysis_2d']['side']}?)" if low
+                                  else f"Tumor outlined — {r2['tumor_analysis_2d']['side']}"),
+                        'message': (('Low outline confidence: the marked region may not be the tumor. ' if low else '') +
+                                    'Size, side and risk come from one 2D slice. Without DICOM pixel spacing the mm '
+                                    'scale is estimated from the head width, and volume assumes an ellipsoid. '
+                                    'Research prototype, not for diagnosis.'),
+                        'show_results': True}
+                elif not is_tumor and not is_indeterminate:
+                    response['alert'] = {
+                        'level': 'warning', 'title': 'No tumor detected on this slice',
+                        'message': ('The model found no tumor on this single 2D slice. A tumor on other slices '
+                                    'is not excluded. Research prototype, not for diagnosis.'),
+                        'show_results': True}
+                elif is_tumor:
+                    response['alert'] = {
+                        'level': 'warning', 'title': 'Tumor detected — outline not found',
+                        'message': ('The detection models classify this image as containing a tumor, but the '
+                                    'segmentation model did not outline a region, so size and side are not given. '
+                                    'Research prototype, not for diagnosis.'),
+                        'show_results': True}
             return jsonify(response)
 
         except Exception as e:
@@ -1144,49 +1439,29 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
     args = TrainArgs(epochs, batch_size, lr, data_dir, use_synthetic, tumor_path, nontumor_path)
 
     if not TORCH_AVAILABLE:
-        training_state['logs'].append("System entering [HYBRID-SIMULATION] mode (PyTorch Engine not detected).")
-        if not use_synthetic:
-            training_state['logs'].append(f"Loading Positive Samples from: {tumor_path}")
-            training_state['logs'].append(f"Loading Negative Samples from: {nontumor_path}")
-            training_state['logs'].append("Indexing datasets... [DONE]")
-
-        try:
-            total_epochs = epochs
-            for epoch in range(total_epochs):
-                if not training_state['is_running']:
-                    break
-                training_state['epoch'] = epoch + 1
-                training_state['logs'].append(f"--- Epoch [{epoch+1}/{total_epochs}] ---")
-                steps = 5
-                current_acc = 0.65
-                for step in range(steps):
-                    if not training_state['is_running']:
-                        break
-                    time.sleep(1.5)
-                    progress = int(((epoch * steps + step + 1) / (total_epochs * steps)) * 100)
-                    training_state['progress'] = progress
-                    base_acc = 0.65 + (epoch * 0.05) if epoch < 6 else 0.92
-                    noise = np.random.uniform(-0.01, 0.01)
-                    current_acc = min(0.98, base_acc + noise)
-                    training_state['accuracy'] = float(current_acc)
-                    training_state['logs'].append(f"Batch {step+1}/{steps} - Loss: {0.8/(epoch+1):.4f} - Accuracy: {current_acc:.4f}")
-                training_state['logs'].append(f"Epoch {epoch+1} Completed. validation_accuracy: {current_acc:.4f}")
-
-            if training_state['is_running']:
-                training_state['logs'].append("Optimal weights found. Training Sequence Completed [SIMULATED].")
-        except Exception as e:
-            training_state['logs'].append(f"Simulation Error: {str(e)}")
-        finally:
-            training_state['is_running'] = False
-            training_state['progress'] = 100
+        training_state['logs'].append("PyTorch is not installed, so training cannot run. Install it with: pip install -r requirements.txt")
+        training_state['is_running'] = False
+        training_state['progress'] = 0
         return
+
+    # Synthetic (random-noise) data is a smoke test only: write to a separate file and
+    # never replace the deployed best_model.pth.
+    args.output_path = "smoke_test_model.pth" if use_synthetic else "best_model.pth"
 
     try:
         training_state['logs'].append("Initializing PyTorch Training Pipeline...")
-        train(args, progress_callback=training_callback)
+        result = train(args, progress_callback=training_callback) or {}
         training_state['logs'].append("Training Sequence Completed Successfully.")
-        
-        global model
+        if use_synthetic:
+            training_state['logs'].append("Smoke test finished on random data; deployed model left unchanged.")
+            return
+        # train() writes to a candidate file when best_model.pth exists and replaces it only if
+        # the new model is more accurate on validation; otherwise keep serving the current model.
+        if result.get('promoted') is False:
+            training_state['logs'].append("Deployed model kept (new model was not better or did not finish).")
+            return
+
+        global model, MODEL_TRAINED_HEADS, MODEL_TEMPERATURE
         try:
             new_model = BrainTumorClassifier(in_channels=4, num_classes=2)
             checkpoint = torch.load("best_model.pth", map_location=device)
@@ -1205,6 +1480,7 @@ def run_training_task(epochs, batch_size, lr, data_source, tumor_path=None, nont
             new_model.to(device)
             new_model.eval()
             model = new_model
+            MODEL_TRAINED_HEADS, MODEL_TEMPERATURE = read_checkpoint_meta(checkpoint)
             training_state['logs'].append(f"Model reloaded: {len(matched)}/{len(model_dict)} layers matched.")
         except Exception as reload_err:
             training_state['logs'].append(f"Warning: Could not reload model: {reload_err}")
@@ -1253,4 +1529,4 @@ def stop_training():
 
 if __name__ == '__main__':
     print("Starting Flask Interface on http://localhost:5000")
-    app.run(debug=True, port=5000, threaded=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1", port=5000, threaded=True)

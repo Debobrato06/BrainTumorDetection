@@ -27,13 +27,25 @@ def estimate_uncertainty(model, volume_tensor, num_samples=10) -> tuple:
         mean_probability: numpy array (D, H, W)
         uncertainty_map: numpy array (D, H, W) — pixel-wise variance
         average_uncertainty_score: float — mean variance in the positive region
+        (all three are None when uncertainty cannot be computed)
     """
     if not TORCH_AVAILABLE:
-        # Fallback if torch not available (dummy calculation)
-        return np.zeros((64, 64, 64)), np.zeros((64, 64, 64)), 0.0
+        return None, None, None
 
     try:
-        model.train()  # Force training mode to keep dropout active
+        # Keep BatchNorm in eval mode (running statistics) and activate only dropout layers;
+        # model.train() would also switch BatchNorm to batch statistics and distort outputs.
+        was_training = model.training
+        model.eval()
+        n_dropout = 0
+        for m in model.modules():
+            if isinstance(m, (torch.nn.Dropout, torch.nn.Dropout2d, torch.nn.Dropout3d)):
+                m.train()
+                n_dropout += 1
+        if n_dropout == 0:
+            print("[Uncertainty] Model has no dropout layers; MC-Dropout uncertainty is undefined")
+            model.train(was_training)
+            return None, None, None
         preds = []
 
         with torch.no_grad():
@@ -49,10 +61,17 @@ def estimate_uncertainty(model, volume_tensor, num_samples=10) -> tuple:
                 probs = torch.sigmoid(seg_logits).squeeze()
                 preds.append(probs)
 
+        model.train(was_training)
+
         # Calculate metrics
         stacked = torch.stack(preds)
         mean_prob = stacked.mean(dim=0).cpu().numpy()
         var_map = stacked.var(dim=0).cpu().numpy()
+        if not np.any(var_map > 0):
+            # Dropout exists only outside the segmentation path (e.g. classification heads),
+            # so the masks never vary: there is no segmentation uncertainty to report.
+            print("[Uncertainty] Segmentation output has no dropout-induced variance; not computed")
+            return None, None, None
 
         # Uncertainty score is average variance in tumor boundaries
         tumor_mask = mean_prob > 0.5
@@ -65,5 +84,5 @@ def estimate_uncertainty(model, volume_tensor, num_samples=10) -> tuple:
 
     except Exception as e:
         print(f"[Uncertainty] MC-Dropout computation failed: {e}")
-        # Fallback to zero
-        return np.zeros((64, 64, 64)), np.zeros((64, 64, 64)), 0.0
+        # Report "not computed" rather than a fake zero uncertainty
+        return None, None, None

@@ -19,94 +19,71 @@ from monai.transforms import (
 )
 from monai.networks.nets import ViT
 from pytorch_lightning.callbacks import ModelCheckpoint
-from sklearn.model_selection import train_test_split
+from pytorch_lightning.loggers import CSVLogger
 from torch.nn import CrossEntropyLoss
 
 # Configuration
-DATA_ROOT = pathlib.Path(r"D:\DebobratoResearch\BrainTumorDetection\dummy_data\Training")
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
+DATA_ROOT = PROJECT_ROOT / "dummy_data"   # holds the real Kaggle 4-class dataset (Training/, Testing/)
+SPLIT_CSV = PROJECT_ROOT / "splits" / "kaggle4class_clean_split.csv"  # scripts/dedupe_2d.py --clean_split
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 4 # Adjust based on GPU memory
 MAX_EPOCHS = 50
 NUM_CLASSES = 4
 CLASSES = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
-class BrainTumorDataModule(pl.LightningDataModule):
-    def __init__(self, data_dir, batch_size=16):
-        super().__init__()
-        self.data_dir = pathlib.Path(data_dir)
-        self.batch_size = batch_size
-        self.train_files = []
-        self.val_files = []
-        self.train_labels = []
-        self.val_labels = []
 
-    def prepare_data(self):
-        # Scan files
-        all_images = []
-        all_labels = []
-        
-        # Verify directory exists
-        if not self.data_dir.exists():
-            print(f"Warning: Directory {self.data_dir} does not exist.")
-            return
+def read_split(split_csv, data_root, split):
+    """(paths, labels) for one split of the deduplicated split CSV (path,class,split)."""
+    import csv
+    paths, labels = [], []
+    with open(split_csv, newline="") as f:
+        for r in csv.DictReader(f):
+            if r["split"] == split:
+                paths.append(str(pathlib.Path(data_root) / r["path"]))
+                labels.append(CLASSES.index(r["class"]))
+    return paths, labels
 
-        for class_idx, class_name in enumerate(CLASSES):
-            class_path = self.data_dir / class_name
-            if not class_path.exists():
-                print(f"Warning: Class folder {class_path} not found.")
-                continue
-            
-            # Support common image formats
-            images = []
-            for ext in ['*.jpg', '*.jpeg', '*.png', '*.tif']:
-                images.extend(glob.glob(str(class_path / ext)))
-            
-            print(f"Found {len(images)} images for class {class_name}")
-            all_images.extend(images)
-            all_labels.extend([class_idx] * len(images))
 
-        if len(all_images) == 0:
-            print("No images found! Please ensure data is in D:\\DebobratoResearch\\BrainTumorDetection\\dummy_data\\Training")
-            return
-
-        # Split
-        self.train_files, self.val_files, self.train_labels, self.val_labels = train_test_split(
-            all_images, all_labels, test_size=0.2, random_state=42, stratify=all_labels
-        )
-
-        # Define Transforms
-        self.train_transforms = Compose([
-            EnsureChannelFirst(channel_dim='no_channel'), 
-            # Force 1 channel if input is RGB
-            monai.transforms.Lambda(func=lambda x: x[:1, ...] if x.shape[0] > 1 else x),
-            ScaleIntensity(),
-            Resize(spatial_size=IMG_SIZE),
-            RandRotate(range_x=15, prob=0.5, keep_size=True),
+def make_transforms(train):
+    base = [
+        EnsureChannelFirst(channel_dim='no_channel'),
+        # Force 1 channel if input is RGB
+        monai.transforms.Lambda(func=lambda x: x[:1, ...] if x.shape[0] > 1 else x),
+        ScaleIntensity(),
+        Resize(spatial_size=IMG_SIZE),
+    ]
+    if train:
+        base += [
+            RandRotate(range_x=0.26, prob=0.5, keep_size=True),  # radians (~15 degrees)
             RandFlip(spatial_axis=0, prob=0.5),
             RandZoom(min_zoom=0.9, max_zoom=1.1, prob=0.5),
-            EnsureType(),
-        ])
-        
-        self.val_transforms = Compose([
-            EnsureChannelFirst(channel_dim='no_channel'),
-            monai.transforms.Lambda(func=lambda x: x[:1, ...] if x.shape[0] > 1 else x),
-            ScaleIntensity(),
-            Resize(spatial_size=IMG_SIZE),
-            EnsureType(),
-        ])
+        ]
+    return Compose(base + [EnsureType()])
 
-        # MONAI ImageDataset automatically handles loading from list of paths
-        self.train_ds = ImageDataset(
-            image_files=self.train_files,
-            labels=self.train_labels,
-            transform=self.train_transforms
-        )
-        
-        self.val_ds = ImageDataset(
-            image_files=self.val_files,
-            labels=self.val_labels,
-            transform=self.val_transforms
-        )
+
+class BrainTumorDataModule(pl.LightningDataModule):
+    """Train/val come from the leak-free split CSV; the test split is only used by evaluate_2d.py."""
+
+    def __init__(self, data_dir=DATA_ROOT, split_csv=SPLIT_CSV, batch_size=16):
+        super().__init__()
+        self.data_dir = pathlib.Path(data_dir)
+        self.split_csv = pathlib.Path(split_csv)
+        self.batch_size = batch_size
+
+    def setup(self, stage=None):
+        if not self.split_csv.exists():
+            raise FileNotFoundError(f"{self.split_csv} not found; run scripts/dedupe_2d.py --clean_split first")
+        train_files, train_labels = read_split(self.split_csv, self.data_dir, "train")
+        val_files, val_labels = read_split(self.split_csv, self.data_dir, "val")
+        print(f"train={len(train_files)} val={len(val_files)}")
+        self.train_labels = train_labels
+        self.train_ds = ImageDataset(image_files=train_files, labels=train_labels, transform=make_transforms(True))
+        self.val_ds = ImageDataset(image_files=val_files, labels=val_labels, transform=make_transforms(False))
+
+    def class_weights(self):
+        counts = torch.bincount(torch.tensor(self.train_labels), minlength=NUM_CLASSES).float()
+        return counts.sum() / (NUM_CLASSES * counts)
 
     def train_dataloader(self):
         return DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True, pin_memory=True, num_workers=2)
@@ -115,7 +92,7 @@ class BrainTumorDataModule(pl.LightningDataModule):
         return DataLoader(self.val_ds, batch_size=self.batch_size, shuffle=False, pin_memory=True, num_workers=2)
 
 class HybridTumorClassifier(pl.LightningModule):
-    def __init__(self, num_classes=4, lr=1e-4):
+    def __init__(self, num_classes=4, lr=1e-4, class_weights=None):
         super().__init__()
         self.save_hyperparameters()
         
@@ -134,7 +111,7 @@ class HybridTumorClassifier(pl.LightningModule):
             spatial_dims=2
         )
         
-        self.loss_fn = CrossEntropyLoss()
+        self.loss_fn = CrossEntropyLoss(weight=class_weights)
 
     def forward(self, x):
         # x: (B, C, H, W)
@@ -170,41 +147,37 @@ class HybridTumorClassifier(pl.LightningModule):
         return torch.optim.AdamW(self.parameters(), lr=self.hparams.lr)
 
 def main():
-    pl.seed_everything(42)
-    
+    pl.seed_everything(42, workers=True)
+
     print("Setting up Data Module...")
-    dm = BrainTumorDataModule(data_dir=DATA_ROOT, batch_size=BATCH_SIZE)
-    dm.prepare_data()
-    # dm.setup() # Let trainer handle this to avoid 'stage' argument error
-    
-    # If using prepare_data to check files, we need to ensure it populates them 
-    # Or just check count of all_images inside prepare_data.
-    # For now, let's just run trainer.
-    
+    dm = BrainTumorDataModule(batch_size=BATCH_SIZE)
+    dm.setup()
+
     print("Initializing MONAI ViT Classifier...")
-    model = HybridTumorClassifier(num_classes=NUM_CLASSES)
-    
-    # Checkpoint Callback
+    model = HybridTumorClassifier(num_classes=NUM_CLASSES, class_weights=dm.class_weights())
+
+    out_dir = PROJECT_ROOT / "runs" / "vit2d"
     checkpoint_callback = ModelCheckpoint(
-        dirpath='checkpoints_monai',
-        filename='vit_tumor-{epoch:02d}-{val_acc:.2f}',
+        dirpath=out_dir,
+        filename='best',
         save_top_k=1,
         mode='max',
         monitor='val/acc'
     )
-    
+
     trainer = pl.Trainer(
         max_epochs=MAX_EPOCHS,
         accelerator='gpu' if torch.cuda.is_available() else 'cpu',
         devices=1,
-        precision=16 if torch.cuda.is_available() else 32, # Mixed precision
+        precision="16-mixed" if torch.cuda.is_available() else 32,
         callbacks=[checkpoint_callback],
+        logger=CSVLogger(out_dir, name="logs"),
         log_every_n_steps=5
     )
-    
+
     print("Starting Training...")
     trainer.fit(model, dm)
-    print("Training Finished.")
+    print(f"Training Finished. Best checkpoint: {checkpoint_callback.best_model_path}")
 
 if __name__ == "__main__":
     main()

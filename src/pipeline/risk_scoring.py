@@ -318,12 +318,16 @@ def _build_clinical_summary(score, risk_level, volume_ml, diameter_mm,
 
     ring_note = " Ring enhancement pattern noted, which may indicate necrotic core characteristic of high-grade lesions." if is_ring else ""
     eloquent_note = f" Location in an eloquent cortical/deep region ({loc}) raises surgical risk consideration." if is_eloquent else ""
+    if volume_ml and diameter_mm:  # the app passes 0 for "not measured"
+        size_note = f"The lesion measures approximately {volume_ml:.1f}mL (longest diameter {diameter_mm:.1f}mm). "
+    else:
+        size_note = "Lesion size was not measured (requires a 3D scan with known voxel spacing). "
     grade_note = f" AI grade indicator suggests {grade_label.lower()}." if grade_label and grade_label != 'N/A' else ""
 
     return (
         f"AI analysis yields a composite risk score of {score}/100 ({risk_level} risk). "
-        f"The lesion measures approximately {volume_ml:.1f}mL (longest diameter {diameter_mm:.1f}mm) "
-        f"and is located in the {loc}. "
+        f"{size_note}"
+        f"The lesion is located in the {loc}. "
         f"Enhancement pattern: {enh}.{ring_note} "
         f"Peritumoral edema: {edema_lbl}.{eloquent_note}{grade_note} "
         f"{clinical_note}"

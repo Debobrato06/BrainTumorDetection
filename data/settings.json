@@ -1,0 +1,11 @@
+{
+  "segmentation_threshold": 0.6,
+  "gpu_acceleration": true,
+  "heuristic_fallback": true,
+  "inference_precision": "int8",
+  "anonymize_patient_data": true,
+  "audit_logging": false,
+  "auto_sync_reports": false,
+  "api_endpoint": "",
+  "auto_check_updates": true
+}

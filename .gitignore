@@ -10,3 +10,17 @@ venv/
 .idea/
 .vscode/
 
+
+# Datasets and derived data (see DATA.md for how to obtain them)
+data/train/
+data/brats2021_cache/
+dummy_data/
+# Case reports written by the web app (may contain patient information)
+data/storage/
+# Experiment outputs and model files
+runs/
+checkpoints_monai/
+smoke_test_model.pth
+temp_upload*
+models/
+external/

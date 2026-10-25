@@ -78,16 +78,23 @@ def compute_midline_shift(vol_np, binary_mask, pixel_spacing_x=1.0, pixel_spacin
         # Intensity-weighted centroid of the full brain
         if brain_mask_approx.any():
             w_indices = np.arange(W)
-            # For each W slice, get total intensity
-            w_profile = brain_3d.sum(axis=(0, 1))   # Shape (W,)
-            w_profile_norm = w_profile / (w_profile.sum() + 1e-8)
-            actual_midline_w = float(np.sum(w_profile_norm * w_indices))
+            # Weights must be non-negative: z-scored volumes contain negative values, and a
+            # signed profile can sum to ~0, which blew the centroid up to thousands of mm.
+            weights = np.where(brain_mask_approx, brain_3d - brain_3d.min(), 0.0)
+            w_profile = weights.sum(axis=(0, 1))   # Shape (W,)
+            total = w_profile.sum()
+            actual_midline_w = float(np.sum(w_profile * w_indices) / total) if total > 0 else ideal_midline_w
         else:
             actual_midline_w = ideal_midline_w
 
         # ── Step 3: Shift magnitude ──
         shift_vox = abs(ideal_midline_w - actual_midline_w)
         shift_mm = round(shift_vox * pixel_spacing_x, 2)
+        # Physical plausibility: the midline cannot move further than half the head width,
+        # and shifts beyond ~30 mm are not survivable; treat such values as estimation failure.
+        if not np.isfinite(shift_mm) or shift_vox > W / 2 or shift_mm > 30.0:
+            print(f"[MassEffect] Implausible midline shift {shift_mm} mm; reporting as not computed")
+            return _default_mass_effect()
 
         # ── Step 4: Direction (tumor pushes midline opposite side) ──
         if tumor_centroid_w < ideal_midline_w:

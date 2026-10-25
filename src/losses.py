@@ -2,64 +2,58 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class TverskyLoss(nn.Module):
-    def __init__(self, alpha=0.5, beta=0.5, smooth=1e-6):
-        super(TverskyLoss, self).__init__()
+    """
+    Tversky loss on sigmoid outputs, averaged over channels (WT/TC/ET).
+
+        TI = TP / (TP + alpha * FP + beta * FN)
+
+    alpha weights false positives and beta weights false negatives, so
+    beta > alpha (default alpha=0.3, beta=0.7) penalizes missed tumor voxels more.
+    """
+
+    def __init__(self, alpha=0.3, beta=0.7, smooth=1e-5):
+        super().__init__()
         self.alpha = alpha
         self.beta = beta
         self.smooth = smooth
 
-    def forward(self, inputs, targets):
-        # inputs: (B, C, D, H, W) or (B, C, H, W), logits
-        # targets: (B, C, D, H, W) or (B, C, H, W), one-hot or binary
-        
-        inputs = torch.sigmoid(inputs)
-        
-        # Flatten
-        inputs = inputs.view(-1)
-        targets = targets.view(-1)
-        
-        # True Positives, False Positives, False Negatives
-        TP = (inputs * targets).sum()
-        FP = ((1 - targets) * inputs).sum()
-        FN = (targets * (1 - inputs)).sum()
-        
-        Tversky = (TP + self.smooth) / (TP + self.alpha * FP + self.beta * FN + self.smooth)
-        return 1 - Tversky
+    def forward(self, logits, targets):
+        # logits, targets: (B, C, D, H, W); targets binary per channel
+        probs = torch.sigmoid(logits)
+        dims = (0,) + tuple(range(2, probs.ndim))  # sum over batch and space, keep channels
+        tp = (probs * targets).sum(dims)
+        fp = (probs * (1 - targets)).sum(dims)
+        fn = ((1 - probs) * targets).sum(dims)
+        tversky = (tp + self.smooth) / (tp + self.alpha * fp + self.beta * fn + self.smooth)
+        return (1 - tversky).mean()
 
-class BoundaryLoss(nn.Module):
+
+class MultiTaskLoss(nn.Module):
     """
-    Approximation of Boundary Loss using distance maps.
-    Requires pre-computed distance maps for the targets, but here we estimate 
-    it or use a simplified level-set approximation if distance maps aren't provided.
-    For this 'innovative framework', we will implement a generalized version usually used
-    which minimizes the integral over the boundary.
+    L = w_seg * Tversky(seg) + w_cls * CE(cls) + w_grade * CE(grade)
+
+    Grade labels equal to -1 (unknown) are ignored; if a whole batch has no grade
+    label the grade term is 0. Pass a missing target as None to skip that task.
     """
-    def __init__(self):
-        super(BoundaryLoss, self).__init__()
 
-    def forward(self, pred, gt):
-        # pred: (B, C, ...), gt: (B, C, ...)
-        # Note: This is a simplified placeholder. Real Boundary loss needs distance transform of GT.
-        # Here we use a Weighted/Generalized Dice as a proxy for boundary alignment in standard implementation 
-        # if distance map generation is too costly online. 
-        # However, to meet the prompt's request precisely, we'd assume GT comes with distance maps 
-        # or we compute simple gradients to emphasize edges.
-        
-        # Simple Edge-weighted loss
-        # Sobel/Laplacian to extract edges
-        # This is a robust differentiable approximation without external distance map utils
-        
-        # ...implementation depends on performance requirements. 
-        # Let's assume standard Dice for now combined with Tversky as the user asked for.
-        # But to be "innovative", let's try a dist-map approximation if feasible.
-        return 0.0 # Placeholder if not using pre-computed maps, usually combined with others.
+    def __init__(self, w_seg=0.6, w_cls=0.2, w_grade=0.2, tversky_alpha=0.3, tversky_beta=0.7,
+                 cls_weight=None):
+        super().__init__()
+        self.w_seg, self.w_cls, self.w_grade = w_seg, w_cls, w_grade
+        self.seg_loss = TverskyLoss(alpha=tversky_alpha, beta=tversky_beta)
+        self.register_buffer("cls_weight", None if cls_weight is None else torch.as_tensor(cls_weight, dtype=torch.float))
 
-class JointLoss(nn.Module):
-    def __init__(self, alpha=0.7, beta=0.3):
-        super(JointLoss, self).__init__()
-        self.tversky = TverskyLoss(alpha=alpha, beta=beta)
-        # self.boundary = ... 
-    
-    def forward(self, inputs, targets):
-        return self.tversky(inputs, targets)
+    def forward(self, outputs, seg=None, label=None, grade=None):
+        cls_logits, seg_logits, grade_logits = outputs[:3]
+        terms = {}
+        zero = seg_logits.sum() * 0.0
+        terms["seg"] = self.seg_loss(seg_logits, seg) if seg is not None else zero
+        terms["cls"] = F.cross_entropy(cls_logits, label, weight=self.cls_weight) if label is not None else zero
+        if grade is not None and (grade >= 0).any():
+            terms["grade"] = F.cross_entropy(grade_logits, grade, ignore_index=-1)
+        else:
+            terms["grade"] = zero
+        total = self.w_seg * terms["seg"] + self.w_cls * terms["cls"] + self.w_grade * terms["grade"]
+        return total, terms

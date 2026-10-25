@@ -134,9 +134,20 @@ class BrainTumorClassifier(nn.Module):
             nn.Linear(128, 5)
         )
 
+    def forward_heads(self, x):
+        """Classification outputs only (cls, grade, type logits, input SE weights), skipping the
+        segmentation decoder. Same values as forward(); far less memory and time on CPU."""
+        x_se, input_channel_weights = self.input_se(x)
+        e1 = self.enc1(x_se)
+        e2 = self.enc2(self.pool(e1))
+        e3 = self.enc3(self.pool(e2))
+        e4 = self.enc4(self.pool(e3))
+        feat = self.avg_pool(self.bottleneck(self.pool(e4))).view(x.size(0), -1)
+        return self.cls_head(feat), self.grade_head(feat), self.type_head(feat), input_channel_weights
+
     def forward(self, x, return_attention=False):
         # x: (B, 4, 64, 64, 64)
-        
+
         # Recalibrate input MRI sequence channels (T1, T1c, T2, FLAIR)
         x_se, input_channel_weights = self.input_se(x)
 
