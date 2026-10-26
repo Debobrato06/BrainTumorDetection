@@ -1,0 +1,1312 @@
+path,true,pred,p_tumor_seg2d,p_tumor_3d_detector,copy_of_training_image,p_No tumor,p_Glioma,p_Meningioma,p_Pituitary tumor
+dummy_data/Testing/notumor/Te-noTr_0000.jpg,No tumor,No tumor,0.05933,0.2479,1,0.94067,0.0152,0.03613,0.00799
+dummy_data/Testing/notumor/Te-noTr_0001.jpg,No tumor,No tumor,0.04141,0.00192,1,0.95859,0.00979,0.01425,0.01738
+dummy_data/Testing/notumor/Te-noTr_0002.jpg,No tumor,No tumor,0.04672,0.08679,1,0.95328,0.0068,0.0195,0.02042
+dummy_data/Testing/notumor/Te-noTr_0003.jpg,No tumor,No tumor,0.03493,0.0168,1,0.96507,0.01275,0.01593,0.00625
+dummy_data/Testing/notumor/Te-noTr_0004.jpg,No tumor,No tumor,0.09077,0.06339,1,0.90923,0.01241,0.05938,0.01899
+dummy_data/Testing/notumor/Te-noTr_0005.jpg,No tumor,No tumor,0.02299,0.22869,1,0.97701,0.00507,0.00971,0.00821
+dummy_data/Testing/notumor/Te-noTr_0006.jpg,No tumor,No tumor,0.02445,0.07979,1,0.97555,0.01021,0.00349,0.01074
+dummy_data/Testing/notumor/Te-noTr_0007.jpg,No tumor,No tumor,0.05476,0.87395,1,0.94524,0.00962,0.0137,0.03144
+dummy_data/Testing/notumor/Te-noTr_0008.jpg,No tumor,No tumor,0.05161,0.01531,1,0.94839,0.01138,0.01774,0.0225
+dummy_data/Testing/notumor/Te-noTr_0009.jpg,No tumor,No tumor,0.0365,0.02711,1,0.9635,0.00287,0.02301,0.01061
+dummy_data/Testing/notumor/Te-no_0010.jpg,No tumor,No tumor,0.02819,0.02712,1,0.97181,0.00439,0.0185,0.0053
+dummy_data/Testing/notumor/Te-no_0011.jpg,No tumor,No tumor,0.04084,0.09066,1,0.95916,0.00583,0.02409,0.01092
+dummy_data/Testing/notumor/Te-no_0012.jpg,No tumor,No tumor,0.05347,0.19233,1,0.94653,0.0072,0.03615,0.01011
+dummy_data/Testing/notumor/Te-no_0013.jpg,No tumor,No tumor,0.26683,0.30013,1,0.73317,0.16089,0.06418,0.04175
+dummy_data/Testing/notumor/Te-no_0014.jpg,No tumor,No tumor,0.04163,0.11958,1,0.95837,0.00832,0.01712,0.01619
+dummy_data/Testing/notumor/Te-no_0015.jpg,No tumor,No tumor,0.35646,0.70131,1,0.64354,0.00485,0.03633,0.31528
+dummy_data/Testing/notumor/Te-no_0016.jpg,No tumor,No tumor,0.04741,0.00596,1,0.95259,0.00738,0.01533,0.0247
+dummy_data/Testing/notumor/Te-no_0017.jpg,No tumor,No tumor,0.02277,0.10998,1,0.97723,0.00513,0.00755,0.0101
+dummy_data/Testing/notumor/Te-no_0018.jpg,No tumor,No tumor,0.04012,0.13842,1,0.95988,0.00587,0.0148,0.01945
+dummy_data/Testing/notumor/Te-no_0019.jpg,No tumor,No tumor,0.03444,0.00711,1,0.96556,0.01153,0.0121,0.01081
+dummy_data/Testing/notumor/Te-no_0020.jpg,No tumor,No tumor,0.03361,0.00699,1,0.96639,0.01659,0.00741,0.00962
+dummy_data/Testing/notumor/Te-no_0021.jpg,No tumor,No tumor,0.04894,0.00889,1,0.95106,0.00961,0.01398,0.02536
+dummy_data/Testing/notumor/Te-no_0022.jpg,No tumor,No tumor,0.06704,0.19317,1,0.93296,0.05277,0.00791,0.00636
+dummy_data/Testing/notumor/Te-no_0023.jpg,No tumor,No tumor,0.03115,0.00495,1,0.96885,0.00947,0.0103,0.01138
+dummy_data/Testing/notumor/Te-no_0024.jpg,No tumor,No tumor,0.25622,0.49914,1,0.74378,0.00528,0.02584,0.2251
+dummy_data/Testing/notumor/Te-no_0025.jpg,No tumor,No tumor,0.02523,0.04872,1,0.97477,0.00681,0.009,0.00941
+dummy_data/Testing/notumor/Te-no_0026.jpg,No tumor,No tumor,0.0315,0.00947,1,0.9685,0.00808,0.00972,0.0137
+dummy_data/Testing/notumor/Te-no_0027.jpg,No tumor,No tumor,0.03357,0.09248,1,0.96643,0.00916,0.01092,0.01348
+dummy_data/Testing/notumor/Te-no_0028.jpg,No tumor,No tumor,0.03248,0.05954,1,0.96752,0.00187,0.02221,0.00841
+dummy_data/Testing/notumor/Te-no_0029.jpg,No tumor,No tumor,0.14537,0.91411,1,0.85463,0.09037,0.04264,0.01236
+dummy_data/Testing/notumor/Te-no_0030.jpg,No tumor,No tumor,0.03315,0.03166,1,0.96685,0.00842,0.01631,0.00843
+dummy_data/Testing/notumor/Te-no_0031.jpg,No tumor,No tumor,0.04141,0.00192,1,0.95859,0.00979,0.01425,0.01738
+dummy_data/Testing/notumor/Te-no_0032.jpg,No tumor,No tumor,0.03724,0.0029,1,0.96276,0.00887,0.01362,0.01475
+dummy_data/Testing/notumor/Te-no_0033.jpg,No tumor,No tumor,0.29731,0.00741,1,0.70269,0.26363,0.02034,0.01334
+dummy_data/Testing/notumor/Te-no_0034.jpg,No tumor,No tumor,0.02801,0.02894,1,0.97199,0.00432,0.01844,0.00525
+dummy_data/Testing/notumor/Te-no_0035.jpg,No tumor,No tumor,0.23708,0.79421,1,0.76292,0.18848,0.03487,0.01373
+dummy_data/Testing/notumor/Te-no_0036.jpg,No tumor,No tumor,0.03739,0.03236,1,0.96261,0.00311,0.02331,0.01097
+dummy_data/Testing/notumor/Te-no_0037.jpg,No tumor,No tumor,0.0297,0.00967,1,0.9703,0.00816,0.00909,0.01246
+dummy_data/Testing/notumor/Te-no_0038.jpg,No tumor,No tumor,0.08828,0.69941,1,0.91172,0.00639,0.04947,0.03242
+dummy_data/Testing/notumor/Te-no_0039.jpg,No tumor,No tumor,0.05141,0.04577,1,0.94859,0.00897,0.03014,0.0123
+dummy_data/Testing/notumor/Te-no_0040.jpg,No tumor,No tumor,0.04663,0.22928,1,0.95337,0.00695,0.02734,0.01234
+dummy_data/Testing/notumor/Te-no_0041.jpg,No tumor,No tumor,0.04497,0.00235,1,0.95503,0.00838,0.0151,0.0215
+dummy_data/Testing/notumor/Te-no_0042.jpg,No tumor,No tumor,0.04076,0.04016,1,0.95924,0.00791,0.02298,0.00987
+dummy_data/Testing/notumor/Te-no_0043.jpg,No tumor,No tumor,0.02834,0.056,1,0.97166,0.00463,0.01527,0.00844
+dummy_data/Testing/notumor/Te-no_0044.jpg,No tumor,No tumor,0.05347,0.19233,1,0.94653,0.0072,0.03615,0.01011
+dummy_data/Testing/notumor/Te-no_0045.jpg,No tumor,No tumor,0.44795,0.7896,1,0.55205,0.41354,0.02455,0.00985
+dummy_data/Testing/notumor/Te-no_0046.jpg,No tumor,No tumor,0.03028,0.00947,1,0.96972,0.00827,0.00907,0.01295
+dummy_data/Testing/notumor/Te-no_0047.jpg,No tumor,No tumor,0.0434,0.0023,1,0.9566,0.00821,0.01464,0.02055
+dummy_data/Testing/notumor/Te-no_0048.jpg,No tumor,No tumor,0.04084,0.09066,1,0.95916,0.00583,0.02409,0.01092
+dummy_data/Testing/notumor/Te-no_0049.jpg,No tumor,No tumor,0.18987,0.04462,1,0.81013,0.02121,0.12058,0.04808
+dummy_data/Testing/notumor/Te-no_0050.jpg,No tumor,No tumor,0.44795,0.7896,1,0.55205,0.41354,0.02455,0.00985
+dummy_data/Testing/notumor/Te-no_0051.jpg,No tumor,No tumor,0.04702,0.06472,1,0.95298,0.00598,0.03003,0.011
+dummy_data/Testing/notumor/Te-no_0052.jpg,No tumor,No tumor,0.04663,0.22928,1,0.95337,0.00695,0.02734,0.01234
+dummy_data/Testing/notumor/Te-no_0053.jpg,No tumor,No tumor,0.04084,0.09066,1,0.95916,0.00583,0.02409,0.01092
+dummy_data/Testing/notumor/Te-no_0054.jpg,No tumor,No tumor,0.44795,0.7896,1,0.55205,0.41354,0.02455,0.00985
+dummy_data/Testing/notumor/Te-no_0055.jpg,No tumor,No tumor,0.05347,0.19233,1,0.94653,0.0072,0.03615,0.01011
+dummy_data/Testing/notumor/Te-no_0056.jpg,No tumor,No tumor,0.04566,0.29869,1,0.95434,0.00517,0.03007,0.01042
+dummy_data/Testing/notumor/Te-no_0057.jpg,No tumor,No tumor,0.02818,0.03132,1,0.97182,0.004,0.01864,0.00555
+dummy_data/Testing/notumor/Te-no_0058.jpg,No tumor,No tumor,0.07145,0.08886,1,0.92855,0.00938,0.05048,0.01158
+dummy_data/Testing/notumor/Te-no_0059.jpg,No tumor,No tumor,0.03987,0.03397,1,0.96013,0.00757,0.02336,0.00894
+dummy_data/Testing/notumor/Te-no_0060.jpg,No tumor,No tumor,0.02973,0.00717,1,0.97027,0.00784,0.00913,0.01276
+dummy_data/Testing/notumor/Te-no_0061.jpg,No tumor,No tumor,0.05347,0.19233,1,0.94653,0.0072,0.03615,0.01011
+dummy_data/Testing/notumor/Te-no_0062.jpg,No tumor,No tumor,0.03444,0.00711,1,0.96556,0.01153,0.0121,0.01081
+dummy_data/Testing/notumor/Te-no_0063.jpg,No tumor,No tumor,0.02776,0.02813,1,0.97224,0.00332,0.01893,0.00551
+dummy_data/Testing/notumor/Te-no_0064.jpg,No tumor,No tumor,0.03007,0.0095,1,0.96993,0.00825,0.00919,0.01262
+dummy_data/Testing/notumor/Te-no_0065.jpg,No tumor,No tumor,0.03315,0.03166,1,0.96685,0.00842,0.01631,0.00843
+dummy_data/Testing/notumor/Te-no_0066.jpg,No tumor,No tumor,0.05147,0.02254,1,0.94853,0.01148,0.01727,0.02271
+dummy_data/Testing/notumor/Te-no_0067.jpg,No tumor,No tumor,0.04141,0.00192,1,0.95859,0.00979,0.01425,0.01738
+dummy_data/Testing/notumor/Te-no_0068.jpg,No tumor,No tumor,0.04084,0.09066,1,0.95916,0.00583,0.02409,0.01092
+dummy_data/Testing/notumor/Te-no_0069.jpg,No tumor,No tumor,0.14537,0.91411,1,0.85463,0.09037,0.04264,0.01236
+dummy_data/Testing/notumor/Te-no_0070.jpg,No tumor,No tumor,0.04012,0.13842,1,0.95988,0.00587,0.0148,0.01945
+dummy_data/Testing/notumor/Te-no_0071.jpg,No tumor,No tumor,0.03398,0.05229,1,0.96602,0.0018,0.0234,0.00878
+dummy_data/Testing/notumor/Te-no_0072.jpg,No tumor,No tumor,0.04894,0.00889,1,0.95106,0.00961,0.01398,0.02536
+dummy_data/Testing/notumor/Te-no_0073.jpg,No tumor,No tumor,0.03444,0.00711,1,0.96556,0.01153,0.0121,0.01081
+dummy_data/Testing/notumor/Te-no_0074.jpg,No tumor,No tumor,0.02286,0.12171,1,0.97714,0.00515,0.00756,0.01014
+dummy_data/Testing/notumor/Te-no_0075.jpg,No tumor,No tumor,0.06704,0.19317,1,0.93296,0.05277,0.00791,0.00636
+dummy_data/Testing/notumor/Te-no_0076.jpg,No tumor,No tumor,0.03353,0.00612,1,0.96647,0.00933,0.01172,0.01247
+dummy_data/Testing/notumor/Te-no_0077.jpg,No tumor,No tumor,0.0434,0.0023,1,0.9566,0.00821,0.01464,0.02055
+dummy_data/Testing/notumor/Te-no_0078.jpg,No tumor,No tumor,0.05264,0.02151,1,0.94736,0.01179,0.01787,0.02298
+dummy_data/Testing/notumor/Te-no_0079.jpg,No tumor,No tumor,0.23792,0.54253,1,0.76208,0.00589,0.02362,0.20841
+dummy_data/Testing/notumor/Te-no_0080.jpg,No tumor,No tumor,0.04021,0.00362,1,0.95979,0.01066,0.01299,0.01656
+dummy_data/Testing/notumor/Te-no_0081.jpg,No tumor,No tumor,0.23708,0.79421,1,0.76292,0.18848,0.03487,0.01373
+dummy_data/Testing/notumor/Te-no_0082.jpg,No tumor,No tumor,0.04464,0.0022,1,0.95536,0.00769,0.01543,0.02152
+dummy_data/Testing/notumor/Te-no_0083.jpg,No tumor,No tumor,0.03318,0.00726,1,0.96682,0.00558,0.01159,0.01601
+dummy_data/Testing/notumor/Te-no_0084.jpg,No tumor,No tumor,0.04141,0.00192,1,0.95859,0.00979,0.01425,0.01738
+dummy_data/Testing/notumor/Te-no_0085.jpg,No tumor,No tumor,0.06975,0.20068,1,0.93025,0.01003,0.03188,0.02783
+dummy_data/Testing/notumor/Te-no_0086.jpg,No tumor,No tumor,0.04497,0.03071,1,0.95503,0.00784,0.02872,0.0084
+dummy_data/Testing/notumor/Te-no_0087.jpg,No tumor,No tumor,0.04084,0.09066,1,0.95916,0.00583,0.02409,0.01092
+dummy_data/Testing/notumor/Te-no_0088.jpg,No tumor,No tumor,0.05476,0.87395,1,0.94524,0.00962,0.0137,0.03144
+dummy_data/Testing/notumor/Te-no_0089.jpg,No tumor,No tumor,0.03231,0.02,1,0.96769,0.01577,0.00961,0.00694
+dummy_data/Testing/notumor/Te-no_0090.jpg,No tumor,No tumor,0.05764,0.2087,1,0.94236,0.00179,0.03811,0.01774
+dummy_data/Testing/notumor/Te-no_0091.jpg,No tumor,No tumor,0.04418,0.00577,1,0.95582,0.01285,0.01502,0.01631
+dummy_data/Testing/notumor/Te-no_0092.jpg,No tumor,No tumor,0.2099,0.05937,1,0.7901,0.00806,0.19187,0.00997
+dummy_data/Testing/notumor/Te-no_0093.jpg,No tumor,No tumor,0.03318,0.00726,1,0.96682,0.00558,0.01159,0.01601
+dummy_data/Testing/notumor/Te-no_0094.jpg,No tumor,No tumor,0.037,0.05587,1,0.963,0.00318,0.02581,0.00801
+dummy_data/Testing/notumor/Te-no_0095.jpg,No tumor,No tumor,0.0305,0.04246,1,0.9695,0.01689,0.00799,0.00563
+dummy_data/Testing/notumor/Te-no_0096.jpg,No tumor,No tumor,0.06577,0.81768,1,0.93423,0.00968,0.04566,0.01043
+dummy_data/Testing/notumor/Te-no_0097.jpg,No tumor,No tumor,0.0613,0.1243,1,0.9387,0.01868,0.01499,0.02763
+dummy_data/Testing/notumor/Te-no_0098.jpg,No tumor,Meningioma,0.925,0.14471,1,0.075,0.01749,0.86546,0.04205
+dummy_data/Testing/notumor/Te-no_0099.jpg,No tumor,No tumor,0.42019,0.01168,1,0.57981,0.38835,0.01987,0.01197
+dummy_data/Testing/notumor/Te-no_0100.jpg,No tumor,No tumor,0.04759,0.00542,1,0.95241,0.01056,0.02142,0.01561
+dummy_data/Testing/notumor/Te-no_0101.jpg,No tumor,No tumor,0.13712,0.12567,1,0.86288,0.07347,0.05223,0.01141
+dummy_data/Testing/notumor/Te-no_0102.jpg,No tumor,No tumor,0.03372,0.02799,1,0.96628,0.00914,0.00789,0.01669
+dummy_data/Testing/notumor/Te-no_0103.jpg,No tumor,No tumor,0.04456,0.01081,1,0.95544,0.01013,0.01254,0.02189
+dummy_data/Testing/notumor/Te-no_0104.jpg,No tumor,Glioma,0.65446,0.33212,1,0.34554,0.50282,0.1195,0.03215
+dummy_data/Testing/notumor/Te-no_0105.jpg,No tumor,No tumor,0.04178,0.09026,0,0.95822,0.00499,0.02178,0.01501
+dummy_data/Testing/notumor/Te-no_0106.jpg,No tumor,No tumor,0.05127,0.09569,1,0.94873,0.00918,0.01445,0.02764
+dummy_data/Testing/notumor/Te-no_0107.jpg,No tumor,No tumor,0.04143,0.02398,1,0.95857,0.00935,0.0127,0.01938
+dummy_data/Testing/notumor/Te-no_0108.jpg,No tumor,No tumor,0.04224,0.01002,1,0.95776,0.00811,0.01247,0.02167
+dummy_data/Testing/notumor/Te-no_0109.jpg,No tumor,No tumor,0.04224,0.00385,1,0.95776,0.00926,0.01526,0.01771
+dummy_data/Testing/notumor/Te-no_0110.jpg,No tumor,No tumor,0.05508,0.05352,1,0.94492,0.01312,0.02231,0.01965
+dummy_data/Testing/notumor/Te-no_0111.jpg,No tumor,No tumor,0.02226,0.07213,1,0.97774,0.00423,0.0111,0.00692
+dummy_data/Testing/notumor/Te-no_0112.jpg,No tumor,No tumor,0.04187,0.00542,1,0.95813,0.00557,0.01401,0.02229
+dummy_data/Testing/notumor/Te-no_0113.jpg,No tumor,No tumor,0.03773,0.01042,1,0.96227,0.01115,0.0166,0.00998
+dummy_data/Testing/notumor/Te-no_0114.jpg,No tumor,No tumor,0.0406,0.00835,1,0.9594,0.00704,0.01438,0.01918
+dummy_data/Testing/notumor/Te-no_0115.jpg,No tumor,No tumor,0.04379,0.06489,1,0.95621,0.00947,0.01662,0.0177
+dummy_data/Testing/notumor/Te-no_0116.jpg,No tumor,No tumor,0.0305,0.02398,1,0.9695,0.01042,0.01108,0.00901
+dummy_data/Testing/notumor/Te-no_0117.jpg,No tumor,No tumor,0.04319,0.0052,1,0.95681,0.01098,0.01501,0.0172
+dummy_data/Testing/notumor/Te-no_0118.jpg,No tumor,No tumor,0.03745,0.3505,1,0.96255,0.00687,0.01431,0.01627
+dummy_data/Testing/notumor/Te-no_0119.jpg,No tumor,No tumor,0.04434,0.00203,0,0.95566,0.00707,0.01491,0.02236
+dummy_data/Testing/notumor/Te-no_0120.jpg,No tumor,No tumor,0.03156,0.12853,1,0.96844,0.00904,0.00811,0.01441
+dummy_data/Testing/notumor/Te-no_0121.jpg,No tumor,No tumor,0.03774,0.08081,1,0.96226,0.00928,0.01168,0.01678
+dummy_data/Testing/notumor/Te-no_0122.jpg,No tumor,No tumor,0.02357,0.0334,1,0.97643,0.00562,0.01046,0.00749
+dummy_data/Testing/notumor/Te-no_0123.jpg,No tumor,No tumor,0.04652,0.0681,1,0.95348,0.00649,0.02356,0.01646
+dummy_data/Testing/notumor/Te-no_0124.jpg,No tumor,No tumor,0.04289,0.01242,1,0.95711,0.00972,0.01214,0.02104
+dummy_data/Testing/notumor/Te-no_0125.jpg,No tumor,No tumor,0.04009,0.01793,1,0.95991,0.01191,0.01215,0.01603
+dummy_data/Testing/notumor/Te-no_0126.jpg,No tumor,No tumor,0.03618,0.01792,1,0.96382,0.01175,0.00944,0.01499
+dummy_data/Testing/notumor/Te-no_0127.jpg,No tumor,No tumor,0.0356,0.02472,1,0.9644,0.00979,0.01203,0.01378
+dummy_data/Testing/notumor/Te-no_0128.jpg,No tumor,No tumor,0.04283,0.02874,1,0.95717,0.00806,0.01465,0.02012
+dummy_data/Testing/notumor/Te-no_0129.jpg,No tumor,No tumor,0.04686,0.00695,1,0.95314,0.00761,0.02555,0.01369
+dummy_data/Testing/notumor/Te-no_0130.jpg,No tumor,No tumor,0.04239,0.02625,1,0.95761,0.00677,0.01197,0.02364
+dummy_data/Testing/notumor/Te-no_0131.jpg,No tumor,No tumor,0.04432,0.10784,1,0.95568,0.00603,0.01331,0.02497
+dummy_data/Testing/notumor/Te-no_0132.jpg,No tumor,No tumor,0.04973,0.00617,1,0.95027,0.0085,0.01933,0.02191
+dummy_data/Testing/notumor/Te-no_0133.jpg,No tumor,No tumor,0.03276,0.02601,1,0.96724,0.00737,0.0114,0.014
+dummy_data/Testing/notumor/Te-no_0134.jpg,No tumor,No tumor,0.0357,0.01937,1,0.9643,0.00711,0.0128,0.01578
+dummy_data/Testing/notumor/Te-no_0135.jpg,No tumor,No tumor,0.05792,0.12212,1,0.94208,0.01231,0.02935,0.01626
+dummy_data/Testing/notumor/Te-no_0136.jpg,No tumor,No tumor,0.04482,0.10208,1,0.95518,0.01076,0.01536,0.0187
+dummy_data/Testing/notumor/Te-no_0137.jpg,No tumor,No tumor,0.03714,0.02366,1,0.96286,0.00738,0.01388,0.01588
+dummy_data/Testing/notumor/Te-no_0138.jpg,No tumor,No tumor,0.05079,0.01542,1,0.94921,0.0074,0.02158,0.02181
+dummy_data/Testing/notumor/Te-no_0139.jpg,No tumor,No tumor,0.02607,0.01985,1,0.97393,0.00614,0.01135,0.00857
+dummy_data/Testing/notumor/Te-no_0140.jpg,No tumor,No tumor,0.03964,0.00642,1,0.96036,0.0092,0.01202,0.01842
+dummy_data/Testing/notumor/Te-no_0141.jpg,No tumor,No tumor,0.04463,0.00089,1,0.95537,0.01059,0.01939,0.01465
+dummy_data/Testing/notumor/Te-no_0142.jpg,No tumor,No tumor,0.03899,0.02155,1,0.96101,0.00588,0.02268,0.01043
+dummy_data/Testing/notumor/Te-no_0143.jpg,No tumor,No tumor,0.04527,0.00218,1,0.95473,0.00936,0.01832,0.01759
+dummy_data/Testing/notumor/Te-no_0144.jpg,No tumor,No tumor,0.03878,0.00683,1,0.96122,0.00737,0.01393,0.01748
+dummy_data/Testing/notumor/Te-no_0145.jpg,No tumor,No tumor,0.04162,0.01256,1,0.95838,0.00953,0.01299,0.01909
+dummy_data/Testing/notumor/Te-no_0146.jpg,No tumor,No tumor,0.0561,0.00123,1,0.9439,0.01105,0.02613,0.01891
+dummy_data/Testing/notumor/Te-no_0147.jpg,No tumor,No tumor,0.04421,0.02006,1,0.95579,0.00901,0.01935,0.01585
+dummy_data/Testing/notumor/Te-no_0148.jpg,No tumor,No tumor,0.03665,0.01639,1,0.96335,0.00951,0.01302,0.01411
+dummy_data/Testing/notumor/Te-no_0149.jpg,No tumor,No tumor,0.01993,0.27761,0,0.98007,0.00685,0.00825,0.00482
+dummy_data/Testing/notumor/Te-no_0150.jpg,No tumor,No tumor,0.03366,0.06361,1,0.96634,0.00799,0.01543,0.01025
+dummy_data/Testing/notumor/Te-no_0151.jpg,No tumor,No tumor,0.04471,0.00718,1,0.95529,0.00856,0.01309,0.02307
+dummy_data/Testing/notumor/Te-no_0152.jpg,No tumor,No tumor,0.04981,0.00568,1,0.95019,0.00862,0.01813,0.02306
+dummy_data/Testing/notumor/Te-no_0153.jpg,No tumor,No tumor,0.04981,0.01527,1,0.95019,0.00993,0.0182,0.02168
+dummy_data/Testing/notumor/Te-no_0154.jpg,No tumor,No tumor,0.04787,0.05439,1,0.95213,0.00884,0.02576,0.01327
+dummy_data/Testing/notumor/Te-no_0155.jpg,No tumor,No tumor,0.04982,0.0192,1,0.95018,0.01104,0.0205,0.01828
+dummy_data/Testing/notumor/Te-no_0156.jpg,No tumor,No tumor,0.0345,0.01929,1,0.9655,0.00835,0.01439,0.01176
+dummy_data/Testing/notumor/Te-no_0157.jpg,No tumor,No tumor,0.04971,0.05879,1,0.95029,0.00954,0.02588,0.01429
+dummy_data/Testing/notumor/Te-no_0158.jpg,No tumor,No tumor,0.04168,0.01967,1,0.95832,0.00638,0.02097,0.01433
+dummy_data/Testing/notumor/Te-no_0159.jpg,No tumor,No tumor,0.04351,0.00113,1,0.95649,0.01044,0.01879,0.01429
+dummy_data/Testing/notumor/Te-no_0160.jpg,No tumor,No tumor,0.04651,0.0019,1,0.95349,0.00925,0.01885,0.01841
+dummy_data/Testing/notumor/Te-no_0161.jpg,No tumor,No tumor,0.0352,0.01811,1,0.9648,0.00996,0.0124,0.01284
+dummy_data/Testing/notumor/Te-no_0162.jpg,No tumor,No tumor,0.05534,0.1185,1,0.94466,0.01156,0.02405,0.01973
+dummy_data/Testing/notumor/Te-no_0163.jpg,No tumor,No tumor,0.03716,0.01113,1,0.96284,0.00778,0.01108,0.0183
+dummy_data/Testing/notumor/Te-no_0164.jpg,No tumor,No tumor,0.0421,0.0297,1,0.9579,0.00857,0.01816,0.01537
+dummy_data/Testing/notumor/Te-no_0165.jpg,No tumor,No tumor,0.04208,0.00293,1,0.95792,0.00903,0.01461,0.01845
+dummy_data/Testing/notumor/Te-no_0166.jpg,No tumor,No tumor,0.03556,0.16056,1,0.96444,0.00893,0.01415,0.01248
+dummy_data/Testing/notumor/Te-no_0167.jpg,No tumor,No tumor,0.04433,0.00839,1,0.95567,0.00831,0.01318,0.02285
+dummy_data/Testing/notumor/Te-no_0168.jpg,No tumor,No tumor,0.04639,0.00971,1,0.95361,0.00742,0.01553,0.02345
+dummy_data/Testing/notumor/Te-no_0169.jpg,No tumor,No tumor,0.04951,0.00577,1,0.95049,0.0087,0.01809,0.02272
+dummy_data/Testing/notumor/Te-no_0170.jpg,No tumor,No tumor,0.04343,0.01084,1,0.95657,0.0074,0.01822,0.01781
+dummy_data/Testing/notumor/Te-no_0171.jpg,No tumor,No tumor,0.05091,0.03542,1,0.94909,0.01135,0.02012,0.01944
+dummy_data/Testing/notumor/Te-no_0172.jpg,No tumor,No tumor,0.04736,0.01677,1,0.95264,0.00937,0.0181,0.01989
+dummy_data/Testing/notumor/Te-no_0173.jpg,No tumor,No tumor,0.03931,0.02911,1,0.96069,0.00887,0.01366,0.01678
+dummy_data/Testing/notumor/Te-no_0174.jpg,No tumor,No tumor,0.04948,0.06611,1,0.95052,0.00902,0.01854,0.02193
+dummy_data/Testing/notumor/Te-no_0175.jpg,No tumor,No tumor,0.05364,0.02074,1,0.94636,0.00868,0.02373,0.02123
+dummy_data/Testing/notumor/Te-no_0176.jpg,No tumor,No tumor,0.03219,0.19862,1,0.96781,0.01136,0.01049,0.01034
+dummy_data/Testing/notumor/Te-no_0177.jpg,No tumor,No tumor,0.04891,0.02678,1,0.95109,0.00651,0.02555,0.01686
+dummy_data/Testing/notumor/Te-no_0178.jpg,No tumor,No tumor,0.04224,0.0121,1,0.95776,0.0081,0.01246,0.02167
+dummy_data/Testing/notumor/Te-no_0179.jpg,No tumor,No tumor,0.03419,0.00874,1,0.96581,0.00667,0.01041,0.01711
+dummy_data/Testing/notumor/Te-no_0180.jpg,No tumor,No tumor,0.04288,0.01167,1,0.95712,0.00617,0.01652,0.0202
+dummy_data/Testing/notumor/Te-no_0181.jpg,No tumor,No tumor,0.04408,0.00852,1,0.95592,0.00558,0.019,0.0195
+dummy_data/Testing/notumor/Te-no_0182.jpg,No tumor,No tumor,0.04877,0.02433,1,0.95123,0.01059,0.01914,0.01904
+dummy_data/Testing/notumor/Te-no_0183.jpg,No tumor,No tumor,0.02487,0.08233,1,0.97513,0.0034,0.01275,0.00873
+dummy_data/Testing/notumor/Te-no_0184.jpg,No tumor,No tumor,0.04512,0.00678,1,0.95488,0.00547,0.01564,0.02401
+dummy_data/Testing/notumor/Te-no_0185.jpg,No tumor,No tumor,0.04678,0.00721,1,0.95322,0.00956,0.02046,0.01676
+dummy_data/Testing/notumor/Te-no_0186.jpg,No tumor,No tumor,0.03905,0.00639,1,0.96095,0.01033,0.01888,0.00985
+dummy_data/Testing/notumor/Te-no_0187.jpg,No tumor,No tumor,0.04305,0.07905,1,0.95695,0.01041,0.01696,0.01568
+dummy_data/Testing/notumor/Te-no_0188.jpg,No tumor,No tumor,0.04366,0.01558,1,0.95634,0.00728,0.01691,0.01948
+dummy_data/Testing/notumor/Te-no_0189.jpg,No tumor,No tumor,0.02664,0.00753,1,0.97336,0.00698,0.01032,0.00934
+dummy_data/Testing/notumor/Te-no_0190.jpg,No tumor,No tumor,0.04839,0.01228,1,0.95161,0.00923,0.02234,0.01682
+dummy_data/Testing/notumor/Te-no_0191.jpg,No tumor,No tumor,0.04517,0.11086,1,0.95483,0.01345,0.01493,0.01679
+dummy_data/Testing/notumor/Te-no_0192.jpg,No tumor,No tumor,0.05103,0.00784,1,0.94897,0.00756,0.01987,0.0236
+dummy_data/Testing/notumor/Te-no_0193.jpg,No tumor,No tumor,0.05344,0.01241,1,0.94656,0.00823,0.02243,0.02279
+dummy_data/Testing/notumor/Te-no_0194.jpg,No tumor,No tumor,0.04384,0.13205,1,0.95616,0.00719,0.01764,0.01902
+dummy_data/Testing/notumor/Te-no_0195.jpg,No tumor,No tumor,0.03992,0.00713,1,0.96008,0.00756,0.01468,0.01768
+dummy_data/Testing/notumor/Te-no_0196.jpg,No tumor,No tumor,0.02002,0.27821,0,0.97998,0.0072,0.00782,0.005
+dummy_data/Testing/notumor/Te-no_0197.jpg,No tumor,No tumor,0.05181,0.00699,1,0.94819,0.00833,0.02291,0.02057
+dummy_data/Testing/notumor/Te-no_0198.jpg,No tumor,No tumor,0.05072,0.07192,1,0.94928,0.00912,0.01435,0.02725
+dummy_data/Testing/notumor/Te-no_0199.jpg,No tumor,No tumor,0.03621,0.03124,1,0.96379,0.00786,0.01266,0.01569
+dummy_data/Testing/notumor/Te-no_0200.jpg,No tumor,No tumor,0.04451,0.00342,1,0.95549,0.00957,0.01597,0.01896
+dummy_data/Testing/notumor/Te-no_0201.jpg,No tumor,No tumor,0.02206,0.12947,1,0.97794,0.00429,0.01095,0.00682
+dummy_data/Testing/notumor/Te-no_0202.jpg,No tumor,No tumor,0.05108,0.00259,0,0.94892,0.01087,0.02654,0.01366
+dummy_data/Testing/notumor/Te-no_0203.jpg,No tumor,No tumor,0.04492,0.01409,1,0.95508,0.01159,0.01278,0.02056
+dummy_data/Testing/notumor/Te-no_0204.jpg,No tumor,No tumor,0.05485,0.01296,1,0.94515,0.00807,0.02176,0.02503
+dummy_data/Testing/notumor/Te-no_0205.jpg,No tumor,No tumor,0.03026,0.03075,1,0.96974,0.01026,0.011,0.009
+dummy_data/Testing/notumor/Te-no_0206.jpg,No tumor,No tumor,0.04007,0.01615,1,0.95993,0.00773,0.01952,0.01282
+dummy_data/Testing/notumor/Te-no_0207.jpg,No tumor,No tumor,0.04717,0.01445,1,0.95283,0.00575,0.03071,0.01071
+dummy_data/Testing/notumor/Te-no_0208.jpg,No tumor,No tumor,0.04322,0.07708,1,0.95678,0.01061,0.01734,0.01527
+dummy_data/Testing/notumor/Te-no_0209.jpg,No tumor,No tumor,0.04928,0.03329,1,0.95072,0.01187,0.01773,0.01968
+dummy_data/Testing/notumor/Te-no_0210.jpg,No tumor,No tumor,0.03056,0.08161,1,0.96944,0.00919,0.0076,0.01377
+dummy_data/Testing/notumor/Te-no_0211.jpg,No tumor,No tumor,0.02274,0.0359,1,0.97726,0.00557,0.00997,0.0072
+dummy_data/Testing/notumor/Te-no_0212.jpg,No tumor,No tumor,0.04923,0.01345,1,0.95077,0.00593,0.03098,0.01231
+dummy_data/Testing/notumor/Te-no_0213.jpg,No tumor,No tumor,0.04279,0.01283,1,0.95721,0.00927,0.01226,0.02126
+dummy_data/Testing/notumor/Te-no_0214.jpg,No tumor,No tumor,0.03808,0.02091,1,0.96192,0.01121,0.01127,0.0156
+dummy_data/Testing/notumor/Te-no_0215.jpg,No tumor,No tumor,0.03869,0.00451,1,0.96131,0.00817,0.01274,0.01778
+dummy_data/Testing/notumor/Te-no_0216.jpg,No tumor,No tumor,0.04275,0.04569,1,0.95725,0.00803,0.01478,0.01994
+dummy_data/Testing/notumor/Te-no_0217.jpg,No tumor,No tumor,0.04822,0.00456,1,0.95178,0.00792,0.01712,0.02318
+dummy_data/Testing/notumor/Te-no_0218.jpg,No tumor,No tumor,0.0442,0.05867,1,0.9558,0.00604,0.01322,0.02494
+dummy_data/Testing/notumor/Te-no_0219.jpg,No tumor,No tumor,0.04424,0.00823,1,0.95576,0.00998,0.01493,0.01933
+dummy_data/Testing/notumor/Te-no_0220.jpg,No tumor,No tumor,0.03324,0.03252,1,0.96676,0.00759,0.01144,0.01422
+dummy_data/Testing/notumor/Te-no_0221.jpg,No tumor,No tumor,0.04307,0.00446,1,0.95693,0.00575,0.0142,0.02311
+dummy_data/Testing/notumor/Te-no_0222.jpg,No tumor,No tumor,0.05826,0.1645,1,0.94174,0.01325,0.0284,0.01661
+dummy_data/Testing/notumor/Te-no_0223.jpg,No tumor,No tumor,0.0442,0.13188,1,0.9558,0.01057,0.01535,0.01827
+dummy_data/Testing/notumor/Te-no_0224.jpg,No tumor,No tumor,0.05174,0.03472,1,0.94826,0.01053,0.01703,0.02418
+dummy_data/Testing/notumor/Te-no_0225.jpg,No tumor,No tumor,0.04194,0.01706,1,0.95806,0.00838,0.01585,0.01771
+dummy_data/Testing/notumor/Te-no_0226.jpg,No tumor,No tumor,0.03084,0.20957,1,0.96916,0.01046,0.01086,0.00952
+dummy_data/Testing/notumor/Te-no_0227.jpg,No tumor,No tumor,0.03925,0.00531,1,0.96075,0.00913,0.01196,0.01816
+dummy_data/Testing/notumor/Te-no_0228.jpg,No tumor,No tumor,0.11466,0.07652,1,0.88534,0.00721,0.09625,0.0112
+dummy_data/Testing/notumor/Te-no_0229.jpg,No tumor,No tumor,0.04253,0.04683,0,0.95747,0.01169,0.01477,0.01608
+dummy_data/Testing/notumor/Te-no_0230.jpg,No tumor,No tumor,0.04857,0.05242,1,0.95143,0.00951,0.01363,0.02543
+dummy_data/Testing/notumor/Te-no_0231.jpg,No tumor,No tumor,0.06203,0.05376,1,0.93797,0.0381,0.00975,0.01418
+dummy_data/Testing/notumor/Te-no_0232.jpg,No tumor,No tumor,0.04157,0.02131,1,0.95843,0.00702,0.01214,0.02241
+dummy_data/Testing/notumor/Te-no_0233.jpg,No tumor,No tumor,0.04539,0.0041,1,0.95461,0.00907,0.01597,0.02036
+dummy_data/Testing/notumor/Te-no_0234.jpg,No tumor,No tumor,0.04474,0.03467,1,0.95526,0.00698,0.01986,0.01791
+dummy_data/Testing/notumor/Te-no_0235.jpg,No tumor,No tumor,0.04714,0.00603,1,0.95286,0.00575,0.01675,0.02464
+dummy_data/Testing/notumor/Te-no_0236.jpg,No tumor,No tumor,0.03272,0.17605,1,0.96728,0.00849,0.01319,0.01103
+dummy_data/Testing/notumor/Te-no_0237.jpg,No tumor,No tumor,0.06736,0.15477,1,0.93264,0.03558,0.02233,0.00946
+dummy_data/Testing/notumor/Te-no_0238.jpg,No tumor,No tumor,0.0379,0.02924,1,0.9621,0.01734,0.00947,0.01108
+dummy_data/Testing/notumor/Te-no_0239.jpg,No tumor,No tumor,0.04678,0.03189,1,0.95322,0.00796,0.01704,0.02179
+dummy_data/Testing/notumor/Te-no_0240.jpg,No tumor,No tumor,0.04239,0.01551,1,0.95761,0.00705,0.0124,0.02294
+dummy_data/Testing/notumor/Te-no_0241.jpg,No tumor,No tumor,0.04763,0.00738,1,0.95237,0.00764,0.02611,0.01388
+dummy_data/Testing/notumor/Te-no_0242.jpg,No tumor,No tumor,0.04471,0.02929,1,0.95529,0.00695,0.01988,0.01788
+dummy_data/Testing/notumor/Te-no_0243.jpg,No tumor,No tumor,0.04806,0.00592,1,0.95194,0.0058,0.01717,0.02509
+dummy_data/Testing/notumor/Te-no_0244.jpg,No tumor,No tumor,0.04808,0.01201,1,0.95192,0.00813,0.01705,0.02289
+dummy_data/Testing/notumor/Te-no_0245.jpg,No tumor,No tumor,0.05055,0.04442,0,0.94945,0.01012,0.02041,0.02003
+dummy_data/Testing/notumor/Te-no_0246.jpg,No tumor,No tumor,0.04397,0.02011,0,0.95603,0.01194,0.01224,0.01978
+dummy_data/Testing/notumor/Te-no_0247.jpg,No tumor,No tumor,0.05016,0.08911,0,0.94984,0.01271,0.018,0.01945
+dummy_data/Testing/notumor/Te-no_0248.jpg,No tumor,No tumor,0.04073,0.00481,1,0.95927,0.00946,0.01352,0.01775
+dummy_data/Testing/notumor/Te-no_0249.jpg,No tumor,No tumor,0.05321,0.0089,1,0.94679,0.00965,0.02505,0.01851
+dummy_data/Testing/notumor/Te-no_0250.jpg,No tumor,No tumor,0.04159,0.07181,1,0.95841,0.00954,0.02014,0.01191
+dummy_data/Testing/notumor/Te-no_0251.jpg,No tumor,No tumor,0.05597,0.02164,1,0.94403,0.0122,0.02782,0.01596
+dummy_data/Testing/notumor/Te-no_0252.jpg,No tumor,No tumor,0.05671,0.08116,1,0.94329,0.01183,0.02634,0.01854
+dummy_data/Testing/notumor/Te-no_0253.jpg,No tumor,No tumor,0.04457,0.01877,1,0.95543,0.0093,0.02052,0.01474
+dummy_data/Testing/notumor/Te-no_0254.jpg,No tumor,No tumor,0.04235,0.00402,1,0.95765,0.00857,0.01411,0.01968
+dummy_data/Testing/notumor/Te-no_0255.jpg,No tumor,No tumor,0.03876,0.01588,1,0.96124,0.00974,0.01386,0.01516
+dummy_data/Testing/notumor/Te-no_0256.jpg,No tumor,No tumor,0.04205,0.01949,1,0.95795,0.00961,0.01402,0.01841
+dummy_data/Testing/notumor/Te-no_0257.jpg,No tumor,No tumor,0.05417,0.01767,0,0.94583,0.00762,0.02498,0.02157
+dummy_data/Testing/notumor/Te-no_0258.jpg,No tumor,No tumor,0.04496,0.00093,1,0.95504,0.01032,0.02022,0.01442
+dummy_data/Testing/notumor/Te-no_0259.jpg,No tumor,No tumor,0.03797,0.02135,1,0.96203,0.00555,0.02196,0.01046
+dummy_data/Testing/notumor/Te-no_0260.jpg,No tumor,No tumor,0.04294,0.00371,0,0.95706,0.00946,0.0204,0.01309
+dummy_data/Testing/notumor/Te-no_0261.jpg,No tumor,No tumor,0.03607,0.02338,1,0.96393,0.01,0.01307,0.01301
+dummy_data/Testing/notumor/Te-no_0262.jpg,No tumor,No tumor,0.0494,0.03253,1,0.9506,0.00665,0.02563,0.01713
+dummy_data/Testing/notumor/Te-no_0263.jpg,No tumor,No tumor,0.034,0.00863,1,0.966,0.00644,0.01097,0.01659
+dummy_data/Testing/notumor/Te-no_0264.jpg,No tumor,No tumor,0.04093,0.01465,1,0.95907,0.00832,0.01648,0.01614
+dummy_data/Testing/notumor/Te-no_0265.jpg,No tumor,No tumor,0.05452,0.04186,1,0.94548,0.00847,0.03362,0.01244
+dummy_data/Testing/notumor/Te-no_0266.jpg,No tumor,No tumor,0.04756,0.01817,1,0.95244,0.01046,0.01872,0.01838
+dummy_data/Testing/notumor/Te-no_0267.jpg,No tumor,No tumor,0.05029,0.02091,1,0.94971,0.01,0.01695,0.02334
+dummy_data/Testing/notumor/Te-no_0268.jpg,No tumor,No tumor,0.05197,0.02969,0,0.94803,0.01216,0.02132,0.01849
+dummy_data/Testing/notumor/Te-no_0269.jpg,No tumor,No tumor,0.04172,0.01209,1,0.95828,0.00947,0.01295,0.01931
+dummy_data/Testing/notumor/Te-no_0270.jpg,No tumor,No tumor,0.05021,0.01089,1,0.94979,0.00613,0.03271,0.01137
+dummy_data/Testing/notumor/Te-no_0271.jpg,No tumor,No tumor,0.04636,0.14394,0,0.95364,0.00892,0.02373,0.01372
+dummy_data/Testing/notumor/Te-no_0272.jpg,No tumor,No tumor,0.03931,0.02088,1,0.96069,0.00721,0.01732,0.01479
+dummy_data/Testing/notumor/Te-no_0273.jpg,No tumor,No tumor,0.04251,0.0109,1,0.95749,0.00634,0.01781,0.01835
+dummy_data/Testing/notumor/Te-no_0274.jpg,No tumor,No tumor,0.0441,0.02673,1,0.9559,0.00896,0.0201,0.01505
+dummy_data/Testing/notumor/Te-no_0275.jpg,No tumor,No tumor,0.04765,0.01333,1,0.95235,0.00604,0.03041,0.0112
+dummy_data/Testing/notumor/Te-no_0276.jpg,No tumor,No tumor,0.03769,0.02536,1,0.96231,0.00786,0.01675,0.01308
+dummy_data/Testing/notumor/Te-no_0277.jpg,No tumor,No tumor,0.03756,0.01075,1,0.96244,0.00986,0.0132,0.01449
+dummy_data/Testing/notumor/Te-no_0278.jpg,No tumor,No tumor,0.05174,0.01204,1,0.94826,0.00955,0.02545,0.01674
+dummy_data/Testing/notumor/Te-no_0279.jpg,No tumor,No tumor,0.052,0.01445,0,0.948,0.00996,0.02717,0.01487
+dummy_data/Testing/notumor/Te-no_0280.jpg,No tumor,No tumor,0.0554,0.1633,0,0.9446,0.01235,0.02497,0.01808
+dummy_data/Testing/notumor/Te-no_0281.jpg,No tumor,No tumor,0.04848,0.05848,1,0.95152,0.00878,0.02594,0.01375
+dummy_data/Testing/notumor/Te-no_0282.jpg,No tumor,No tumor,0.05309,0.04224,1,0.94691,0.00731,0.02819,0.0176
+dummy_data/Testing/notumor/Te-no_0283.jpg,No tumor,No tumor,0.04976,0.00999,1,0.95024,0.00631,0.02354,0.01992
+dummy_data/Testing/notumor/Te-no_0284.jpg,No tumor,No tumor,0.037,0.02763,1,0.963,0.00572,0.02037,0.01091
+dummy_data/Testing/notumor/Te-no_0285.jpg,No tumor,No tumor,0.06136,0.001,0,0.93864,0.0079,0.03812,0.01534
+dummy_data/Testing/notumor/Te-no_0286.jpg,No tumor,No tumor,0.03227,0.19991,1,0.96773,0.01119,0.011,0.01008
+dummy_data/Testing/notumor/Te-no_0287.jpg,No tumor,No tumor,0.05181,0.02704,1,0.94819,0.00646,0.02843,0.01692
+dummy_data/Testing/notumor/Te-no_0288.jpg,No tumor,No tumor,0.04228,0.01152,1,0.95772,0.00594,0.01595,0.02038
+dummy_data/Testing/notumor/Te-no_0289.jpg,No tumor,No tumor,0.03514,0.07447,0,0.96486,0.00679,0.01364,0.01471
+dummy_data/Testing/notumor/Te-no_0290.jpg,No tumor,No tumor,0.05035,0.00941,1,0.94965,0.00782,0.02379,0.01874
+dummy_data/Testing/notumor/Te-no_0291.jpg,No tumor,No tumor,0.04606,0.02266,1,0.95394,0.00825,0.01742,0.02039
+dummy_data/Testing/notumor/Te-no_0292.jpg,No tumor,No tumor,0.04139,0.06199,0,0.95861,0.01147,0.01368,0.01624
+dummy_data/Testing/notumor/Te-no_0293.jpg,No tumor,No tumor,0.0441,0.00212,1,0.9559,0.00948,0.01646,0.01816
+dummy_data/Testing/notumor/Te-no_0294.jpg,No tumor,No tumor,0.03578,0.15439,1,0.96422,0.00897,0.01416,0.01265
+dummy_data/Testing/notumor/Te-no_0295.jpg,No tumor,No tumor,0.04452,0.008,1,0.95548,0.00859,0.0133,0.02263
+dummy_data/Testing/notumor/Te-no_0296.jpg,No tumor,No tumor,0.04564,0.00951,1,0.95436,0.00548,0.01751,0.02265
+dummy_data/Testing/notumor/Te-no_0297.jpg,No tumor,No tumor,0.05787,0.00676,1,0.94213,0.01233,0.02106,0.02448
+dummy_data/Testing/notumor/Te-no_0298.jpg,No tumor,No tumor,0.06113,0.21868,1,0.93887,0.01107,0.0348,0.01526
+dummy_data/Testing/notumor/Te-no_0299.jpg,No tumor,No tumor,0.03837,0.00049,1,0.96163,0.01076,0.0141,0.01351
+dummy_data/Testing/notumor/Te-no_0300.jpg,No tumor,No tumor,0.03769,0.00971,1,0.96231,0.0121,0.01605,0.00953
+dummy_data/Testing/notumor/Te-no_0301.jpg,No tumor,No tumor,0.0406,0.00687,1,0.9594,0.00704,0.01447,0.01909
+dummy_data/Testing/notumor/Te-no_0302.jpg,No tumor,No tumor,0.03073,0.02921,1,0.96927,0.01042,0.01126,0.00905
+dummy_data/Testing/notumor/Te-no_0303.jpg,No tumor,No tumor,0.0379,0.04419,1,0.9621,0.0098,0.01385,0.01425
+dummy_data/Testing/notumor/Te-no_0304.jpg,No tumor,No tumor,0.04702,0.00588,1,0.95298,0.00766,0.02602,0.01333
+dummy_data/Testing/notumor/Te-no_0305.jpg,No tumor,No tumor,0.04286,0.07688,1,0.95714,0.01061,0.01746,0.01479
+dummy_data/Testing/notumor/Te-no_0306.jpg,No tumor,No tumor,0.04683,0.0338,1,0.95317,0.01199,0.01709,0.01775
+dummy_data/Testing/notumor/Te-no_0307.jpg,No tumor,No tumor,0.02357,0.03579,1,0.97643,0.00565,0.01064,0.00728
+dummy_data/Testing/notumor/Te-no_0308.jpg,No tumor,No tumor,0.03163,0.03357,1,0.96837,0.00735,0.01052,0.01376
+dummy_data/Testing/notumor/Te-no_0309.jpg,No tumor,No tumor,0.05335,0.00436,1,0.94665,0.0112,0.02284,0.01932
+dummy_data/Testing/notumor/Te-no_0310.jpg,No tumor,No tumor,0.03789,0.01902,1,0.96211,0.0112,0.01181,0.01489
+dummy_data/Testing/notumor/Te-no_0311.jpg,No tumor,No tumor,0.02677,0.00363,1,0.97323,0.00823,0.00775,0.01079
+dummy_data/Testing/notumor/Te-no_0312.jpg,No tumor,No tumor,0.04612,0.00681,1,0.95388,0.00544,0.01609,0.02459
+dummy_data/Testing/notumor/Te-no_0313.jpg,No tumor,No tumor,0.04336,0.02312,1,0.95664,0.01179,0.01249,0.01908
+dummy_data/Testing/notumor/Te-no_0314.jpg,No tumor,No tumor,0.03983,0.00356,1,0.96017,0.00679,0.01452,0.01852
+dummy_data/Testing/notumor/Te-no_0315.jpg,No tumor,No tumor,0.04434,0.07969,1,0.95566,0.01037,0.01801,0.01596
+dummy_data/Testing/notumor/Te-no_0316.jpg,No tumor,No tumor,0.05207,0.00382,1,0.94793,0.00727,0.02144,0.02337
+dummy_data/Testing/notumor/Te-no_0317.jpg,No tumor,No tumor,0.04717,0.0125,1,0.95283,0.00896,0.02158,0.01662
+dummy_data/Testing/notumor/Te-no_0318.jpg,No tumor,No tumor,0.04332,0.13444,1,0.95668,0.00714,0.01739,0.01879
+dummy_data/Testing/notumor/Te-no_0319.jpg,No tumor,No tumor,0.03584,0.01984,1,0.96416,0.00712,0.01291,0.0158
+dummy_data/Testing/notumor/Te-no_0320.jpg,No tumor,No tumor,0.0197,0.27635,0,0.9803,0.00731,0.00777,0.00463
+dummy_data/Testing/notumor/Te-no_0321.jpg,No tumor,No tumor,0.02668,0.01066,1,0.97332,0.00932,0.01065,0.00672
+dummy_data/Testing/notumor/Te-no_0322.jpg,No tumor,No tumor,0.05112,0.07131,1,0.94888,0.00912,0.01441,0.0276
+dummy_data/Testing/notumor/Te-no_0323.jpg,No tumor,No tumor,0.04877,0.01817,1,0.95123,0.01059,0.01915,0.01903
+dummy_data/Testing/notumor/Te-no_0324.jpg,No tumor,No tumor,0.04042,0.00085,0,0.95958,0.01287,0.01448,0.01307
+dummy_data/Testing/notumor/Te-no_0325.jpg,No tumor,No tumor,0.03789,0.0063,1,0.96211,0.01006,0.01801,0.00982
+dummy_data/Testing/notumor/Te-no_0326.jpg,No tumor,No tumor,0.05056,0.00871,1,0.94944,0.00616,0.03189,0.0125
+dummy_data/Testing/notumor/Te-no_0327.jpg,No tumor,No tumor,0.05358,0.0036,0,0.94642,0.00713,0.02267,0.02378
+dummy_data/Testing/notumor/Te-no_0328.jpg,No tumor,No tumor,0.04949,0.25219,0,0.95051,0.00671,0.01761,0.02517
+dummy_data/Testing/notumor/Te-no_0329.jpg,No tumor,No tumor,0.06382,0.00089,0,0.93618,0.0079,0.04071,0.01521
+dummy_data/Testing/notumor/Te-no_0330.jpg,No tumor,No tumor,0.03664,0.01263,1,0.96336,0.00647,0.01407,0.01611
+dummy_data/Testing/notumor/Te-no_0331.jpg,No tumor,No tumor,0.04362,0.03098,1,0.95638,0.00655,0.01903,0.01803
+dummy_data/Testing/notumor/Te-no_0332.jpg,No tumor,No tumor,0.05095,0.09604,1,0.94905,0.00917,0.01437,0.02741
+dummy_data/Testing/notumor/Te-no_0333.jpg,No tumor,No tumor,0.03916,0.03219,1,0.96084,0.00603,0.01363,0.0195
+dummy_data/Testing/notumor/Te-no_0334.jpg,No tumor,No tumor,0.04081,0.0056,1,0.95919,0.00554,0.01356,0.0217
+dummy_data/Testing/notumor/Te-no_0335.jpg,No tumor,No tumor,0.0463,0.00701,1,0.9537,0.00889,0.01784,0.01957
+dummy_data/Testing/notumor/Te-no_0336.jpg,No tumor,No tumor,0.04863,0.10689,1,0.95137,0.0096,0.01778,0.02125
+dummy_data/Testing/notumor/Te-no_0337.jpg,No tumor,No tumor,0.03852,0.03811,1,0.96148,0.00984,0.01416,0.01453
+dummy_data/Testing/notumor/Te-no_0338.jpg,No tumor,No tumor,0.05047,0.03133,1,0.94953,0.01362,0.02156,0.01528
+dummy_data/Testing/notumor/Te-no_0339.jpg,No tumor,No tumor,0.04492,0.00205,0,0.95508,0.00711,0.01509,0.02272
+dummy_data/Testing/notumor/Te-no_0340.jpg,No tumor,No tumor,0.05619,0.00085,0,0.94381,0.00815,0.03217,0.01588
+dummy_data/Testing/notumor/Te-no_0341.jpg,No tumor,No tumor,0.02303,0.03196,1,0.97697,0.0054,0.01023,0.0074
+dummy_data/Testing/notumor/Te-no_0342.jpg,No tumor,No tumor,0.05864,0.17197,1,0.94136,0.00831,0.01811,0.03223
+dummy_data/Testing/notumor/Te-no_0343.jpg,No tumor,No tumor,0.03858,0.01745,1,0.96142,0.01137,0.01139,0.01582
+dummy_data/Testing/notumor/Te-no_0344.jpg,No tumor,No tumor,0.08693,0.05245,1,0.91307,0.0062,0.06366,0.01707
+dummy_data/Testing/notumor/Te-no_0345.jpg,No tumor,No tumor,0.06052,0.06545,1,0.93948,0.01158,0.01405,0.03489
+dummy_data/Testing/notumor/Te-no_0346.jpg,No tumor,No tumor,0.0442,0.10657,1,0.9558,0.00604,0.01324,0.02492
+dummy_data/Testing/notumor/Te-no_0347.jpg,No tumor,No tumor,0.03326,0.02666,1,0.96674,0.00733,0.01151,0.01441
+dummy_data/Testing/notumor/Te-no_0348.jpg,No tumor,No tumor,0.04421,0.10222,1,0.95579,0.01069,0.01508,0.01844
+dummy_data/Testing/notumor/Te-no_0349.jpg,No tumor,No tumor,0.04893,0.04561,1,0.95107,0.00927,0.0173,0.02236
+dummy_data/Testing/notumor/Te-no_0350.jpg,No tumor,No tumor,0.09283,0.08982,1,0.90717,0.00598,0.07842,0.00843
+dummy_data/Testing/notumor/Te-no_0351.jpg,No tumor,No tumor,0.06151,0.00838,1,0.93849,0.0102,0.03803,0.01328
+dummy_data/Testing/notumor/Te-no_0352.jpg,No tumor,No tumor,0.036,0.01483,1,0.964,0.00632,0.00998,0.0197
+dummy_data/Testing/notumor/Te-no_0353.jpg,No tumor,No tumor,0.03406,0.01682,1,0.96594,0.00765,0.0105,0.01591
+dummy_data/Testing/notumor/Te-no_0354.jpg,No tumor,No tumor,0.05367,0.01645,1,0.94633,0.01292,0.01678,0.02397
+dummy_data/Testing/notumor/Te-no_0355.jpg,No tumor,No tumor,0.04986,0.01198,1,0.95014,0.0078,0.01728,0.02478
+dummy_data/Testing/notumor/Te-no_0356.jpg,No tumor,No tumor,0.03693,0.02141,1,0.96307,0.01609,0.00946,0.01139
+dummy_data/Testing/notumor/Te-no_0357.jpg,No tumor,No tumor,0.04927,0.04764,1,0.95073,0.00987,0.01358,0.02582
+dummy_data/Testing/notumor/Te-no_0358.jpg,No tumor,No tumor,0.04442,0.00414,1,0.95558,0.00923,0.0159,0.01928
+dummy_data/Testing/notumor/Te-no_0359.jpg,No tumor,No tumor,0.05369,0.01472,1,0.94631,0.01334,0.01667,0.02368
+dummy_data/Testing/notumor/Te-no_0360.jpg,No tumor,No tumor,0.03131,0.18244,1,0.96869,0.00835,0.01294,0.01002
+dummy_data/Testing/notumor/Te-no_0361.jpg,No tumor,No tumor,0.04947,0.0208,1,0.95053,0.00825,0.01589,0.02533
+dummy_data/Testing/notumor/Te-no_0362.jpg,No tumor,No tumor,0.05023,0.20845,1,0.94977,0.01085,0.02014,0.01923
+dummy_data/Testing/notumor/Te-no_0363.jpg,No tumor,No tumor,0.04183,0.01187,1,0.95817,0.00964,0.01309,0.0191
+dummy_data/Testing/notumor/Te-no_0364.jpg,No tumor,No tumor,0.04335,0.0025,1,0.95665,0.00964,0.01501,0.0187
+dummy_data/Testing/notumor/Te-no_0365.jpg,No tumor,No tumor,0.04275,0.0234,1,0.95725,0.01151,0.01211,0.01913
+dummy_data/Testing/notumor/Te-no_0366.jpg,No tumor,No tumor,0.04892,0.00519,1,0.95108,0.01174,0.01679,0.02039
+dummy_data/Testing/notumor/Te-no_0367.jpg,No tumor,No tumor,0.04421,0.00213,1,0.95579,0.00958,0.01677,0.01786
+dummy_data/Testing/notumor/Te-no_0368.jpg,No tumor,No tumor,0.05572,0.0815,1,0.94428,0.01191,0.02521,0.01859
+dummy_data/Testing/notumor/Te-no_0369.jpg,No tumor,No tumor,0.04074,0.01043,1,0.95926,0.00913,0.01228,0.01932
+dummy_data/Testing/notumor/Te-no_0370.jpg,No tumor,No tumor,0.04112,0.00408,1,0.95888,0.00866,0.01372,0.01873
+dummy_data/Testing/notumor/Te-no_0371.jpg,No tumor,No tumor,0.03266,0.0034,1,0.96734,0.00378,0.0169,0.01198
+dummy_data/Testing/notumor/Te-no_0372.jpg,No tumor,No tumor,0.0417,0.00704,1,0.9583,0.00678,0.021,0.01391
+dummy_data/Testing/notumor/Te-no_0373.jpg,No tumor,No tumor,0.03783,0.02055,1,0.96217,0.00461,0.02223,0.011
+dummy_data/Testing/notumor/Te-no_0374.jpg,No tumor,No tumor,0.0342,0.00883,1,0.9658,0.00659,0.01105,0.01657
+dummy_data/Testing/notumor/Te-no_0375.jpg,No tumor,No tumor,0.05109,0.09361,1,0.94891,0.00884,0.02691,0.01534
+dummy_data/Testing/notumor/Te-no_0376.jpg,No tumor,No tumor,0.04556,0.07692,1,0.95444,0.00864,0.01903,0.0179
+dummy_data/Testing/notumor/Te-no_0377.jpg,No tumor,No tumor,0.03622,0.16621,1,0.96378,0.00899,0.01438,0.01285
+dummy_data/Testing/notumor/Te-no_0378.jpg,No tumor,No tumor,0.04584,0.01592,1,0.95416,0.00549,0.01768,0.02267
+dummy_data/Testing/notumor/Te-no_0379.jpg,No tumor,No tumor,0.04855,0.009,1,0.95145,0.00884,0.01418,0.02552
+dummy_data/Testing/notumor/Te-no_0380.jpg,No tumor,No tumor,0.05809,0.00665,1,0.94191,0.0124,0.0211,0.0246
+dummy_data/Testing/notumor/Te-no_0381.jpg,No tumor,No tumor,0.04679,0.00674,1,0.95321,0.00998,0.01331,0.0235
+dummy_data/Testing/notumor/Te-no_0382.jpg,No tumor,No tumor,0.04122,0.11094,1,0.95878,0.00728,0.01294,0.021
+dummy_data/Testing/notumor/Te-no_0383.jpg,No tumor,No tumor,0.04045,0.00818,1,0.95955,0.00706,0.0146,0.01879
+dummy_data/Testing/notumor/Te-no_0384.jpg,No tumor,No tumor,0.03079,0.02287,1,0.96921,0.0105,0.01129,0.009
+dummy_data/Testing/notumor/Te-no_0385.jpg,No tumor,No tumor,0.04422,0.00519,1,0.95578,0.01126,0.01576,0.01721
+dummy_data/Testing/notumor/Te-no_0386.jpg,No tumor,No tumor,0.04657,0.00188,0,0.95343,0.00705,0.01555,0.02397
+dummy_data/Testing/notumor/Te-no_0387.jpg,No tumor,No tumor,0.03291,0.01395,1,0.96709,0.01049,0.01284,0.00959
+dummy_data/Testing/notumor/Te-no_0388.jpg,No tumor,No tumor,0.03191,0.02623,1,0.96809,0.0073,0.01073,0.01388
+dummy_data/Testing/notumor/Te-no_0389.jpg,No tumor,No tumor,0.03965,0.01737,1,0.96035,0.01158,0.01251,0.01556
+dummy_data/Testing/notumor/Te-no_0390.jpg,No tumor,No tumor,0.04029,0.0053,1,0.95971,0.00874,0.01283,0.01872
+dummy_data/Testing/notumor/Te-no_0391.jpg,No tumor,No tumor,0.04291,0.01514,1,0.95709,0.00559,0.02099,0.01632
+dummy_data/Testing/notumor/Te-no_0392.jpg,No tumor,No tumor,0.02488,0.10605,1,0.97512,0.00349,0.01274,0.00865
+dummy_data/Testing/notumor/Te-no_0393.jpg,No tumor,No tumor,0.04655,0.00671,1,0.95345,0.00549,0.01605,0.02501
+dummy_data/Testing/notumor/Te-no_0394.jpg,No tumor,No tumor,0.03728,0.00649,1,0.96272,0.01004,0.01768,0.00956
+dummy_data/Testing/notumor/Te-no_0395.jpg,No tumor,No tumor,0.04421,0.09648,1,0.95579,0.01042,0.01756,0.01623
+dummy_data/Testing/notumor/Te-no_0396.jpg,No tumor,No tumor,0.0455,0.05445,1,0.9545,0.00864,0.019,0.01786
+dummy_data/Testing/notumor/Te-no_0397.jpg,No tumor,No tumor,0.03556,0.0276,1,0.96444,0.00903,0.01198,0.01455
+dummy_data/Testing/notumor/Te-no_0398.jpg,No tumor,No tumor,0.05309,0.00361,0,0.94691,0.00714,0.02191,0.02404
+dummy_data/Testing/notumor/Te-no_0399.jpg,No tumor,No tumor,0.04779,0.25342,0,0.95221,0.0067,0.01672,0.02436
+dummy_data/Testing/notumor/Te-no_0400.jpg,No tumor,No tumor,0.05498,0.04845,1,0.94502,0.01308,0.02225,0.01965
+dummy_data/Testing/notumor/Te-no_0401.jpg,No tumor,No tumor,0.05467,0.01311,1,0.94533,0.00859,0.02328,0.02281
+dummy_data/Testing/notumor/Te-no_0402.jpg,No tumor,No tumor,0.04302,0.06874,1,0.95698,0.00715,0.01746,0.01842
+dummy_data/Testing/notumor/Te-no_0403.jpg,No tumor,No tumor,0.02542,0.01004,1,0.97458,0.0059,0.01107,0.00846
+dummy_data/Testing/notumor/Te-no_0404.jpg,No tumor,No tumor,0.04378,0.03234,1,0.95622,0.00638,0.0191,0.0183
+dummy_data/Testing/glioma/Te-glTr_0000.jpg,Glioma,Glioma,0.98013,0.99583,0,0.01987,0.93895,0.02947,0.01171
+dummy_data/Testing/glioma/Te-glTr_0001.jpg,Glioma,Glioma,0.99434,0.99648,1,0.00566,0.9751,0.00633,0.0129
+dummy_data/Testing/glioma/Te-glTr_0002.jpg,Glioma,Glioma,0.98885,0.99404,1,0.01115,0.95863,0.0159,0.01432
+dummy_data/Testing/glioma/Te-glTr_0003.jpg,Glioma,Pituitary tumor,0.99355,0.99228,0,0.00645,0.435,0.06598,0.49258
+dummy_data/Testing/glioma/Te-glTr_0004.jpg,Glioma,Glioma,0.99401,0.99791,0,0.00599,0.96199,0.01016,0.02186
+dummy_data/Testing/glioma/Te-glTr_0005.jpg,Glioma,Glioma,0.99189,0.99982,1,0.00811,0.96905,0.01501,0.00783
+dummy_data/Testing/glioma/Te-glTr_0006.jpg,Glioma,Glioma,0.99215,0.99888,1,0.00785,0.96758,0.00966,0.0149
+dummy_data/Testing/glioma/Te-glTr_0007.jpg,Glioma,Glioma,0.99438,0.99742,0,0.00562,0.97594,0.00604,0.01241
+dummy_data/Testing/glioma/Te-glTr_0008.jpg,Glioma,Glioma,0.99116,0.99307,1,0.00884,0.96358,0.01086,0.01673
+dummy_data/Testing/glioma/Te-glTr_0009.jpg,Glioma,Glioma,0.99013,0.49811,1,0.00987,0.96907,0.01261,0.00845
+dummy_data/Testing/glioma/Te-gl_0010.jpg,Glioma,Glioma,0.9943,0.99966,0,0.0057,0.97268,0.00747,0.01415
+dummy_data/Testing/glioma/Te-gl_0011.jpg,Glioma,Glioma,0.99386,0.99945,1,0.00614,0.969,0.00822,0.01663
+dummy_data/Testing/glioma/Te-gl_0012.jpg,Glioma,Glioma,0.99443,0.9948,1,0.00557,0.96109,0.01507,0.01827
+dummy_data/Testing/glioma/Te-gl_0013.jpg,Glioma,Glioma,0.99448,0.99902,1,0.00552,0.97794,0.00949,0.00706
+dummy_data/Testing/glioma/Te-gl_0014.jpg,Glioma,Glioma,0.98704,0.9003,1,0.01296,0.96084,0.01403,0.01217
+dummy_data/Testing/glioma/Te-gl_0015.jpg,Glioma,Glioma,0.99383,0.99904,1,0.00617,0.96806,0.00953,0.01625
+dummy_data/Testing/glioma/Te-gl_0016.jpg,Glioma,Glioma,0.99184,0.99925,0,0.00816,0.96858,0.01212,0.01114
+dummy_data/Testing/glioma/Te-gl_0017.jpg,Glioma,Glioma,0.99181,0.99987,0,0.00819,0.96759,0.01047,0.01376
+dummy_data/Testing/glioma/Te-gl_0018.jpg,Glioma,Glioma,0.99196,0.99904,1,0.00804,0.96387,0.01991,0.00819
+dummy_data/Testing/glioma/Te-gl_0019.jpg,Glioma,Glioma,0.99441,0.99158,1,0.00559,0.95199,0.02739,0.01503
+dummy_data/Testing/glioma/Te-gl_0020.jpg,Glioma,Glioma,0.99442,0.99897,0,0.00558,0.9456,0.01499,0.03383
+dummy_data/Testing/glioma/Te-gl_0021.jpg,Glioma,Glioma,0.9947,0.99864,0,0.0053,0.97364,0.01195,0.00911
+dummy_data/Testing/glioma/Te-gl_0022.jpg,Glioma,Glioma,0.99119,0.98866,1,0.00881,0.96405,0.01604,0.0111
+dummy_data/Testing/glioma/Te-gl_0023.jpg,Glioma,Glioma,0.99188,0.99993,1,0.00812,0.96539,0.01176,0.01473
+dummy_data/Testing/glioma/Te-gl_0024.jpg,Glioma,Glioma,0.97653,0.99488,0,0.02347,0.44168,0.21318,0.32167
+dummy_data/Testing/glioma/Te-gl_0025.jpg,Glioma,Glioma,0.99037,0.99954,1,0.00963,0.96714,0.00882,0.01441
+dummy_data/Testing/glioma/Te-gl_0026.jpg,Glioma,Glioma,0.99313,0.98901,1,0.00687,0.96885,0.00816,0.01611
+dummy_data/Testing/glioma/Te-gl_0027.jpg,Glioma,Glioma,0.98902,0.99724,1,0.01098,0.96496,0.00959,0.01447
+dummy_data/Testing/glioma/Te-gl_0028.jpg,Glioma,Glioma,0.99281,0.95599,1,0.00719,0.96214,0.02098,0.00969
+dummy_data/Testing/glioma/Te-gl_0029.jpg,Glioma,Glioma,0.97653,0.99488,0,0.02347,0.44168,0.21318,0.32167
+dummy_data/Testing/glioma/Te-gl_0030.jpg,Glioma,Glioma,0.99459,0.99948,1,0.00541,0.97089,0.01328,0.01042
+dummy_data/Testing/glioma/Te-gl_0031.jpg,Glioma,Glioma,0.994,0.99895,0,0.006,0.96786,0.00918,0.01696
+dummy_data/Testing/glioma/Te-gl_0032.jpg,Glioma,Glioma,0.99098,0.99899,0,0.00902,0.95801,0.02325,0.00972
+dummy_data/Testing/glioma/Te-gl_0033.jpg,Glioma,Glioma,0.99282,0.99354,1,0.00718,0.9616,0.0157,0.01552
+dummy_data/Testing/glioma/Te-gl_0034.jpg,Glioma,Glioma,0.99095,0.99101,1,0.00905,0.96462,0.0167,0.00963
+dummy_data/Testing/glioma/Te-gl_0035.jpg,Glioma,Glioma,0.9923,0.99694,1,0.0077,0.96869,0.01468,0.00893
+dummy_data/Testing/glioma/Te-gl_0036.jpg,Glioma,Glioma,0.99105,0.99963,0,0.00895,0.96491,0.01524,0.01089
+dummy_data/Testing/glioma/Te-gl_0037.jpg,Glioma,Glioma,0.99192,0.99946,1,0.00808,0.9679,0.01772,0.0063
+dummy_data/Testing/glioma/Te-gl_0038.jpg,Glioma,Glioma,0.99089,0.99964,1,0.00911,0.96491,0.00758,0.01839
+dummy_data/Testing/glioma/Te-gl_0039.jpg,Glioma,Glioma,0.98758,0.99805,1,0.01242,0.96382,0.01208,0.01168
+dummy_data/Testing/glioma/Te-gl_0040.jpg,Glioma,Glioma,0.98693,0.99999,1,0.01307,0.95681,0.01612,0.014
+dummy_data/Testing/glioma/Te-gl_0041.jpg,Glioma,Glioma,0.98941,0.99989,1,0.01059,0.9687,0.00561,0.01509
+dummy_data/Testing/glioma/Te-gl_0042.jpg,Glioma,Glioma,0.99222,0.99988,1,0.00778,0.97079,0.01074,0.01069
+dummy_data/Testing/glioma/Te-gl_0043.jpg,Glioma,Glioma,0.99079,0.99732,1,0.00921,0.86719,0.09299,0.03061
+dummy_data/Testing/glioma/Te-gl_0044.jpg,Glioma,Glioma,0.99313,0.99982,1,0.00687,0.9539,0.02949,0.00973
+dummy_data/Testing/glioma/Te-gl_0045.jpg,Glioma,Glioma,0.99263,0.9994,1,0.00737,0.96054,0.02482,0.00727
+dummy_data/Testing/glioma/Te-gl_0046.jpg,Glioma,Glioma,0.99328,0.99982,1,0.00672,0.97504,0.01066,0.00758
+dummy_data/Testing/glioma/Te-gl_0047.jpg,Glioma,Glioma,0.98903,0.9999,1,0.01097,0.96572,0.0129,0.01042
+dummy_data/Testing/glioma/Te-gl_0048.jpg,Glioma,Glioma,0.99172,0.99983,1,0.00828,0.96278,0.01637,0.01258
+dummy_data/Testing/glioma/Te-gl_0049.jpg,Glioma,Glioma,0.99392,0.9971,0,0.00608,0.96617,0.01616,0.0116
+dummy_data/Testing/glioma/Te-gl_0050.jpg,Glioma,Glioma,0.99373,0.99865,0,0.00627,0.96197,0.01052,0.02124
+dummy_data/Testing/glioma/Te-gl_0051.jpg,Glioma,Glioma,0.9935,0.99951,0,0.0065,0.96824,0.01432,0.01094
+dummy_data/Testing/glioma/Te-gl_0052.jpg,Glioma,Glioma,0.98883,0.99912,1,0.01117,0.96666,0.01119,0.01097
+dummy_data/Testing/glioma/Te-gl_0053.jpg,Glioma,Glioma,0.99309,0.93901,0,0.00691,0.96736,0.01221,0.01353
+dummy_data/Testing/glioma/Te-gl_0054.jpg,Glioma,Glioma,0.9912,0.97457,0,0.0088,0.96653,0.01424,0.01043
+dummy_data/Testing/glioma/Te-gl_0055.jpg,Glioma,Glioma,0.99086,0.99821,1,0.00914,0.96705,0.01051,0.0133
+dummy_data/Testing/glioma/Te-gl_0056.jpg,Glioma,Glioma,0.99086,0.99919,1,0.00914,0.88212,0.0988,0.00995
+dummy_data/Testing/glioma/Te-gl_0057.jpg,Glioma,Glioma,0.99367,0.99913,1,0.00633,0.95073,0.03125,0.01169
+dummy_data/Testing/glioma/Te-gl_0058.jpg,Glioma,Glioma,0.99114,0.99967,1,0.00886,0.96804,0.00524,0.01786
+dummy_data/Testing/glioma/Te-gl_0059.jpg,Glioma,Glioma,0.9906,0.99937,1,0.0094,0.96618,0.0084,0.01602
+dummy_data/Testing/glioma/Te-gl_0060.jpg,Glioma,Glioma,0.99076,0.99977,1,0.00924,0.96508,0.01301,0.01267
+dummy_data/Testing/glioma/Te-gl_0061.jpg,Glioma,Glioma,0.9874,0.9987,1,0.0126,0.94959,0.01876,0.01905
+dummy_data/Testing/glioma/Te-gl_0062.jpg,Glioma,Glioma,0.98798,0.9999,1,0.01202,0.96257,0.01026,0.01515
+dummy_data/Testing/glioma/Te-gl_0063.jpg,Glioma,Glioma,0.98953,0.99956,1,0.01047,0.96025,0.01212,0.01716
+dummy_data/Testing/glioma/Te-gl_0064.jpg,Glioma,Glioma,0.99243,0.99993,1,0.00757,0.96382,0.00916,0.01946
+dummy_data/Testing/glioma/Te-gl_0065.jpg,Glioma,Glioma,0.9912,0.99939,1,0.0088,0.96456,0.0098,0.01685
+dummy_data/Testing/glioma/Te-gl_0066.jpg,Glioma,Glioma,0.99163,0.99848,1,0.00837,0.96721,0.01163,0.0128
+dummy_data/Testing/glioma/Te-gl_0067.jpg,Glioma,Glioma,0.99447,0.99978,1,0.00553,0.96098,0.00584,0.02766
+dummy_data/Testing/glioma/Te-gl_0068.jpg,Glioma,Glioma,0.98575,0.99939,1,0.01425,0.94803,0.01844,0.01928
+dummy_data/Testing/glioma/Te-gl_0069.jpg,Glioma,Glioma,0.98963,0.99972,1,0.01037,0.96333,0.00907,0.01723
+dummy_data/Testing/glioma/Te-gl_0070.jpg,Glioma,Glioma,0.99239,0.99966,1,0.00761,0.97025,0.01086,0.01127
+dummy_data/Testing/glioma/Te-gl_0071.jpg,Glioma,Glioma,0.99008,0.99964,1,0.00992,0.96255,0.00886,0.01866
+dummy_data/Testing/glioma/Te-gl_0072.jpg,Glioma,Glioma,0.98876,0.99402,1,0.01124,0.95784,0.01915,0.01177
+dummy_data/Testing/glioma/Te-gl_0073.jpg,Glioma,Glioma,0.99411,0.98625,1,0.00589,0.96642,0.01337,0.01432
+dummy_data/Testing/glioma/Te-gl_0074.jpg,Glioma,Glioma,0.99147,0.98152,0,0.00853,0.95054,0.01481,0.02612
+dummy_data/Testing/glioma/Te-gl_0075.jpg,Glioma,Glioma,0.9924,0.99498,0,0.0076,0.96883,0.00935,0.01422
+dummy_data/Testing/glioma/Te-gl_0076.jpg,Glioma,Glioma,0.99164,0.99804,0,0.00836,0.96616,0.01434,0.01114
+dummy_data/Testing/glioma/Te-gl_0077.jpg,Glioma,Glioma,0.99285,0.99996,0,0.00715,0.97293,0.01224,0.00768
+dummy_data/Testing/glioma/Te-gl_0078.jpg,Glioma,Glioma,0.99326,0.99745,0,0.00674,0.96439,0.00901,0.01986
+dummy_data/Testing/glioma/Te-gl_0079.jpg,Glioma,Glioma,0.9916,0.99788,0,0.0084,0.96741,0.01505,0.00914
+dummy_data/Testing/glioma/Te-gl_0080.jpg,Glioma,Glioma,0.99407,0.97946,0,0.00593,0.97463,0.01129,0.00815
+dummy_data/Testing/glioma/Te-gl_0081.jpg,Glioma,Glioma,0.99429,0.99923,0,0.00571,0.93288,0.02242,0.03899
+dummy_data/Testing/glioma/Te-gl_0082.jpg,Glioma,Glioma,0.99046,0.99966,0,0.00954,0.96743,0.00864,0.01439
+dummy_data/Testing/glioma/Te-gl_0083.jpg,Glioma,Glioma,0.97944,0.99872,0,0.02056,0.4328,0.20641,0.34023
+dummy_data/Testing/glioma/Te-gl_0084.jpg,Glioma,Meningioma,0.98656,0.99853,0,0.01344,0.3107,0.65892,0.01694
+dummy_data/Testing/glioma/Te-gl_0085.jpg,Glioma,Glioma,0.99341,0.16671,0,0.00659,0.96899,0.01241,0.01201
+dummy_data/Testing/glioma/Te-gl_0086.jpg,Glioma,Glioma,0.9893,0.3577,0,0.0107,0.97009,0.00964,0.00957
+dummy_data/Testing/glioma/Te-gl_0087.jpg,Glioma,Glioma,0.99192,0.9999,0,0.00808,0.95644,0.0215,0.01399
+dummy_data/Testing/glioma/Te-gl_0088.jpg,Glioma,Glioma,0.99269,0.99994,0,0.00731,0.96308,0.01682,0.01279
+dummy_data/Testing/glioma/Te-gl_0089.jpg,Glioma,Pituitary tumor,0.99364,0.99633,0,0.00636,0.45058,0.06842,0.47464
+dummy_data/Testing/glioma/Te-gl_0090.jpg,Glioma,Glioma,0.99174,0.9999,0,0.00826,0.96688,0.01094,0.01392
+dummy_data/Testing/glioma/Te-gl_0091.jpg,Glioma,Glioma,0.99478,0.99955,0,0.00522,0.96976,0.00535,0.01967
+dummy_data/Testing/glioma/Te-gl_0092.jpg,Glioma,Glioma,0.99428,0.99952,0,0.00572,0.9726,0.00741,0.01428
+dummy_data/Testing/glioma/Te-gl_0093.jpg,Glioma,Glioma,0.9903,0.99927,0,0.0097,0.83137,0.02518,0.13375
+dummy_data/Testing/glioma/Te-gl_0094.jpg,Glioma,Glioma,0.99167,0.99912,0,0.00833,0.97482,0.01207,0.00478
+dummy_data/Testing/glioma/Te-gl_0095.jpg,Glioma,Glioma,0.99448,0.99741,0,0.00552,0.96877,0.0134,0.0123
+dummy_data/Testing/glioma/Te-gl_0096.jpg,Glioma,Glioma,0.99402,0.99449,0,0.00598,0.96824,0.00993,0.01584
+dummy_data/Testing/glioma/Te-gl_0097.jpg,Glioma,Glioma,0.99463,0.99914,0,0.00537,0.97775,0.00962,0.00726
+dummy_data/Testing/glioma/Te-gl_0098.jpg,Glioma,Glioma,0.99487,0.99705,0,0.00513,0.97812,0.00982,0.00693
+dummy_data/Testing/glioma/Te-gl_0099.jpg,Glioma,Glioma,0.99418,0.99984,0,0.00582,0.96655,0.01061,0.01702
+dummy_data/Testing/glioma/Te-gl_0100.jpg,Glioma,Glioma,0.99626,0.99782,0,0.00374,0.98117,0.00822,0.00688
+dummy_data/Testing/glioma/Te-gl_0101.jpg,Glioma,Glioma,0.99289,0.99905,0,0.00711,0.96518,0.01318,0.01452
+dummy_data/Testing/glioma/Te-gl_0102.jpg,Glioma,Glioma,0.9834,0.0225,0,0.0166,0.96613,0.01245,0.00483
+dummy_data/Testing/glioma/Te-gl_0103.jpg,Glioma,Glioma,0.9888,0.01361,0,0.0112,0.96324,0.01939,0.00617
+dummy_data/Testing/glioma/Te-gl_0104.jpg,Glioma,Glioma,0.99265,0.10834,0,0.00735,0.96746,0.01965,0.00555
+dummy_data/Testing/glioma/Te-gl_0105.jpg,Glioma,Glioma,0.99381,0.59051,0,0.00619,0.9703,0.01922,0.00429
+dummy_data/Testing/glioma/Te-gl_0106.jpg,Glioma,Glioma,0.99194,0.99646,0,0.00806,0.96047,0.01652,0.01495
+dummy_data/Testing/glioma/Te-gl_0107.jpg,Glioma,Glioma,0.99243,0.99708,0,0.00757,0.96673,0.01532,0.01038
+dummy_data/Testing/glioma/Te-gl_0108.jpg,Glioma,Glioma,0.99601,0.99854,0,0.00399,0.97597,0.00936,0.01068
+dummy_data/Testing/glioma/Te-gl_0109.jpg,Glioma,Pituitary tumor,0.99423,0.99931,0,0.00577,0.11245,0.00489,0.8769
+dummy_data/Testing/glioma/Te-gl_0110.jpg,Glioma,Glioma,0.9944,0.99836,0,0.0056,0.94477,0.01501,0.03461
+dummy_data/Testing/glioma/Te-gl_0111.jpg,Glioma,Glioma,0.99464,0.9968,0,0.00536,0.97338,0.01193,0.00934
+dummy_data/Testing/glioma/Te-gl_0112.jpg,Glioma,Glioma,0.99569,0.99563,0,0.00431,0.9759,0.00826,0.01153
+dummy_data/Testing/glioma/Te-gl_0113.jpg,Glioma,Glioma,0.9911,0.99758,0,0.0089,0.96369,0.01587,0.01154
+dummy_data/Testing/glioma/Te-gl_0114.jpg,Glioma,Glioma,0.99207,0.99987,0,0.00793,0.96614,0.01172,0.0142
+dummy_data/Testing/glioma/Te-gl_0115.jpg,Glioma,Glioma,0.99556,0.99893,0,0.00444,0.9722,0.00958,0.01377
+dummy_data/Testing/glioma/Te-gl_0116.jpg,Glioma,Glioma,0.99367,0.99917,0,0.00633,0.96455,0.01201,0.01711
+dummy_data/Testing/glioma/Te-gl_0117.jpg,Glioma,Glioma,0.99217,0.99846,0,0.00783,0.96544,0.01245,0.01429
+dummy_data/Testing/glioma/Te-gl_0118.jpg,Glioma,Glioma,0.99337,0.99971,0,0.00663,0.97158,0.01052,0.01126
+dummy_data/Testing/glioma/Te-gl_0119.jpg,Glioma,Glioma,0.99362,0.99955,0,0.00638,0.96201,0.01068,0.02092
+dummy_data/Testing/glioma/Te-gl_0120.jpg,Glioma,Glioma,0.99174,0.99969,0,0.00826,0.96197,0.01178,0.01799
+dummy_data/Testing/glioma/Te-gl_0121.jpg,Glioma,Glioma,0.99252,0.98201,0,0.00748,0.97138,0.00889,0.01226
+dummy_data/Testing/glioma/Te-gl_0122.jpg,Glioma,Glioma,0.98644,0.99987,0,0.01356,0.96425,0.01186,0.01032
+dummy_data/Testing/glioma/Te-gl_0123.jpg,Glioma,Glioma,0.99113,0.99958,0,0.00887,0.89211,0.08916,0.00986
+dummy_data/Testing/glioma/Te-gl_0124.jpg,Glioma,Glioma,0.99313,0.99901,0,0.00687,0.96279,0.0178,0.01255
+dummy_data/Testing/glioma/Te-gl_0125.jpg,Glioma,Glioma,0.99099,0.9991,0,0.00901,0.95711,0.0221,0.01177
+dummy_data/Testing/glioma/Te-gl_0126.jpg,Glioma,Glioma,0.99371,0.99854,0,0.00629,0.95183,0.03025,0.01162
+dummy_data/Testing/glioma/Te-gl_0127.jpg,Glioma,Glioma,0.98921,0.99965,0,0.01079,0.96986,0.00534,0.01402
+dummy_data/Testing/glioma/Te-gl_0128.jpg,Glioma,Glioma,0.99009,0.99985,0,0.00991,0.96828,0.00896,0.01285
+dummy_data/Testing/glioma/Te-gl_0129.jpg,Glioma,Glioma,0.98681,0.99755,0,0.01319,0.94898,0.01493,0.0229
+dummy_data/Testing/glioma/Te-gl_0130.jpg,Glioma,Glioma,0.99079,0.99791,0,0.00921,0.94859,0.02322,0.01898
+dummy_data/Testing/glioma/Te-gl_0131.jpg,Glioma,Glioma,0.98703,0.99979,0,0.01297,0.95752,0.01029,0.01922
+dummy_data/Testing/glioma/Te-gl_0132.jpg,Glioma,Glioma,0.98952,0.99967,0,0.01048,0.95981,0.01209,0.01762
+dummy_data/Testing/glioma/Te-gl_0133.jpg,Glioma,Glioma,0.99237,0.99988,0,0.00763,0.96865,0.00619,0.01752
+dummy_data/Testing/glioma/Te-gl_0134.jpg,Glioma,Glioma,0.99364,0.99964,0,0.00636,0.96217,0.01311,0.01836
+dummy_data/Testing/glioma/Te-gl_0135.jpg,Glioma,Glioma,0.99179,0.89917,0,0.00821,0.96464,0.01815,0.009
+dummy_data/Testing/glioma/Te-gl_0136.jpg,Glioma,Glioma,0.99127,0.99977,0,0.00873,0.96288,0.01118,0.01721
+dummy_data/Testing/glioma/Te-gl_0137.jpg,Glioma,Glioma,0.99155,0.99972,0,0.00845,0.95949,0.01367,0.01839
+dummy_data/Testing/glioma/Te-gl_0138.jpg,Glioma,Glioma,0.99144,0.99977,0,0.00856,0.96622,0.01474,0.01049
+dummy_data/Testing/glioma/Te-gl_0139.jpg,Glioma,Glioma,0.99126,0.99989,0,0.00874,0.97375,0.00627,0.01123
+dummy_data/Testing/glioma/Te-gl_0140.jpg,Glioma,Glioma,0.98768,0.99885,0,0.01232,0.96423,0.01208,0.01137
+dummy_data/Testing/glioma/Te-gl_0141.jpg,Glioma,Glioma,0.98931,0.99692,0,0.01069,0.95444,0.0132,0.02166
+dummy_data/Testing/glioma/Te-gl_0142.jpg,Glioma,Glioma,0.98946,0.99996,0,0.01054,0.96218,0.01208,0.0152
+dummy_data/Testing/glioma/Te-gl_0143.jpg,Glioma,Glioma,0.99071,0.99934,0,0.00929,0.95602,0.02468,0.01001
+dummy_data/Testing/glioma/Te-gl_0144.jpg,Glioma,Glioma,0.99656,0.99988,0,0.00344,0.97087,0.01168,0.01401
+dummy_data/Testing/glioma/Te-gl_0145.jpg,Glioma,Glioma,0.98563,0.99945,0,0.01437,0.96253,0.0116,0.01149
+dummy_data/Testing/glioma/Te-gl_0146.jpg,Glioma,Glioma,0.98068,0.99918,0,0.01932,0.94561,0.02261,0.01245
+dummy_data/Testing/glioma/Te-gl_0147.jpg,Glioma,Glioma,0.98845,0.99941,0,0.01155,0.95446,0.02012,0.01387
+dummy_data/Testing/glioma/Te-gl_0148.jpg,Glioma,Glioma,0.98698,0.99962,0,0.01302,0.95916,0.01891,0.00891
+dummy_data/Testing/glioma/Te-gl_0149.jpg,Glioma,Glioma,0.98764,0.99933,0,0.01236,0.95896,0.01045,0.01822
+dummy_data/Testing/glioma/Te-gl_0150.jpg,Glioma,Glioma,0.98967,0.98462,0,0.01033,0.96038,0.01382,0.01547
+dummy_data/Testing/glioma/Te-gl_0151.jpg,Glioma,Glioma,0.99298,0.99578,0,0.00702,0.97718,0.00714,0.00866
+dummy_data/Testing/glioma/Te-gl_0152.jpg,Glioma,Glioma,0.99305,0.99953,0,0.00695,0.97246,0.01077,0.00981
+dummy_data/Testing/glioma/Te-gl_0153.jpg,Glioma,Glioma,0.98937,0.99989,0,0.01063,0.96079,0.01849,0.01008
+dummy_data/Testing/glioma/Te-gl_0154.jpg,Glioma,Glioma,0.99143,0.99992,0,0.00857,0.97624,0.01001,0.00518
+dummy_data/Testing/glioma/Te-gl_0155.jpg,Glioma,Glioma,0.99343,0.99938,0,0.00657,0.97352,0.00774,0.01217
+dummy_data/Testing/glioma/Te-gl_0156.jpg,Glioma,Glioma,0.99434,0.99892,0,0.00566,0.97366,0.00719,0.01349
+dummy_data/Testing/glioma/Te-gl_0157.jpg,Glioma,Glioma,0.99221,0.99987,0,0.00779,0.96448,0.01913,0.0086
+dummy_data/Testing/glioma/Te-gl_0158.jpg,Glioma,Glioma,0.99414,0.99976,0,0.00586,0.96116,0.02688,0.00609
+dummy_data/Testing/glioma/Te-gl_0159.jpg,Glioma,Glioma,0.99396,0.99994,0,0.00604,0.95947,0.01957,0.01492
+dummy_data/Testing/glioma/Te-gl_0160.jpg,Glioma,Glioma,0.99427,0.99773,0,0.00573,0.97804,0.00666,0.00957
+dummy_data/Testing/glioma/Te-gl_0161.jpg,Glioma,Glioma,0.99328,0.99983,0,0.00672,0.96276,0.02158,0.00894
+dummy_data/Testing/glioma/Te-gl_0162.jpg,Glioma,Glioma,0.99246,0.99534,0,0.00754,0.96917,0.01198,0.0113
+dummy_data/Testing/glioma/Te-gl_0163.jpg,Glioma,Glioma,0.99183,0.98345,0,0.00817,0.96979,0.01218,0.00986
+dummy_data/Testing/glioma/Te-gl_0164.jpg,Glioma,Glioma,0.98939,0.99869,0,0.01061,0.95996,0.0123,0.01714
+dummy_data/Testing/glioma/Te-gl_0165.jpg,Glioma,Glioma,0.9897,0.99948,0,0.0103,0.9572,0.0121,0.0204
+dummy_data/Testing/glioma/Te-gl_0166.jpg,Glioma,Glioma,0.99427,0.99977,0,0.00573,0.97921,0.00702,0.00804
+dummy_data/Testing/glioma/Te-gl_0167.jpg,Glioma,Glioma,0.99243,0.99453,0,0.00757,0.95728,0.01878,0.01637
+dummy_data/Testing/glioma/Te-gl_0168.jpg,Glioma,Glioma,0.99407,0.99968,0,0.00593,0.97545,0.00922,0.00939
+dummy_data/Testing/glioma/Te-gl_0169.jpg,Glioma,Glioma,0.99305,0.99683,0,0.00695,0.96249,0.02233,0.00822
+dummy_data/Testing/glioma/Te-gl_0170.jpg,Glioma,Glioma,0.99442,0.99923,0,0.00558,0.95835,0.02298,0.01308
+dummy_data/Testing/glioma/Te-gl_0171.jpg,Glioma,Glioma,0.99552,0.9952,0,0.00448,0.96974,0.01396,0.01182
+dummy_data/Testing/glioma/Te-gl_0172.jpg,Glioma,Glioma,0.99154,0.99849,0,0.00846,0.96393,0.01162,0.01599
+dummy_data/Testing/glioma/Te-gl_0173.jpg,Glioma,Glioma,0.99401,0.99669,0,0.00599,0.97333,0.00769,0.01299
+dummy_data/Testing/glioma/Te-gl_0174.jpg,Glioma,Glioma,0.9915,0.98107,0,0.0085,0.97407,0.00796,0.00946
+dummy_data/Testing/glioma/Te-gl_0175.jpg,Glioma,Glioma,0.99152,0.9999,0,0.00848,0.97214,0.00888,0.0105
+dummy_data/Testing/glioma/Te-gl_0176.jpg,Glioma,Glioma,0.9897,0.9984,0,0.0103,0.97202,0.00424,0.01344
+dummy_data/Testing/glioma/Te-gl_0177.jpg,Glioma,Glioma,0.98922,0.9903,0,0.01078,0.96017,0.01885,0.01019
+dummy_data/Testing/glioma/Te-gl_0178.jpg,Glioma,Glioma,0.99038,0.99353,0,0.00962,0.95202,0.02855,0.00981
+dummy_data/Testing/glioma/Te-gl_0179.jpg,Glioma,Glioma,0.99765,0.99876,0,0.00235,0.97966,0.01116,0.00684
+dummy_data/Testing/glioma/Te-gl_0180.jpg,Glioma,Glioma,0.98919,0.9991,0,0.01081,0.9671,0.0097,0.01239
+dummy_data/Testing/glioma/Te-gl_0181.jpg,Glioma,Glioma,0.98892,0.99956,0,0.01108,0.96638,0.01193,0.01061
+dummy_data/Testing/glioma/Te-gl_0182.jpg,Glioma,Glioma,0.9895,0.99991,0,0.0105,0.96967,0.0093,0.01052
+dummy_data/Testing/glioma/Te-gl_0183.jpg,Glioma,Glioma,0.99462,0.99725,0,0.00538,0.97904,0.00826,0.00731
+dummy_data/Testing/glioma/Te-gl_0184.jpg,Glioma,Glioma,0.99321,0.9907,0,0.00679,0.96251,0.02225,0.00846
+dummy_data/Testing/glioma/Te-gl_0185.jpg,Glioma,Glioma,0.99501,0.99794,0,0.00499,0.97619,0.00886,0.00996
+dummy_data/Testing/glioma/Te-gl_0186.jpg,Glioma,Glioma,0.99572,0.99883,0,0.00428,0.96823,0.00943,0.01806
+dummy_data/Testing/glioma/Te-gl_0187.jpg,Glioma,Glioma,0.98974,0.99957,0,0.01026,0.96472,0.00912,0.0159
+dummy_data/Testing/glioma/Te-gl_0188.jpg,Glioma,Glioma,0.99088,0.99959,0,0.00912,0.96509,0.0128,0.013
+dummy_data/Testing/glioma/Te-gl_0189.jpg,Glioma,Glioma,0.99214,0.99916,0,0.00786,0.97561,0.00664,0.00989
+dummy_data/Testing/glioma/Te-gl_0190.jpg,Glioma,Glioma,0.99458,0.99341,0,0.00542,0.96343,0.01191,0.01924
+dummy_data/Testing/glioma/Te-gl_0191.jpg,Glioma,Glioma,0.99088,0.99925,0,0.00912,0.97189,0.00833,0.01067
+dummy_data/Testing/glioma/Te-gl_0192.jpg,Glioma,Glioma,0.9915,0.99797,0,0.0085,0.93065,0.05772,0.00312
+dummy_data/Testing/glioma/Te-gl_0193.jpg,Glioma,Glioma,0.99124,0.99662,0,0.00876,0.97299,0.00721,0.01104
+dummy_data/Testing/glioma/Te-gl_0194.jpg,Glioma,Glioma,0.98937,0.99804,0,0.01063,0.96982,0.01174,0.0078
+dummy_data/Testing/glioma/Te-gl_0195.jpg,Glioma,Glioma,0.99159,0.99871,0,0.00841,0.95378,0.02988,0.00792
+dummy_data/Testing/glioma/Te-gl_0196.jpg,Glioma,Glioma,0.99399,0.99945,0,0.00601,0.98057,0.00569,0.00774
+dummy_data/Testing/glioma/Te-gl_0197.jpg,Glioma,Glioma,0.99385,0.99887,0,0.00615,0.97189,0.01377,0.00819
+dummy_data/Testing/glioma/Te-gl_0198.jpg,Glioma,Glioma,0.99089,0.99964,0,0.00911,0.96392,0.01456,0.01241
+dummy_data/Testing/glioma/Te-gl_0199.jpg,Glioma,Glioma,0.99136,0.99883,0,0.00865,0.97558,0.00878,0.007
+dummy_data/Testing/glioma/Te-gl_0200.jpg,Glioma,Glioma,0.99311,0.99962,0,0.00689,0.97013,0.01335,0.00963
+dummy_data/Testing/glioma/Te-gl_0201.jpg,Glioma,Glioma,0.9951,0.99976,0,0.0049,0.97393,0.01581,0.00536
+dummy_data/Testing/glioma/Te-gl_0202.jpg,Glioma,Glioma,0.99379,0.99992,0,0.00621,0.97261,0.01098,0.0102
+dummy_data/Testing/glioma/Te-gl_0203.jpg,Glioma,Glioma,0.99221,0.99971,0,0.00779,0.96612,0.00746,0.01863
+dummy_data/Testing/glioma/Te-gl_0204.jpg,Glioma,Glioma,0.99329,0.99997,0,0.00671,0.97757,0.00856,0.00715
+dummy_data/Testing/glioma/Te-gl_0205.jpg,Glioma,Glioma,0.98831,0.99986,0,0.01169,0.96068,0.01011,0.01752
+dummy_data/Testing/glioma/Te-gl_0206.jpg,Glioma,Glioma,0.99285,0.9991,0,0.00715,0.96663,0.00737,0.01885
+dummy_data/Testing/glioma/Te-gl_0207.jpg,Glioma,Glioma,0.99205,0.99992,0,0.00795,0.97558,0.00856,0.00791
+dummy_data/Testing/glioma/Te-gl_0208.jpg,Glioma,Glioma,0.99254,0.9999,0,0.00746,0.97104,0.01241,0.00909
+dummy_data/Testing/glioma/Te-gl_0209.jpg,Glioma,Glioma,0.99169,0.99457,0,0.00831,0.97703,0.00642,0.00825
+dummy_data/Testing/glioma/Te-gl_0210.jpg,Glioma,Glioma,0.99212,0.9998,0,0.00788,0.96803,0.00916,0.01493
+dummy_data/Testing/glioma/Te-gl_0211.jpg,Glioma,Glioma,0.99325,0.99948,0,0.00675,0.95779,0.01016,0.02531
+dummy_data/Testing/glioma/Te-gl_0212.jpg,Glioma,Glioma,0.99129,0.99967,0,0.00871,0.97454,0.00783,0.00893
+dummy_data/Testing/glioma/Te-gl_0213.jpg,Glioma,Glioma,0.99097,0.99965,0,0.00903,0.96553,0.01132,0.01412
+dummy_data/Testing/glioma/Te-gl_0214.jpg,Glioma,Glioma,0.99064,0.98133,0,0.00936,0.97834,0.00542,0.00688
+dummy_data/Testing/glioma/Te-gl_0215.jpg,Glioma,Glioma,0.99037,0.98027,0,0.00963,0.96753,0.00806,0.01477
+dummy_data/Testing/glioma/Te-gl_0216.jpg,Glioma,Glioma,0.98792,0.99798,0,0.01208,0.96338,0.01044,0.0141
+dummy_data/Testing/glioma/Te-gl_0217.jpg,Glioma,Glioma,0.98903,0.99927,0,0.01097,0.95507,0.02126,0.01269
+dummy_data/Testing/glioma/Te-gl_0218.jpg,Glioma,Glioma,0.99356,0.9985,0,0.00644,0.96872,0.01711,0.00773
+dummy_data/Testing/glioma/Te-gl_0219.jpg,Glioma,Glioma,0.99307,0.95661,0,0.00693,0.96143,0.00507,0.02657
+dummy_data/Testing/glioma/Te-gl_0220.jpg,Glioma,Glioma,0.99657,0.99913,0,0.00343,0.98164,0.01085,0.00408
+dummy_data/Testing/glioma/Te-gl_0221.jpg,Glioma,Glioma,0.98722,0.99891,0,0.01278,0.96114,0.00904,0.01703
+dummy_data/Testing/glioma/Te-gl_0222.jpg,Glioma,Glioma,0.98324,0.99828,0,0.01676,0.74424,0.17175,0.06725
+dummy_data/Testing/glioma/Te-gl_0223.jpg,Glioma,Glioma,0.99722,0.99951,0,0.00278,0.96335,0.00802,0.02585
+dummy_data/Testing/glioma/Te-gl_0224.jpg,Glioma,Glioma,0.98927,0.9904,0,0.01073,0.96932,0.01041,0.00954
+dummy_data/Testing/glioma/Te-gl_0225.jpg,Glioma,Glioma,0.99593,0.99967,0,0.00407,0.97855,0.0103,0.00708
+dummy_data/Testing/glioma/Te-gl_0226.jpg,Glioma,Glioma,0.99259,0.9995,0,0.00741,0.97977,0.0035,0.00932
+dummy_data/Testing/glioma/Te-gl_0227.jpg,Glioma,Glioma,0.99477,0.99975,0,0.00523,0.9747,0.01158,0.00848
+dummy_data/Testing/glioma/Te-gl_0228.jpg,Glioma,Glioma,0.99023,0.999,0,0.00977,0.97191,0.00923,0.00908
+dummy_data/Testing/glioma/Te-gl_0229.jpg,Glioma,Glioma,0.993,0.99962,0,0.007,0.96922,0.01021,0.01357
+dummy_data/Testing/glioma/Te-gl_0230.jpg,Glioma,Glioma,0.99154,0.94012,0,0.00846,0.97304,0.00922,0.00928
+dummy_data/Testing/glioma/Te-gl_0231.jpg,Glioma,Glioma,0.99282,0.98614,0,0.00718,0.97412,0.01386,0.00483
+dummy_data/Testing/glioma/Te-gl_0232.jpg,Glioma,Glioma,0.98965,0.97402,0,0.01035,0.9535,0.01661,0.01953
+dummy_data/Testing/glioma/Te-gl_0233.jpg,Glioma,Glioma,0.99147,0.998,0,0.00853,0.96615,0.01229,0.01303
+dummy_data/Testing/glioma/Te-gl_0234.jpg,Glioma,Glioma,0.98887,0.99945,0,0.01113,0.96556,0.0145,0.00881
+dummy_data/Testing/glioma/Te-gl_0235.jpg,Glioma,Glioma,0.9943,0.99943,0,0.0057,0.97262,0.01362,0.00805
+dummy_data/Testing/glioma/Te-gl_0236.jpg,Glioma,Glioma,0.99459,0.9998,0,0.00541,0.97102,0.01324,0.01032
+dummy_data/Testing/glioma/Te-gl_0237.jpg,Glioma,Glioma,0.99301,0.99993,0,0.00699,0.95738,0.02613,0.00949
+dummy_data/Testing/glioma/Te-gl_0238.jpg,Glioma,Glioma,0.99311,0.99969,0,0.00689,0.95405,0.02942,0.00964
+dummy_data/Testing/glioma/Te-gl_0239.jpg,Glioma,Glioma,0.99486,0.99986,0,0.00514,0.93509,0.05076,0.00901
+dummy_data/Testing/glioma/Te-gl_0240.jpg,Glioma,Glioma,0.99362,0.99988,0,0.00638,0.98101,0.00869,0.00393
+dummy_data/Testing/glioma/Te-gl_0241.jpg,Glioma,Glioma,0.98755,0.99954,0,0.01245,0.9592,0.01449,0.01387
+dummy_data/Testing/glioma/Te-gl_0242.jpg,Glioma,Glioma,0.99343,0.99801,0,0.00657,0.93694,0.0404,0.01609
+dummy_data/Testing/glioma/Te-gl_0243.jpg,Glioma,Glioma,0.9941,0.99993,0,0.0059,0.97628,0.01123,0.0066
+dummy_data/Testing/glioma/Te-gl_0244.jpg,Glioma,Glioma,0.99181,0.99711,0,0.00819,0.96665,0.01485,0.01031
+dummy_data/Testing/glioma/Te-gl_0245.jpg,Glioma,Glioma,0.99085,0.99989,0,0.00915,0.97497,0.00834,0.00754
+dummy_data/Testing/glioma/Te-gl_0246.jpg,Glioma,Glioma,0.99007,0.99993,0,0.00993,0.96726,0.01534,0.00747
+dummy_data/Testing/glioma/Te-gl_0247.jpg,Glioma,Glioma,0.98757,0.99997,0,0.01243,0.95486,0.0271,0.00561
+dummy_data/Testing/glioma/Te-gl_0248.jpg,Glioma,Glioma,0.98733,0.99996,0,0.01267,0.95979,0.01444,0.0131
+dummy_data/Testing/glioma/Te-gl_0249.jpg,Glioma,Glioma,0.98438,0.99995,0,0.01562,0.95862,0.01202,0.01373
+dummy_data/Testing/glioma/Te-gl_0250.jpg,Glioma,Glioma,0.9901,0.99969,0,0.0099,0.96546,0.00792,0.01672
+dummy_data/Testing/glioma/Te-gl_0251.jpg,Glioma,Glioma,0.98979,0.99996,0,0.01021,0.96896,0.01197,0.00885
+dummy_data/Testing/glioma/Te-gl_0252.jpg,Glioma,Glioma,0.99232,0.99968,0,0.00768,0.96699,0.0083,0.01702
+dummy_data/Testing/glioma/Te-gl_0253.jpg,Glioma,Glioma,0.99409,0.99949,0,0.00591,0.96693,0.01861,0.00855
+dummy_data/Testing/glioma/Te-gl_0254.jpg,Glioma,Glioma,0.99354,0.99955,0,0.00646,0.96461,0.01965,0.00927
+dummy_data/Testing/glioma/Te-gl_0255.jpg,Glioma,Glioma,0.98921,0.9998,0,0.0108,0.96289,0.01778,0.00854
+dummy_data/Testing/glioma/Te-gl_0256.jpg,Glioma,Glioma,0.99456,0.98587,0,0.00544,0.97382,0.01095,0.00979
+dummy_data/Testing/glioma/Te-gl_0257.jpg,Glioma,Glioma,0.99444,0.99915,0,0.00556,0.961,0.02505,0.00839
+dummy_data/Testing/glioma/Te-gl_0258.jpg,Glioma,Glioma,0.98933,0.99989,0,0.01067,0.9547,0.02786,0.00676
+dummy_data/Testing/glioma/Te-gl_0259.jpg,Glioma,Glioma,0.98181,0.99598,0,0.01819,0.6109,0.28187,0.08904
+dummy_data/Testing/glioma/Te-gl_0260.jpg,Glioma,Glioma,0.9893,0.98904,0,0.0107,0.95065,0.01806,0.0206
+dummy_data/Testing/glioma/Te-gl_0261.jpg,Glioma,Glioma,0.99179,0.99252,0,0.00821,0.94577,0.03545,0.01057
+dummy_data/Testing/glioma/Te-gl_0262.jpg,Glioma,Glioma,0.9946,0.99755,0,0.0054,0.96133,0.02161,0.01166
+dummy_data/Testing/glioma/Te-gl_0263.jpg,Glioma,Glioma,0.99136,0.99934,0,0.00864,0.96434,0.01257,0.01444
+dummy_data/Testing/glioma/Te-gl_0264.jpg,Glioma,Glioma,0.99193,0.99743,0,0.00807,0.94579,0.02483,0.0213
+dummy_data/Testing/glioma/Te-gl_0265.jpg,Glioma,Glioma,0.98966,0.99177,0,0.01034,0.80835,0.1658,0.0155
+dummy_data/Testing/glioma/Te-gl_0266.jpg,Glioma,Glioma,0.98955,0.99955,0,0.01045,0.9631,0.01658,0.00988
+dummy_data/Testing/glioma/Te-gl_0267.jpg,Glioma,Glioma,0.98828,0.99908,0,0.01172,0.96597,0.01359,0.00872
+dummy_data/Testing/glioma/Te-gl_0268.jpg,Glioma,Glioma,0.99091,0.97153,0,0.00909,0.95012,0.03211,0.00867
+dummy_data/Testing/glioma/Te-gl_0269.jpg,Glioma,Glioma,0.99429,0.99989,0,0.00571,0.98028,0.00864,0.00536
+dummy_data/Testing/glioma/Te-gl_0270.jpg,Glioma,Glioma,0.99398,0.99989,0,0.00602,0.97026,0.01925,0.00448
+dummy_data/Testing/glioma/Te-gl_0271.jpg,Glioma,Glioma,0.98979,0.9614,0,0.01021,0.9547,0.02077,0.01431
+dummy_data/Testing/glioma/Te-gl_0272.jpg,Glioma,Glioma,0.99217,0.99606,0,0.00783,0.93161,0.02027,0.04028
+dummy_data/Testing/glioma/Te-gl_0273.jpg,Glioma,Glioma,0.99233,0.99688,0,0.00767,0.97007,0.00768,0.01458
+dummy_data/Testing/glioma/Te-gl_0274.jpg,Glioma,Glioma,0.9857,0.99942,0,0.0143,0.96723,0.00637,0.0121
+dummy_data/Testing/glioma/Te-gl_0275.jpg,Glioma,Glioma,0.9921,0.99996,0,0.0079,0.96231,0.02042,0.00936
+dummy_data/Testing/glioma/Te-gl_0276.jpg,Glioma,Glioma,0.99211,0.99988,0,0.00789,0.9614,0.02203,0.00867
+dummy_data/Testing/glioma/Te-gl_0277.jpg,Glioma,Glioma,0.98648,0.9993,0,0.01352,0.96168,0.01656,0.00824
+dummy_data/Testing/glioma/Te-gl_0278.jpg,Glioma,Glioma,0.99291,0.99991,0,0.00709,0.97062,0.00782,0.01447
+dummy_data/Testing/glioma/Te-gl_0279.jpg,Glioma,Glioma,0.99393,0.99939,0,0.00607,0.9659,0.01642,0.01161
+dummy_data/Testing/glioma/Te-gl_0280.jpg,Glioma,Glioma,0.98954,0.99161,0,0.01046,0.96248,0.01172,0.01534
+dummy_data/Testing/glioma/Te-gl_0281.jpg,Glioma,Glioma,0.99287,0.98641,0,0.00713,0.95991,0.0249,0.00806
+dummy_data/Testing/glioma/Te-gl_0282.jpg,Glioma,Glioma,0.99318,0.99855,0,0.00682,0.97103,0.01517,0.00697
+dummy_data/Testing/glioma/Te-gl_0283.jpg,Glioma,Glioma,0.99059,0.99995,0,0.00941,0.96163,0.01809,0.01087
+dummy_data/Testing/glioma/Te-gl_0284.jpg,Glioma,Glioma,0.99321,0.9973,0,0.00679,0.9772,0.00704,0.00898
+dummy_data/Testing/glioma/Te-gl_0285.jpg,Glioma,Glioma,0.98976,0.99527,0,0.01024,0.95705,0.02343,0.00928
+dummy_data/Testing/glioma/Te-gl_0286.jpg,Glioma,Glioma,0.99299,0.98773,1,0.00701,0.96939,0.00925,0.01435
+dummy_data/Testing/glioma/Te-gl_0287.jpg,Glioma,Glioma,0.99316,0.9832,1,0.00684,0.97171,0.00924,0.01221
+dummy_data/Testing/glioma/Te-gl_0288.jpg,Glioma,Glioma,0.99498,0.99757,0,0.00502,0.96843,0.02017,0.00638
+dummy_data/Testing/glioma/Te-gl_0289.jpg,Glioma,Glioma,0.99458,0.99919,0,0.00542,0.96723,0.01062,0.01673
+dummy_data/Testing/glioma/Te-gl_0290.jpg,Glioma,Glioma,0.99203,0.96133,0,0.00797,0.96582,0.01206,0.01415
+dummy_data/Testing/glioma/Te-gl_0291.jpg,Glioma,Glioma,0.99268,0.99978,0,0.00732,0.97431,0.01093,0.00744
+dummy_data/Testing/glioma/Te-gl_0292.jpg,Glioma,Glioma,0.99316,0.9989,0,0.00684,0.97809,0.0067,0.00837
+dummy_data/Testing/glioma/Te-gl_0293.jpg,Glioma,Glioma,0.99099,0.99987,0,0.00901,0.96066,0.0199,0.01043
+dummy_data/Testing/glioma/Te-gl_0294.jpg,Glioma,Glioma,0.9937,0.99974,0,0.0063,0.97124,0.009,0.01346
+dummy_data/Testing/glioma/Te-gl_0295.jpg,Glioma,Glioma,0.99284,0.99927,0,0.00716,0.96723,0.01377,0.01183
+dummy_data/Testing/glioma/Te-gl_0296.jpg,Glioma,Glioma,0.98998,0.9998,0,0.01002,0.96487,0.01037,0.01474
+dummy_data/Testing/glioma/Te-gl_0297.jpg,Glioma,Glioma,0.99085,0.99995,0,0.00915,0.96627,0.01417,0.01041
+dummy_data/Testing/glioma/Te-gl_0298.jpg,Glioma,Glioma,0.99182,0.98348,0,0.00818,0.97006,0.01006,0.01171
+dummy_data/Testing/glioma/Te-gl_0299.jpg,Glioma,Glioma,0.99026,0.99967,0,0.00974,0.96354,0.00769,0.01903
+dummy_data/Testing/meningioma/Te-meTr_0000.jpg,Meningioma,Meningioma,0.90838,0.01528,0,0.09162,0.01583,0.87313,0.01942
+dummy_data/Testing/meningioma/Te-meTr_0001.jpg,Meningioma,Glioma,0.94445,0.82945,1,0.05555,0.7273,0.14856,0.0686
+dummy_data/Testing/meningioma/Te-meTr_0002.jpg,Meningioma,Meningioma,0.9785,0.24858,0,0.0215,0.05654,0.86962,0.05235
+dummy_data/Testing/meningioma/Te-meTr_0003.jpg,Meningioma,Meningioma,0.95913,0.23228,1,0.04087,0.02778,0.92483,0.00652
+dummy_data/Testing/meningioma/Te-meTr_0004.jpg,Meningioma,Meningioma,0.97387,0.05612,1,0.02613,0.00234,0.96478,0.00675
+dummy_data/Testing/meningioma/Te-meTr_0005.jpg,Meningioma,Meningioma,0.98384,0.08815,1,0.01616,0.001,0.97922,0.00362
+dummy_data/Testing/meningioma/Te-meTr_0006.jpg,Meningioma,No tumor,0.15161,0.15848,1,0.84839,0.01198,0.10777,0.03186
+dummy_data/Testing/meningioma/Te-meTr_0007.jpg,Meningioma,Meningioma,0.99014,0.98263,1,0.00986,0.4662,0.50689,0.01705
+dummy_data/Testing/meningioma/Te-meTr_0008.jpg,Meningioma,Meningioma,0.9786,0.52018,1,0.0214,0.0097,0.95917,0.00973
+dummy_data/Testing/meningioma/Te-meTr_0009.jpg,Meningioma,Meningioma,0.99327,0.21263,1,0.00673,0.00078,0.98992,0.00257
+dummy_data/Testing/meningioma/Te-me_0010.jpg,Meningioma,Meningioma,0.96598,0.05912,1,0.03402,0.01656,0.93674,0.01269
+dummy_data/Testing/meningioma/Te-me_0011.jpg,Meningioma,Meningioma,0.92319,0.13617,1,0.07681,0.00504,0.91106,0.00709
+dummy_data/Testing/meningioma/Te-me_0012.jpg,Meningioma,Meningioma,0.99853,0.57167,1,0.00147,0.00087,0.99572,0.00193
+dummy_data/Testing/meningioma/Te-me_0013.jpg,Meningioma,Meningioma,0.99584,0.21323,1,0.00416,0.00353,0.98303,0.00927
+dummy_data/Testing/meningioma/Te-me_0014.jpg,Meningioma,Meningioma,0.98014,0.15747,0,0.01986,0.00213,0.97266,0.00535
+dummy_data/Testing/meningioma/Te-me_0015.jpg,Meningioma,Meningioma,0.97608,0.19675,1,0.02392,0.00082,0.97187,0.00339
+dummy_data/Testing/meningioma/Te-me_0016.jpg,Meningioma,Meningioma,0.99243,0.15869,1,0.00757,0.00858,0.9764,0.00745
+dummy_data/Testing/meningioma/Te-me_0017.jpg,Meningioma,Meningioma,0.97532,0.06582,1,0.02468,0.00228,0.96639,0.00665
+dummy_data/Testing/meningioma/Te-me_0018.jpg,Meningioma,Meningioma,0.99793,0.98835,1,0.00207,0.00106,0.99256,0.00431
+dummy_data/Testing/meningioma/Te-me_0019.jpg,Meningioma,Meningioma,0.99681,0.24842,1,0.00319,0.00071,0.98951,0.00659
+dummy_data/Testing/meningioma/Te-me_0020.jpg,Meningioma,Meningioma,0.99452,0.07507,1,0.00548,0.00221,0.9886,0.00371
+dummy_data/Testing/meningioma/Te-me_0021.jpg,Meningioma,Meningioma,0.99804,0.69544,1,0.00196,0.00457,0.98863,0.00484
+dummy_data/Testing/meningioma/Te-me_0022.jpg,Meningioma,Glioma,0.93426,0.86083,1,0.06574,0.48712,0.40181,0.04533
+dummy_data/Testing/meningioma/Te-me_0023.jpg,Meningioma,Meningioma,0.97997,0.22563,1,0.02003,0.00234,0.96982,0.00781
+dummy_data/Testing/meningioma/Te-me_0024.jpg,Meningioma,Meningioma,0.89606,0.21057,1,0.10394,0.00147,0.88813,0.00646
+dummy_data/Testing/meningioma/Te-me_0025.jpg,Meningioma,Meningioma,0.9986,0.8942,1,0.0014,0.00169,0.99518,0.00174
+dummy_data/Testing/meningioma/Te-me_0026.jpg,Meningioma,Meningioma,0.99968,0.89129,1,0.00032,0.00045,0.99859,0.00065
+dummy_data/Testing/meningioma/Te-me_0027.jpg,Meningioma,Meningioma,0.99591,0.75268,1,0.00409,0.00821,0.98141,0.00629
+dummy_data/Testing/meningioma/Te-me_0028.jpg,Meningioma,Meningioma,0.99869,0.1981,1,0.00131,0.004,0.99315,0.00154
+dummy_data/Testing/meningioma/Te-me_0029.jpg,Meningioma,Meningioma,0.98498,0.07638,1,0.01502,0.00249,0.9796,0.00289
+dummy_data/Testing/meningioma/Te-me_0030.jpg,Meningioma,Meningioma,0.98913,0.50781,1,0.01087,0.00466,0.97668,0.00779
+dummy_data/Testing/meningioma/Te-me_0031.jpg,Meningioma,Meningioma,0.96598,0.05912,1,0.03402,0.01656,0.93674,0.01269
+dummy_data/Testing/meningioma/Te-me_0032.jpg,Meningioma,Meningioma,0.80882,0.22764,1,0.19118,0.00456,0.79717,0.0071
+dummy_data/Testing/meningioma/Te-me_0033.jpg,Meningioma,Meningioma,0.94801,0.00258,0,0.05199,0.00225,0.94091,0.00486
+dummy_data/Testing/meningioma/Te-me_0034.jpg,Meningioma,Meningioma,0.98544,0.05686,1,0.01456,0.00107,0.98104,0.00333
+dummy_data/Testing/meningioma/Te-me_0035.jpg,Meningioma,Meningioma,0.99804,0.25701,1,0.00196,0.0014,0.99491,0.00174
+dummy_data/Testing/meningioma/Te-me_0036.jpg,Meningioma,Meningioma,0.99139,0.67241,1,0.00861,0.00142,0.98838,0.00159
+dummy_data/Testing/meningioma/Te-me_0037.jpg,Meningioma,Meningioma,0.96975,0.08035,1,0.03025,0.04027,0.91035,0.01913
+dummy_data/Testing/meningioma/Te-me_0038.jpg,Meningioma,Meningioma,0.98161,0.46625,1,0.01839,0.00973,0.96265,0.00923
+dummy_data/Testing/meningioma/Te-me_0039.jpg,Meningioma,Meningioma,0.97115,0.18544,1,0.02885,0.001,0.96181,0.00834
+dummy_data/Testing/meningioma/Te-me_0040.jpg,Meningioma,Meningioma,0.99699,0.66881,1,0.00301,0.01524,0.97572,0.00604
+dummy_data/Testing/meningioma/Te-me_0041.jpg,Meningioma,Meningioma,0.9908,0.15308,1,0.0092,0.00847,0.97438,0.00795
+dummy_data/Testing/meningioma/Te-me_0042.jpg,Meningioma,Meningioma,0.99543,0.92723,1,0.00457,0.00343,0.98222,0.00978
+dummy_data/Testing/meningioma/Te-me_0043.jpg,Meningioma,Meningioma,0.98889,0.82538,1,0.01111,0.00434,0.97402,0.01054
+dummy_data/Testing/meningioma/Te-me_0044.jpg,Meningioma,Meningioma,0.97402,0.41221,1,0.02598,0.00406,0.96219,0.00777
+dummy_data/Testing/meningioma/Te-me_0045.jpg,Meningioma,Meningioma,0.98344,0.87515,1,0.01656,0.01193,0.96037,0.01114
+dummy_data/Testing/meningioma/Te-me_0046.jpg,Meningioma,Meningioma,0.98683,0.78356,1,0.01317,0.01782,0.93435,0.03465
+dummy_data/Testing/meningioma/Te-me_0047.jpg,Meningioma,Meningioma,0.91348,0.50775,1,0.08652,0.00739,0.89491,0.01118
+dummy_data/Testing/meningioma/Te-me_0048.jpg,Meningioma,Meningioma,0.95913,0.66392,1,0.04087,0.04245,0.83927,0.0774
+dummy_data/Testing/meningioma/Te-me_0049.jpg,Meningioma,Meningioma,0.94909,0.23742,1,0.05091,0.00448,0.93962,0.00499
+dummy_data/Testing/meningioma/Te-me_0050.jpg,Meningioma,Meningioma,0.95959,0.88223,1,0.04041,0.0077,0.94204,0.00985
+dummy_data/Testing/meningioma/Te-me_0051.jpg,Meningioma,Meningioma,0.88434,0.74203,1,0.11566,0.00797,0.86409,0.01228
+dummy_data/Testing/meningioma/Te-me_0052.jpg,Meningioma,Meningioma,0.97972,0.99743,1,0.02028,0.00415,0.96615,0.00942
+dummy_data/Testing/meningioma/Te-me_0053.jpg,Meningioma,Meningioma,0.97669,0.99811,1,0.02331,0.00979,0.95606,0.01085
+dummy_data/Testing/meningioma/Te-me_0054.jpg,Meningioma,Meningioma,0.99543,0.92887,1,0.00457,0.00343,0.98223,0.00977
+dummy_data/Testing/meningioma/Te-me_0055.jpg,Meningioma,Meningioma,0.98797,0.82551,1,0.01203,0.00383,0.97405,0.01009
+dummy_data/Testing/meningioma/Te-me_0056.jpg,Meningioma,Meningioma,0.96684,0.85779,1,0.03316,0.00525,0.9353,0.02628
+dummy_data/Testing/meningioma/Te-me_0057.jpg,Meningioma,Meningioma,0.97711,0.8433,1,0.02289,0.00768,0.96352,0.00591
+dummy_data/Testing/meningioma/Te-me_0058.jpg,Meningioma,Meningioma,0.98672,0.73373,1,0.01328,0.00637,0.97325,0.00711
+dummy_data/Testing/meningioma/Te-me_0059.jpg,Meningioma,Meningioma,0.93278,0.98789,0,0.06722,0.03723,0.88104,0.0145
+dummy_data/Testing/meningioma/Te-me_0060.jpg,Meningioma,Meningioma,0.95878,0.87993,1,0.04122,0.03461,0.91637,0.00781
+dummy_data/Testing/meningioma/Te-me_0061.jpg,Meningioma,Meningioma,0.99313,0.74362,0,0.00687,0.00344,0.98484,0.00485
+dummy_data/Testing/meningioma/Te-me_0062.jpg,Meningioma,Meningioma,0.94311,0.40935,1,0.05689,0.00298,0.93041,0.00971
+dummy_data/Testing/meningioma/Te-me_0063.jpg,Meningioma,Meningioma,0.99934,0.94374,1,0.00066,0.00485,0.99228,0.00221
+dummy_data/Testing/meningioma/Te-me_0064.jpg,Meningioma,Glioma,0.93663,0.63544,0,0.06337,0.77972,0.1054,0.05151
+dummy_data/Testing/meningioma/Te-me_0065.jpg,Meningioma,Meningioma,0.86865,0.12812,1,0.13135,0.00901,0.84741,0.01223
+dummy_data/Testing/meningioma/Te-me_0066.jpg,Meningioma,Meningioma,0.97329,0.85447,1,0.02671,0.07778,0.88911,0.0064
+dummy_data/Testing/meningioma/Te-me_0067.jpg,Meningioma,Meningioma,0.98662,0.92424,1,0.01338,0.04335,0.93163,0.01164
+dummy_data/Testing/meningioma/Te-me_0068.jpg,Meningioma,Meningioma,0.99968,0.89112,1,0.00032,0.00046,0.99857,0.00066
+dummy_data/Testing/meningioma/Te-me_0069.jpg,Meningioma,Meningioma,0.97763,0.27628,1,0.02237,0.00296,0.96598,0.00869
+dummy_data/Testing/meningioma/Te-me_0070.jpg,Meningioma,Meningioma,0.97608,0.40853,1,0.02392,0.002,0.96985,0.00423
+dummy_data/Testing/meningioma/Te-me_0071.jpg,Meningioma,Meningioma,0.98743,0.99237,1,0.01257,0.02185,0.95259,0.01299
+dummy_data/Testing/meningioma/Te-me_0072.jpg,Meningioma,Meningioma,0.90273,0.8188,1,0.09727,0.05946,0.83259,0.01068
+dummy_data/Testing/meningioma/Te-me_0073.jpg,Meningioma,Meningioma,0.98743,0.99237,1,0.01257,0.02185,0.95259,0.01299
+dummy_data/Testing/meningioma/Te-me_0074.jpg,Meningioma,Meningioma,0.99919,0.33734,1,0.00081,7e-05,0.9988,0.00031
+dummy_data/Testing/meningioma/Te-me_0075.jpg,Meningioma,Meningioma,0.99452,0.87874,1,0.00548,0.00447,0.98747,0.00257
+dummy_data/Testing/meningioma/Te-me_0076.jpg,Meningioma,Meningioma,0.99881,0.19267,1,0.00119,0.00406,0.99335,0.00141
+dummy_data/Testing/meningioma/Te-me_0077.jpg,Meningioma,Meningioma,0.99661,0.85985,1,0.00339,0.00698,0.98481,0.00481
+dummy_data/Testing/meningioma/Te-me_0078.jpg,Meningioma,Meningioma,0.99779,0.17835,1,0.00221,0.00149,0.9944,0.0019
+dummy_data/Testing/meningioma/Te-me_0079.jpg,Meningioma,Meningioma,0.9748,0.35118,1,0.0252,0.00871,0.96105,0.00504
+dummy_data/Testing/meningioma/Te-me_0080.jpg,Meningioma,Meningioma,0.95109,0.79148,1,0.04891,0.01108,0.91757,0.02244
+dummy_data/Testing/meningioma/Te-me_0081.jpg,Meningioma,Meningioma,0.86537,0.24162,1,0.13463,0.00146,0.85532,0.00859
+dummy_data/Testing/meningioma/Te-me_0082.jpg,Meningioma,Meningioma,0.99129,0.04833,1,0.00871,0.00153,0.98295,0.00681
+dummy_data/Testing/meningioma/Te-me_0083.jpg,Meningioma,Meningioma,0.76932,0.35493,1,0.23068,0.10681,0.64291,0.01961
+dummy_data/Testing/meningioma/Te-me_0084.jpg,Meningioma,Meningioma,0.97592,0.32769,1,0.02408,0.00262,0.96894,0.00435
+dummy_data/Testing/meningioma/Te-me_0085.jpg,Meningioma,Meningioma,0.95962,0.23522,1,0.04038,0.00201,0.94778,0.00984
+dummy_data/Testing/meningioma/Te-me_0086.jpg,Meningioma,Meningioma,0.99671,0.70666,1,0.00329,0.02148,0.964,0.01123
+dummy_data/Testing/meningioma/Te-me_0087.jpg,Meningioma,Meningioma,0.98975,0.96296,1,0.01025,0.00211,0.98492,0.00272
+dummy_data/Testing/meningioma/Te-me_0088.jpg,Meningioma,Meningioma,0.99477,0.13492,1,0.00522,0.00135,0.98808,0.00535
+dummy_data/Testing/meningioma/Te-me_0089.jpg,Meningioma,Meningioma,0.99789,0.765,1,0.00211,0.00739,0.98916,0.00134
+dummy_data/Testing/meningioma/Te-me_0090.jpg,Meningioma,Meningioma,0.99586,0.13353,1,0.00414,0.00421,0.98868,0.00297
+dummy_data/Testing/meningioma/Te-me_0091.jpg,Meningioma,Meningioma,0.9965,0.3484,1,0.0035,0.00021,0.99511,0.00118
+dummy_data/Testing/meningioma/Te-me_0092.jpg,Meningioma,Meningioma,0.99027,0.94575,1,0.00973,0.02393,0.86008,0.10626
+dummy_data/Testing/meningioma/Te-me_0093.jpg,Meningioma,Meningioma,0.78216,0.22757,1,0.21784,0.00498,0.76977,0.00741
+dummy_data/Testing/meningioma/Te-me_0094.jpg,Meningioma,Meningioma,0.9948,0.9986,1,0.0052,0.0083,0.9797,0.0068
+dummy_data/Testing/meningioma/Te-me_0095.jpg,Meningioma,Meningioma,0.99971,0.89136,1,0.00029,0.00043,0.9987,0.00058
+dummy_data/Testing/meningioma/Te-me_0096.jpg,Meningioma,Meningioma,0.9942,0.1315,1,0.0058,0.00238,0.98326,0.00856
+dummy_data/Testing/meningioma/Te-me_0097.jpg,Meningioma,Meningioma,0.99622,0.55052,1,0.00378,0.0007,0.99237,0.00315
+dummy_data/Testing/meningioma/Te-me_0098.jpg,Meningioma,Meningioma,0.99768,0.69689,1,0.00232,0.00098,0.99391,0.00279
+dummy_data/Testing/meningioma/Te-me_0099.jpg,Meningioma,Meningioma,0.84322,0.05588,1,0.15678,0.01025,0.81932,0.01364
+dummy_data/Testing/meningioma/Te-me_0100.jpg,Meningioma,Meningioma,0.52117,0.10646,1,0.47883,0.01275,0.49855,0.00988
+dummy_data/Testing/meningioma/Te-me_0101.jpg,Meningioma,Meningioma,0.99031,0.04698,1,0.00969,0.00183,0.98454,0.00395
+dummy_data/Testing/meningioma/Te-me_0102.jpg,Meningioma,Meningioma,0.99081,0.50343,1,0.00919,0.01481,0.97189,0.00411
+dummy_data/Testing/meningioma/Te-me_0103.jpg,Meningioma,Meningioma,0.88998,0.71897,1,0.11002,0.06175,0.81736,0.01086
+dummy_data/Testing/meningioma/Te-me_0104.jpg,Meningioma,Meningioma,0.99872,0.89419,1,0.00128,0.00151,0.99553,0.00167
+dummy_data/Testing/meningioma/Te-me_0105.jpg,Meningioma,Meningioma,0.99338,0.19805,1,0.00662,0.00072,0.99012,0.00253
+dummy_data/Testing/meningioma/Te-me_0106.jpg,Meningioma,Meningioma,0.96217,0.01679,1,0.03783,0.00536,0.95247,0.00434
+dummy_data/Testing/meningioma/Te-me_0107.jpg,Meningioma,Meningioma,0.97119,0.05521,1,0.02881,0.00266,0.96127,0.00726
+dummy_data/Testing/meningioma/Te-me_0108.jpg,Meningioma,Meningioma,0.95297,0.5941,1,0.04703,0.00373,0.94492,0.00432
+dummy_data/Testing/meningioma/Te-me_0109.jpg,Meningioma,Meningioma,0.997,0.11243,1,0.003,0.00232,0.99217,0.00251
+dummy_data/Testing/meningioma/Te-me_0110.jpg,Meningioma,Meningioma,0.98279,0.18088,0,0.01721,0.00791,0.95804,0.01684
+dummy_data/Testing/meningioma/Te-me_0111.jpg,Meningioma,Meningioma,0.82151,0.08834,1,0.17849,0.00852,0.8064,0.00658
+dummy_data/Testing/meningioma/Te-me_0112.jpg,Meningioma,Meningioma,0.96816,0.1049,1,0.03184,0.01263,0.95027,0.00526
+dummy_data/Testing/meningioma/Te-me_0113.jpg,Meningioma,Meningioma,0.93033,0.00174,1,0.06967,0.00185,0.92348,0.00499
+dummy_data/Testing/meningioma/Te-me_0114.jpg,Meningioma,Meningioma,0.99679,0.59628,1,0.00321,0.01675,0.97436,0.00568
+dummy_data/Testing/meningioma/Te-me_0115.jpg,Meningioma,Meningioma,0.99761,0.90345,1,0.00239,0.00578,0.98523,0.00661
+dummy_data/Testing/meningioma/Te-me_0116.jpg,Meningioma,Meningioma,0.99291,0.98642,1,0.00709,0.01506,0.95166,0.02618
+dummy_data/Testing/meningioma/Te-me_0117.jpg,Meningioma,Meningioma,0.99709,0.99919,1,0.00291,0.00421,0.98844,0.00444
+dummy_data/Testing/meningioma/Te-me_0118.jpg,Meningioma,Meningioma,0.99735,0.99827,1,0.00265,0.00298,0.98494,0.00942
+dummy_data/Testing/meningioma/Te-me_0119.jpg,Meningioma,Meningioma,0.99309,0.99886,1,0.00691,0.01058,0.96934,0.01317
+dummy_data/Testing/meningioma/Te-me_0120.jpg,Meningioma,Meningioma,0.99665,0.99993,1,0.00335,0.00627,0.98544,0.00494
+dummy_data/Testing/meningioma/Te-me_0121.jpg,Meningioma,Meningioma,0.99658,0.99939,0,0.00342,0.00457,0.98624,0.00577
+dummy_data/Testing/meningioma/Te-me_0122.jpg,Meningioma,Meningioma,0.99628,0.9995,1,0.00372,0.01936,0.97079,0.00613
+dummy_data/Testing/meningioma/Te-me_0123.jpg,Meningioma,Meningioma,0.99587,0.9969,1,0.00413,0.0071,0.97579,0.01298
+dummy_data/Testing/meningioma/Te-me_0124.jpg,Meningioma,Meningioma,0.99096,0.9958,1,0.00904,0.01188,0.97433,0.00476
+dummy_data/Testing/meningioma/Te-me_0125.jpg,Meningioma,Meningioma,0.99408,0.99942,0,0.00592,0.00553,0.98288,0.00567
+dummy_data/Testing/meningioma/Te-me_0126.jpg,Meningioma,Meningioma,0.9941,0.826,0,0.0059,0.00724,0.98069,0.00618
+dummy_data/Testing/meningioma/Te-me_0127.jpg,Meningioma,Meningioma,0.99846,0.99913,0,0.00154,0.00503,0.98763,0.00579
+dummy_data/Testing/meningioma/Te-me_0128.jpg,Meningioma,Meningioma,0.99317,0.91503,1,0.00683,0.00453,0.97942,0.00922
+dummy_data/Testing/meningioma/Te-me_0129.jpg,Meningioma,Meningioma,0.99839,0.999,1,0.00161,0.00555,0.98901,0.00383
+dummy_data/Testing/meningioma/Te-me_0130.jpg,Meningioma,Meningioma,0.99662,0.98324,1,0.00338,0.01018,0.97958,0.00685
+dummy_data/Testing/meningioma/Te-me_0131.jpg,Meningioma,Meningioma,0.99667,0.99105,1,0.00333,0.01047,0.97995,0.00626
+dummy_data/Testing/meningioma/Te-me_0132.jpg,Meningioma,Meningioma,0.99721,0.99177,0,0.00279,0.00319,0.97011,0.0239
+dummy_data/Testing/meningioma/Te-me_0133.jpg,Meningioma,Meningioma,0.99738,0.99696,1,0.00262,0.0111,0.98178,0.0045
+dummy_data/Testing/meningioma/Te-me_0134.jpg,Meningioma,Meningioma,0.99158,0.99988,1,0.00842,0.00832,0.97763,0.00562
+dummy_data/Testing/meningioma/Te-me_0135.jpg,Meningioma,Meningioma,0.99458,0.99924,1,0.00542,0.00515,0.98307,0.00636
+dummy_data/Testing/meningioma/Te-me_0136.jpg,Meningioma,Meningioma,0.99743,0.9971,1,0.00257,0.00408,0.98722,0.00613
+dummy_data/Testing/meningioma/Te-me_0137.jpg,Meningioma,Meningioma,0.99365,0.99935,1,0.00635,0.0141,0.97111,0.00844
+dummy_data/Testing/meningioma/Te-me_0138.jpg,Meningioma,Meningioma,0.99705,0.99952,0,0.00295,0.00608,0.98272,0.00824
+dummy_data/Testing/meningioma/Te-me_0139.jpg,Meningioma,Meningioma,0.99778,0.91918,0,0.00222,0.00449,0.98802,0.00526
+dummy_data/Testing/meningioma/Te-me_0140.jpg,Meningioma,Meningioma,0.9785,0.24858,0,0.0215,0.05654,0.86962,0.05235
+dummy_data/Testing/meningioma/Te-me_0141.jpg,Meningioma,Meningioma,0.99671,0.99914,1,0.00329,0.01942,0.96922,0.00807
+dummy_data/Testing/meningioma/Te-me_0142.jpg,Meningioma,Meningioma,0.99654,0.99874,1,0.00346,0.01045,0.98042,0.00566
+dummy_data/Testing/meningioma/Te-me_0143.jpg,Meningioma,Meningioma,0.96217,0.01679,1,0.03783,0.00536,0.95247,0.00434
+dummy_data/Testing/meningioma/Te-me_0144.jpg,Meningioma,Meningioma,0.99161,0.98559,1,0.00839,0.00669,0.97566,0.00927
+dummy_data/Testing/meningioma/Te-me_0145.jpg,Meningioma,Meningioma,0.98279,0.18088,0,0.01721,0.00791,0.95804,0.01684
+dummy_data/Testing/meningioma/Te-me_0146.jpg,Meningioma,Meningioma,0.99521,0.99684,0,0.00479,0.00516,0.98012,0.00993
+dummy_data/Testing/meningioma/Te-me_0147.jpg,Meningioma,Meningioma,0.99886,0.99884,0,0.00114,0.00228,0.99139,0.00519
+dummy_data/Testing/meningioma/Te-me_0148.jpg,Meningioma,Meningioma,0.9956,0.99816,0,0.0044,0.0064,0.97328,0.01592
+dummy_data/Testing/meningioma/Te-me_0149.jpg,Meningioma,Meningioma,0.99464,0.99918,0,0.00536,0.00389,0.98277,0.00799
+dummy_data/Testing/meningioma/Te-me_0150.jpg,Meningioma,Meningioma,0.99773,0.99953,0,0.00227,0.00542,0.98816,0.00415
+dummy_data/Testing/meningioma/Te-me_0151.jpg,Meningioma,Meningioma,0.99632,0.92887,0,0.00368,0.00519,0.98748,0.00365
+dummy_data/Testing/meningioma/Te-me_0152.jpg,Meningioma,Meningioma,0.99829,0.99966,0,0.00171,0.00655,0.98742,0.00432
+dummy_data/Testing/meningioma/Te-me_0153.jpg,Meningioma,Meningioma,0.99673,0.99848,0,0.00327,0.0039,0.98333,0.0095
+dummy_data/Testing/meningioma/Te-me_0154.jpg,Meningioma,Meningioma,0.99027,0.99992,0,0.00973,0.00894,0.97333,0.008
+dummy_data/Testing/meningioma/Te-me_0155.jpg,Meningioma,Meningioma,0.99601,0.99995,0,0.00399,0.00492,0.9848,0.0063
+dummy_data/Testing/meningioma/Te-me_0156.jpg,Meningioma,Meningioma,0.99321,0.99616,0,0.00679,0.00651,0.96588,0.02082
+dummy_data/Testing/meningioma/Te-me_0157.jpg,Meningioma,Meningioma,0.99542,0.99961,0,0.00458,0.00598,0.98211,0.00734
+dummy_data/Testing/meningioma/Te-me_0158.jpg,Meningioma,Meningioma,0.99444,0.99987,0,0.00556,0.00529,0.98313,0.00602
+dummy_data/Testing/meningioma/Te-me_0159.jpg,Meningioma,Meningioma,0.99783,0.99157,0,0.00217,0.00274,0.99154,0.00355
+dummy_data/Testing/meningioma/Te-me_0160.jpg,Meningioma,Meningioma,0.99311,0.99953,0,0.00689,0.01109,0.96908,0.01295
+dummy_data/Testing/meningioma/Te-me_0161.jpg,Meningioma,Meningioma,0.98924,0.99925,0,0.01076,0.00546,0.96787,0.01591
+dummy_data/Testing/meningioma/Te-me_0162.jpg,Meningioma,Meningioma,0.99352,0.99985,0,0.00648,0.00371,0.97994,0.00986
+dummy_data/Testing/meningioma/Te-me_0163.jpg,Meningioma,Meningioma,0.9833,0.99973,0,0.0167,0.01853,0.71368,0.25108
+dummy_data/Testing/meningioma/Te-me_0164.jpg,Meningioma,Pituitary tumor,0.98804,0.99948,0,0.01196,0.00703,0.42076,0.56025
+dummy_data/Testing/meningioma/Te-me_0165.jpg,Meningioma,Meningioma,0.99591,0.99623,0,0.00409,0.00685,0.98536,0.0037
+dummy_data/Testing/meningioma/Te-me_0166.jpg,Meningioma,Meningioma,0.9964,0.9957,0,0.0036,0.00739,0.98643,0.00258
+dummy_data/Testing/meningioma/Te-me_0167.jpg,Meningioma,Meningioma,0.99447,0.98225,0,0.00553,0.00571,0.98223,0.00652
+dummy_data/Testing/meningioma/Te-me_0168.jpg,Meningioma,Meningioma,0.99607,0.99768,0,0.00393,0.0059,0.98517,0.00501
+dummy_data/Testing/meningioma/Te-me_0169.jpg,Meningioma,Meningioma,0.9962,0.99997,0,0.0038,0.00794,0.98218,0.00608
+dummy_data/Testing/meningioma/Te-me_0170.jpg,Meningioma,Meningioma,0.99681,0.99125,0,0.00319,0.00551,0.98323,0.00807
+dummy_data/Testing/meningioma/Te-me_0171.jpg,Meningioma,Meningioma,0.9902,0.99975,0,0.0098,0.01135,0.97007,0.00878
+dummy_data/Testing/meningioma/Te-me_0172.jpg,Meningioma,Meningioma,0.99529,0.99829,0,0.00471,0.00386,0.98634,0.00509
+dummy_data/Testing/meningioma/Te-me_0173.jpg,Meningioma,Meningioma,0.99317,0.73052,0,0.00683,0.00795,0.97638,0.00884
+dummy_data/Testing/meningioma/Te-me_0174.jpg,Meningioma,Meningioma,0.99098,0.99915,0,0.00902,0.01185,0.96696,0.01216
+dummy_data/Testing/meningioma/Te-me_0175.jpg,Meningioma,Meningioma,0.99637,0.49145,0,0.00363,0.00424,0.98835,0.00377
+dummy_data/Testing/meningioma/Te-me_0176.jpg,Meningioma,Meningioma,0.99906,0.99983,0,0.00094,0.00328,0.99236,0.00342
+dummy_data/Testing/meningioma/Te-me_0177.jpg,Meningioma,Meningioma,0.9977,0.99618,0,0.0023,0.0033,0.98864,0.00576
+dummy_data/Testing/meningioma/Te-me_0178.jpg,Meningioma,Meningioma,0.992,0.99735,0,0.008,0.03661,0.94867,0.00673
+dummy_data/Testing/meningioma/Te-me_0179.jpg,Meningioma,Meningioma,0.99673,0.99998,0,0.00327,0.00633,0.98608,0.00431
+dummy_data/Testing/meningioma/Te-me_0180.jpg,Meningioma,Meningioma,0.99606,0.99945,0,0.00394,0.00784,0.98221,0.00601
+dummy_data/Testing/meningioma/Te-me_0181.jpg,Meningioma,Meningioma,0.9958,0.99985,0,0.0042,0.00664,0.98346,0.00571
+dummy_data/Testing/meningioma/Te-me_0182.jpg,Meningioma,Meningioma,0.995,0.98039,0,0.005,0.00726,0.98059,0.00715
+dummy_data/Testing/meningioma/Te-me_0183.jpg,Meningioma,Meningioma,0.99456,0.99926,0,0.00544,0.00904,0.97608,0.00945
+dummy_data/Testing/meningioma/Te-me_0184.jpg,Meningioma,Meningioma,0.99711,0.99994,0,0.00289,0.0031,0.99132,0.00269
+dummy_data/Testing/meningioma/Te-me_0185.jpg,Meningioma,Meningioma,0.99444,0.99992,0,0.00556,0.00733,0.97689,0.01022
+dummy_data/Testing/meningioma/Te-me_0186.jpg,Meningioma,Meningioma,0.99274,0.99871,0,0.00726,0.00533,0.98379,0.00362
+dummy_data/Testing/meningioma/Te-me_0187.jpg,Meningioma,Meningioma,0.99012,0.99995,0,0.00988,0.01909,0.95333,0.0177
+dummy_data/Testing/meningioma/Te-me_0188.jpg,Meningioma,Meningioma,0.99781,0.99991,0,0.00219,0.00398,0.9916,0.00223
+dummy_data/Testing/meningioma/Te-me_0189.jpg,Meningioma,Meningioma,0.98438,0.99633,0,0.01562,0.00225,0.64855,0.33357
+dummy_data/Testing/meningioma/Te-me_0190.jpg,Meningioma,Meningioma,0.9897,0.99978,0,0.0103,0.037,0.94369,0.00901
+dummy_data/Testing/meningioma/Te-me_0191.jpg,Meningioma,Meningioma,0.99203,0.99828,0,0.00797,0.00735,0.9761,0.00858
+dummy_data/Testing/meningioma/Te-me_0192.jpg,Meningioma,Meningioma,0.99551,0.9998,0,0.00449,0.00705,0.98315,0.00531
+dummy_data/Testing/meningioma/Te-me_0193.jpg,Meningioma,Pituitary tumor,0.99574,0.9959,0,0.00426,0.00161,0.05449,0.93964
+dummy_data/Testing/meningioma/Te-me_0194.jpg,Meningioma,Meningioma,0.99374,0.7864,0,0.00626,0.02181,0.96815,0.00379
+dummy_data/Testing/meningioma/Te-me_0195.jpg,Meningioma,Meningioma,0.99419,0.99874,0,0.00581,0.00504,0.98421,0.00494
+dummy_data/Testing/meningioma/Te-me_0196.jpg,Meningioma,Meningioma,0.99385,0.99736,0,0.00615,0.00601,0.97976,0.00808
+dummy_data/Testing/meningioma/Te-me_0197.jpg,Meningioma,Meningioma,0.99869,0.99774,0,0.00131,0.00205,0.99288,0.00376
+dummy_data/Testing/meningioma/Te-me_0198.jpg,Meningioma,Meningioma,0.99671,0.99992,0,0.00329,0.0044,0.98787,0.00443
+dummy_data/Testing/meningioma/Te-me_0199.jpg,Meningioma,Meningioma,0.99302,0.99977,0,0.00698,0.00769,0.97803,0.0073
+dummy_data/Testing/meningioma/Te-me_0200.jpg,Meningioma,Meningioma,0.99807,0.99997,0,0.00193,0.00411,0.99003,0.00394
+dummy_data/Testing/meningioma/Te-me_0201.jpg,Meningioma,Meningioma,0.99714,0.99998,0,0.00286,0.00471,0.98547,0.00696
+dummy_data/Testing/meningioma/Te-me_0202.jpg,Meningioma,Meningioma,0.99441,0.99996,0,0.00559,0.00954,0.97851,0.00636
+dummy_data/Testing/meningioma/Te-me_0203.jpg,Meningioma,Meningioma,0.99181,0.99765,0,0.00819,0.00976,0.94464,0.0374
+dummy_data/Testing/meningioma/Te-me_0204.jpg,Meningioma,Meningioma,0.99819,0.99934,0,0.00181,0.00365,0.98707,0.00747
+dummy_data/Testing/meningioma/Te-me_0205.jpg,Meningioma,Meningioma,0.9976,0.99977,0,0.0024,0.00408,0.9888,0.00473
+dummy_data/Testing/meningioma/Te-me_0206.jpg,Meningioma,Meningioma,0.99482,0.99991,0,0.00518,0.00566,0.98115,0.00801
+dummy_data/Testing/meningioma/Te-me_0207.jpg,Meningioma,Pituitary tumor,0.99428,0.97393,0,0.00572,0.00264,0.03064,0.961
+dummy_data/Testing/meningioma/Te-me_0208.jpg,Meningioma,Meningioma,0.99175,0.99858,0,0.00825,0.00586,0.97977,0.00612
+dummy_data/Testing/meningioma/Te-me_0209.jpg,Meningioma,Meningioma,0.99277,0.99965,0,0.00723,0.00486,0.9809,0.007
+dummy_data/Testing/meningioma/Te-me_0210.jpg,Meningioma,Meningioma,0.9937,0.95683,0,0.0063,0.005,0.97557,0.01312
+dummy_data/Testing/meningioma/Te-me_0211.jpg,Meningioma,Meningioma,0.99812,0.99991,0,0.00188,0.0029,0.99023,0.00499
+dummy_data/Testing/meningioma/Te-me_0212.jpg,Meningioma,Meningioma,0.99661,0.99995,0,0.00339,0.00512,0.98089,0.01061
+dummy_data/Testing/meningioma/Te-me_0213.jpg,Meningioma,Meningioma,0.99653,0.99989,0,0.00347,0.00387,0.98504,0.00762
+dummy_data/Testing/meningioma/Te-me_0214.jpg,Meningioma,Meningioma,0.99326,0.99977,0,0.00674,0.00757,0.97821,0.00748
+dummy_data/Testing/meningioma/Te-me_0215.jpg,Meningioma,Meningioma,0.9978,0.99989,0,0.0022,0.00401,0.98938,0.00442
+dummy_data/Testing/meningioma/Te-me_0216.jpg,Meningioma,Meningioma,0.99527,0.99586,0,0.00473,0.01536,0.97397,0.00593
+dummy_data/Testing/meningioma/Te-me_0217.jpg,Meningioma,Meningioma,0.99492,0.99916,0,0.00508,0.01105,0.97702,0.00685
+dummy_data/Testing/meningioma/Te-me_0218.jpg,Meningioma,Meningioma,0.99669,0.99908,0,0.00331,0.00556,0.9865,0.00462
+dummy_data/Testing/meningioma/Te-me_0219.jpg,Meningioma,Meningioma,0.99509,0.99886,0,0.00491,0.00519,0.98249,0.00741
+dummy_data/Testing/meningioma/Te-me_0220.jpg,Meningioma,Meningioma,0.99756,0.99899,0,0.00244,0.00432,0.98661,0.00663
+dummy_data/Testing/meningioma/Te-me_0221.jpg,Meningioma,Meningioma,0.99404,0.99897,0,0.00596,0.00814,0.97944,0.00646
+dummy_data/Testing/meningioma/Te-me_0222.jpg,Meningioma,Meningioma,0.99491,0.98851,0,0.00509,0.00332,0.98309,0.0085
+dummy_data/Testing/meningioma/Te-me_0223.jpg,Meningioma,Meningioma,0.99511,0.99683,0,0.00489,0.00766,0.97638,0.01107
+dummy_data/Testing/meningioma/Te-me_0224.jpg,Meningioma,Meningioma,0.9967,0.99496,0,0.0033,0.00443,0.98787,0.0044
+dummy_data/Testing/meningioma/Te-me_0225.jpg,Meningioma,Meningioma,0.99576,0.99719,0,0.00424,0.00625,0.98247,0.00704
+dummy_data/Testing/meningioma/Te-me_0226.jpg,Meningioma,Meningioma,0.99339,0.99979,0,0.00661,0.01295,0.97514,0.0053
+dummy_data/Testing/meningioma/Te-me_0227.jpg,Meningioma,Meningioma,0.99476,0.9998,0,0.00524,0.00431,0.98168,0.00878
+dummy_data/Testing/meningioma/Te-me_0228.jpg,Meningioma,Meningioma,0.99456,0.99945,0,0.00544,0.00592,0.97989,0.00875
+dummy_data/Testing/meningioma/Te-me_0229.jpg,Meningioma,Meningioma,0.99565,0.9343,0,0.00435,0.00651,0.9853,0.00383
+dummy_data/Testing/meningioma/Te-me_0230.jpg,Meningioma,Meningioma,0.99501,0.99474,0,0.00499,0.00785,0.97847,0.00869
+dummy_data/Testing/meningioma/Te-me_0231.jpg,Meningioma,Meningioma,0.99138,0.98574,0,0.00862,0.00254,0.71909,0.26975
+dummy_data/Testing/meningioma/Te-me_0232.jpg,Meningioma,Meningioma,0.99585,0.91878,0,0.00415,0.0043,0.98596,0.00559
+dummy_data/Testing/meningioma/Te-me_0233.jpg,Meningioma,Meningioma,0.9956,0.99772,0,0.0044,0.00719,0.98142,0.00698
+dummy_data/Testing/meningioma/Te-me_0234.jpg,Meningioma,Meningioma,0.99563,0.99908,0,0.00437,0.00662,0.98419,0.00482
+dummy_data/Testing/meningioma/Te-me_0235.jpg,Meningioma,Meningioma,0.99529,0.99353,0,0.00471,0.00829,0.98074,0.00626
+dummy_data/Testing/meningioma/Te-me_0236.jpg,Meningioma,Meningioma,0.99476,0.99777,0,0.00524,0.00754,0.98119,0.00603
+dummy_data/Testing/meningioma/Te-me_0237.jpg,Meningioma,Meningioma,0.99113,0.99832,0,0.00887,0.01434,0.96659,0.01021
+dummy_data/Testing/meningioma/Te-me_0238.jpg,Meningioma,Meningioma,0.99216,0.99942,0,0.00784,0.00553,0.97859,0.00804
+dummy_data/Testing/meningioma/Te-me_0239.jpg,Meningioma,Meningioma,0.9911,0.9119,0,0.0089,0.0076,0.96637,0.01713
+dummy_data/Testing/meningioma/Te-me_0240.jpg,Meningioma,Meningioma,0.99674,0.9996,0,0.00326,0.00517,0.98474,0.00683
+dummy_data/Testing/meningioma/Te-me_0241.jpg,Meningioma,Meningioma,0.9963,0.98529,0,0.0037,0.00734,0.97766,0.01129
+dummy_data/Testing/meningioma/Te-me_0242.jpg,Meningioma,Meningioma,0.99928,0.99923,0,0.00072,0.002,0.99401,0.00328
+dummy_data/Testing/meningioma/Te-me_0243.jpg,Meningioma,Meningioma,0.99629,0.99834,0,0.00371,0.00445,0.98637,0.00547
+dummy_data/Testing/meningioma/Te-me_0244.jpg,Meningioma,Meningioma,0.9942,0.99663,0,0.0058,0.00862,0.97878,0.0068
+dummy_data/Testing/meningioma/Te-me_0245.jpg,Meningioma,Meningioma,0.99387,0.99933,0,0.00613,0.009,0.97957,0.00529
+dummy_data/Testing/meningioma/Te-me_0246.jpg,Meningioma,Meningioma,0.99311,0.99896,0,0.00689,0.00634,0.97847,0.0083
+dummy_data/Testing/meningioma/Te-me_0247.jpg,Meningioma,Meningioma,0.99287,0.98417,0,0.00713,0.00557,0.96655,0.02075
+dummy_data/Testing/meningioma/Te-me_0248.jpg,Meningioma,Meningioma,0.9955,0.99944,0,0.0045,0.0037,0.98212,0.00968
+dummy_data/Testing/meningioma/Te-me_0249.jpg,Meningioma,Meningioma,0.99671,0.99709,0,0.00329,0.01701,0.97275,0.00695
+dummy_data/Testing/meningioma/Te-me_0250.jpg,Meningioma,Meningioma,0.99743,0.99775,0,0.00257,0.0039,0.98776,0.00576
+dummy_data/Testing/meningioma/Te-me_0251.jpg,Meningioma,Meningioma,0.99708,0.99932,0,0.00292,0.00318,0.98314,0.01076
+dummy_data/Testing/meningioma/Te-me_0252.jpg,Meningioma,Meningioma,0.99316,0.99915,0,0.00684,0.00509,0.98203,0.00604
+dummy_data/Testing/meningioma/Te-me_0253.jpg,Meningioma,Meningioma,0.99303,0.99782,0,0.00697,0.01413,0.974,0.0049
+dummy_data/Testing/meningioma/Te-me_0254.jpg,Meningioma,Meningioma,0.99678,0.9687,0,0.00322,0.01009,0.98279,0.0039
+dummy_data/Testing/meningioma/Te-me_0255.jpg,Meningioma,Meningioma,0.99495,0.99618,0,0.00505,0.00529,0.97698,0.01268
+dummy_data/Testing/meningioma/Te-me_0256.jpg,Meningioma,Meningioma,0.99075,0.98168,0,0.00925,0.01569,0.96124,0.01382
+dummy_data/Testing/meningioma/Te-me_0257.jpg,Meningioma,Meningioma,0.99636,0.97096,0,0.00364,0.00721,0.98403,0.00512
+dummy_data/Testing/meningioma/Te-me_0258.jpg,Meningioma,Meningioma,0.99344,0.99909,0,0.00656,0.00927,0.97287,0.0113
+dummy_data/Testing/meningioma/Te-me_0259.jpg,Meningioma,Meningioma,0.99277,0.99427,0,0.00723,0.01881,0.96757,0.0064
+dummy_data/Testing/meningioma/Te-me_0260.jpg,Meningioma,Meningioma,0.99688,0.99551,0,0.00312,0.00505,0.98791,0.00392
+dummy_data/Testing/meningioma/Te-me_0261.jpg,Meningioma,Meningioma,0.99319,0.99913,0,0.00681,0.00574,0.97684,0.01061
+dummy_data/Testing/meningioma/Te-me_0262.jpg,Meningioma,Meningioma,0.99906,0.99654,0,0.00094,0.00256,0.99396,0.00254
+dummy_data/Testing/meningioma/Te-me_0263.jpg,Meningioma,Meningioma,0.99852,0.99934,0,0.00148,0.00319,0.99262,0.00271
+dummy_data/Testing/meningioma/Te-me_0264.jpg,Meningioma,Meningioma,0.99742,0.9992,0,0.00258,0.00487,0.98897,0.00357
+dummy_data/Testing/meningioma/Te-me_0265.jpg,Meningioma,Meningioma,0.99204,0.99033,0,0.00796,0.0101,0.97308,0.00886
+dummy_data/Testing/meningioma/Te-me_0266.jpg,Meningioma,Meningioma,0.99743,0.99943,0,0.00257,0.01211,0.97905,0.00627
+dummy_data/Testing/meningioma/Te-me_0267.jpg,Meningioma,Meningioma,0.99901,0.99992,0,0.00099,0.00174,0.99484,0.00242
+dummy_data/Testing/meningioma/Te-me_0268.jpg,Meningioma,Meningioma,0.99655,0.99932,0,0.00345,0.00372,0.9861,0.00673
+dummy_data/Testing/meningioma/Te-me_0269.jpg,Meningioma,Meningioma,0.98755,0.99711,0,0.01245,0.01553,0.95548,0.01653
+dummy_data/Testing/meningioma/Te-me_0270.jpg,Meningioma,Meningioma,0.99444,0.89846,0,0.00556,0.00761,0.98205,0.00479
+dummy_data/Testing/meningioma/Te-me_0271.jpg,Meningioma,Meningioma,0.99283,0.99693,0,0.00717,0.00539,0.97664,0.0108
+dummy_data/Testing/meningioma/Te-me_0272.jpg,Meningioma,Meningioma,0.9949,0.99175,0,0.0051,0.0054,0.96645,0.02305
+dummy_data/Testing/meningioma/Te-me_0273.jpg,Meningioma,Meningioma,0.99667,0.99928,0,0.00333,0.00652,0.98573,0.00443
+dummy_data/Testing/meningioma/Te-me_0274.jpg,Meningioma,Meningioma,0.99608,0.99975,0,0.00392,0.00613,0.98371,0.00624
+dummy_data/Testing/meningioma/Te-me_0275.jpg,Meningioma,Meningioma,0.9963,0.99889,0,0.0037,0.00751,0.98342,0.00537
+dummy_data/Testing/meningioma/Te-me_0276.jpg,Meningioma,Meningioma,0.99414,0.99608,0,0.00586,0.00682,0.97447,0.01284
+dummy_data/Testing/meningioma/Te-me_0277.jpg,Meningioma,Meningioma,0.99525,0.99977,0,0.00475,0.00559,0.98226,0.0074
+dummy_data/Testing/meningioma/Te-me_0278.jpg,Meningioma,Meningioma,0.99402,0.99961,0,0.00598,0.00667,0.98163,0.00572
+dummy_data/Testing/meningioma/Te-me_0279.jpg,Meningioma,Meningioma,0.99596,0.99834,0,0.00404,0.00451,0.98597,0.00548
+dummy_data/Testing/meningioma/Te-me_0280.jpg,Meningioma,Meningioma,0.99669,0.99926,0,0.00331,0.00262,0.98806,0.00601
+dummy_data/Testing/meningioma/Te-me_0281.jpg,Meningioma,Meningioma,0.99528,0.9998,0,0.00472,0.00626,0.98238,0.00663
+dummy_data/Testing/meningioma/Te-me_0282.jpg,Meningioma,Meningioma,0.99858,0.99944,0,0.00142,0.00325,0.99118,0.00416
+dummy_data/Testing/meningioma/Te-me_0283.jpg,Meningioma,Meningioma,0.99608,0.99949,0,0.00392,0.00691,0.97683,0.01234
+dummy_data/Testing/meningioma/Te-me_0284.jpg,Meningioma,Meningioma,0.99345,0.99639,0,0.00655,0.00394,0.9817,0.00782
+dummy_data/Testing/meningioma/Te-me_0285.jpg,Meningioma,Meningioma,0.99255,0.99732,0,0.00745,0.00524,0.98309,0.00422
+dummy_data/Testing/meningioma/Te-me_0286.jpg,Meningioma,Meningioma,0.9909,0.99695,0,0.0091,0.02622,0.90162,0.06305
+dummy_data/Testing/meningioma/Te-me_0287.jpg,Meningioma,Meningioma,0.99867,0.9998,0,0.00133,0.00189,0.98751,0.00926
+dummy_data/Testing/meningioma/Te-me_0288.jpg,Meningioma,Meningioma,0.99476,0.99862,0,0.00524,0.00553,0.98323,0.00601
+dummy_data/Testing/meningioma/Te-me_0289.jpg,Meningioma,Meningioma,0.99746,0.99594,0,0.00254,0.00512,0.98563,0.00671
+dummy_data/Testing/meningioma/Te-me_0290.jpg,Meningioma,Meningioma,0.99763,0.99581,0,0.00237,0.0073,0.98515,0.00518
+dummy_data/Testing/meningioma/Te-me_0291.jpg,Meningioma,Meningioma,0.99511,0.99907,0,0.00489,0.00839,0.98363,0.00309
+dummy_data/Testing/meningioma/Te-me_0292.jpg,Meningioma,Meningioma,0.99772,0.99978,0,0.00228,0.00224,0.98271,0.01277
+dummy_data/Testing/meningioma/Te-me_0293.jpg,Meningioma,Meningioma,0.99927,0.99989,0,0.00073,0.00183,0.99437,0.00307
+dummy_data/Testing/meningioma/Te-me_0294.jpg,Meningioma,Meningioma,0.99564,0.99712,0,0.00436,0.00726,0.97743,0.01094
+dummy_data/Testing/meningioma/Te-me_0295.jpg,Meningioma,Meningioma,0.99668,0.99287,0,0.00332,0.00707,0.98255,0.00705
+dummy_data/Testing/meningioma/Te-me_0296.jpg,Meningioma,Meningioma,0.99848,0.99613,0,0.00152,0.00475,0.98841,0.00532
+dummy_data/Testing/meningioma/Te-me_0297.jpg,Meningioma,Meningioma,0.99616,0.95542,0,0.00384,0.0074,0.9809,0.00786
+dummy_data/Testing/meningioma/Te-me_0298.jpg,Meningioma,Meningioma,0.99506,0.99984,0,0.00494,0.00353,0.98481,0.00673
+dummy_data/Testing/meningioma/Te-me_0299.jpg,Meningioma,Meningioma,0.99865,0.99742,0,0.00135,0.00154,0.9761,0.02101
+dummy_data/Testing/meningioma/Te-me_0300.jpg,Meningioma,Meningioma,0.99424,0.99958,0,0.00576,0.00442,0.97418,0.01564
+dummy_data/Testing/meningioma/Te-me_0301.jpg,Meningioma,Meningioma,0.99604,0.99984,0,0.00396,0.00721,0.98281,0.00602
+dummy_data/Testing/meningioma/Te-me_0302.jpg,Meningioma,Meningioma,0.99536,0.99974,0,0.00464,0.00496,0.98468,0.00573
+dummy_data/Testing/meningioma/Te-me_0303.jpg,Meningioma,Meningioma,0.99297,0.99959,0,0.00703,0.00459,0.97914,0.00924
+dummy_data/Testing/meningioma/Te-me_0304.jpg,Meningioma,Meningioma,0.99747,0.99825,0,0.00253,0.00386,0.98748,0.00613
+dummy_data/Testing/meningioma/Te-me_0305.jpg,Meningioma,Meningioma,0.98978,0.99914,0,0.01022,0.01195,0.9579,0.01993
+dummy_data/Testing/pituitary/Te-piTr_0000.jpg,Pituitary tumor,Pituitary tumor,0.99518,0.99485,1,0.00482,0.00448,0.00478,0.98592
+dummy_data/Testing/pituitary/Te-piTr_0001.jpg,Pituitary tumor,Pituitary tumor,0.98991,0.99825,1,0.01009,0.00793,0.00711,0.97486
+dummy_data/Testing/pituitary/Te-piTr_0002.jpg,Pituitary tumor,Meningioma,0.99321,0.99549,1,0.00679,0.0065,0.96556,0.02115
+dummy_data/Testing/pituitary/Te-piTr_0003.jpg,Pituitary tumor,Pituitary tumor,0.99386,0.99963,1,0.00614,0.00509,0.01635,0.97242
+dummy_data/Testing/pituitary/Te-piTr_0004.jpg,Pituitary tumor,Pituitary tumor,0.99501,0.99971,1,0.00499,0.01108,0.01556,0.96836
+dummy_data/Testing/pituitary/Te-piTr_0005.jpg,Pituitary tumor,Pituitary tumor,0.99084,0.99639,1,0.00916,0.00557,0.01127,0.974
+dummy_data/Testing/pituitary/Te-piTr_0006.jpg,Pituitary tumor,Pituitary tumor,0.98833,0.99936,1,0.01167,0.01069,0.0107,0.96693
+dummy_data/Testing/pituitary/Te-piTr_0007.jpg,Pituitary tumor,Pituitary tumor,0.99433,0.99947,1,0.00567,0.01077,0.0096,0.97396
+dummy_data/Testing/pituitary/Te-piTr_0008.jpg,Pituitary tumor,Pituitary tumor,0.98618,0.99881,1,0.01382,0.00808,0.011,0.9671
+dummy_data/Testing/pituitary/Te-piTr_0009.jpg,Pituitary tumor,Pituitary tumor,0.99427,0.96134,1,0.00573,0.00704,0.0067,0.98053
+dummy_data/Testing/pituitary/Te-pi_0010.jpg,Pituitary tumor,Pituitary tumor,0.99577,0.99806,1,0.00423,0.0048,0.01016,0.98081
+dummy_data/Testing/pituitary/Te-pi_0011.jpg,Pituitary tumor,Pituitary tumor,0.99457,0.99193,1,0.00543,0.00767,0.00958,0.97732
+dummy_data/Testing/pituitary/Te-pi_0012.jpg,Pituitary tumor,Pituitary tumor,0.99577,0.99869,0,0.00423,0.11907,0.01289,0.86381
+dummy_data/Testing/pituitary/Te-pi_0013.jpg,Pituitary tumor,Pituitary tumor,0.9955,0.99899,0,0.0045,0.01533,0.00301,0.97717
+dummy_data/Testing/pituitary/Te-pi_0014.jpg,Pituitary tumor,Pituitary tumor,0.9956,0.98487,1,0.0044,0.00289,0.00665,0.98606
+dummy_data/Testing/pituitary/Te-pi_0015.jpg,Pituitary tumor,Pituitary tumor,0.99583,0.98367,1,0.00417,0.00338,0.00653,0.98592
+dummy_data/Testing/pituitary/Te-pi_0016.jpg,Pituitary tumor,Pituitary tumor,0.99414,0.99543,1,0.00586,0.00407,0.03165,0.95842
+dummy_data/Testing/pituitary/Te-pi_0017.jpg,Pituitary tumor,Pituitary tumor,0.99628,0.99933,1,0.00372,0.00569,0.00882,0.98177
+dummy_data/Testing/pituitary/Te-pi_0018.jpg,Pituitary tumor,Pituitary tumor,0.9932,0.99656,1,0.0068,0.00618,0.00974,0.97729
+dummy_data/Testing/pituitary/Te-pi_0019.jpg,Pituitary tumor,Pituitary tumor,0.99496,0.99962,1,0.00504,0.00874,0.00874,0.97749
+dummy_data/Testing/pituitary/Te-pi_0020.jpg,Pituitary tumor,Pituitary tumor,0.99598,0.98496,1,0.00402,0.00379,0.00816,0.98403
+dummy_data/Testing/pituitary/Te-pi_0021.jpg,Pituitary tumor,Pituitary tumor,0.99358,0.98654,1,0.00642,0.0063,0.01151,0.97576
+dummy_data/Testing/pituitary/Te-pi_0022.jpg,Pituitary tumor,Pituitary tumor,0.99269,0.95937,1,0.00731,0.00857,0.0059,0.97823
+dummy_data/Testing/pituitary/Te-pi_0023.jpg,Pituitary tumor,Pituitary tumor,0.99455,0.99937,1,0.00545,0.00624,0.0061,0.98221
+dummy_data/Testing/pituitary/Te-pi_0024.jpg,Pituitary tumor,Pituitary tumor,0.99579,0.99678,1,0.00421,0.00684,0.00366,0.98529
+dummy_data/Testing/pituitary/Te-pi_0025.jpg,Pituitary tumor,Pituitary tumor,0.99353,0.99244,1,0.00647,0.00623,0.00697,0.98032
+dummy_data/Testing/pituitary/Te-pi_0026.jpg,Pituitary tumor,Pituitary tumor,0.99409,0.98484,1,0.00591,0.00209,0.00825,0.98374
+dummy_data/Testing/pituitary/Te-pi_0027.jpg,Pituitary tumor,Pituitary tumor,0.99595,0.98898,1,0.00405,0.0046,0.01154,0.9798
+dummy_data/Testing/pituitary/Te-pi_0028.jpg,Pituitary tumor,Pituitary tumor,0.99441,0.99715,0,0.00559,0.00318,0.02207,0.96917
+dummy_data/Testing/pituitary/Te-pi_0029.jpg,Pituitary tumor,Pituitary tumor,0.99721,0.97431,1,0.00279,0.00505,0.05369,0.93847
+dummy_data/Testing/pituitary/Te-pi_0030.jpg,Pituitary tumor,Pituitary tumor,0.9923,0.99634,1,0.0077,0.00328,0.01774,0.97128
+dummy_data/Testing/pituitary/Te-pi_0031.jpg,Pituitary tumor,Pituitary tumor,0.99656,0.99867,1,0.00344,0.00369,0.0196,0.97327
+dummy_data/Testing/pituitary/Te-pi_0032.jpg,Pituitary tumor,Pituitary tumor,0.99417,0.98013,1,0.00583,0.0033,0.02977,0.9611
+dummy_data/Testing/pituitary/Te-pi_0033.jpg,Pituitary tumor,Pituitary tumor,0.99485,0.9877,1,0.00515,0.0067,0.00338,0.98477
+dummy_data/Testing/pituitary/Te-pi_0034.jpg,Pituitary tumor,Pituitary tumor,0.99611,0.99878,1,0.00389,0.00689,0.01102,0.9782
+dummy_data/Testing/pituitary/Te-pi_0035.jpg,Pituitary tumor,Pituitary tumor,0.99473,0.99924,0,0.00527,0.00807,0.00382,0.98285
+dummy_data/Testing/pituitary/Te-pi_0036.jpg,Pituitary tumor,Pituitary tumor,0.99428,0.99695,1,0.00572,0.00343,0.0118,0.97905
+dummy_data/Testing/pituitary/Te-pi_0037.jpg,Pituitary tumor,Pituitary tumor,0.99387,0.99708,1,0.00613,0.00353,0.0114,0.97894
+dummy_data/Testing/pituitary/Te-pi_0038.jpg,Pituitary tumor,Pituitary tumor,0.99622,0.99837,1,0.00378,0.0052,0.00769,0.98333
+dummy_data/Testing/pituitary/Te-pi_0039.jpg,Pituitary tumor,Pituitary tumor,0.99453,0.98811,1,0.00547,0.00753,0.00535,0.98165
+dummy_data/Testing/pituitary/Te-pi_0040.jpg,Pituitary tumor,Pituitary tumor,0.99404,0.98554,1,0.00596,0.0066,0.00562,0.98182
+dummy_data/Testing/pituitary/Te-pi_0041.jpg,Pituitary tumor,Pituitary tumor,0.9931,0.99874,0,0.0069,0.00562,0.01287,0.97461
+dummy_data/Testing/pituitary/Te-pi_0042.jpg,Pituitary tumor,Pituitary tumor,0.99532,0.98539,1,0.00468,0.00264,0.01306,0.97962
+dummy_data/Testing/pituitary/Te-pi_0043.jpg,Pituitary tumor,Pituitary tumor,0.99671,0.99727,1,0.00329,0.00678,0.00821,0.98172
+dummy_data/Testing/pituitary/Te-pi_0044.jpg,Pituitary tumor,Pituitary tumor,0.99531,0.99916,1,0.00469,0.00737,0.00471,0.98323
+dummy_data/Testing/pituitary/Te-pi_0045.jpg,Pituitary tumor,Pituitary tumor,0.99498,0.99468,1,0.00502,0.00821,0.00872,0.97805
+dummy_data/Testing/pituitary/Te-pi_0046.jpg,Pituitary tumor,Pituitary tumor,0.99401,0.99971,1,0.00599,0.00892,0.0076,0.97749
+dummy_data/Testing/pituitary/Te-pi_0047.jpg,Pituitary tumor,Pituitary tumor,0.99256,0.99678,1,0.00744,0.00337,0.00607,0.98311
+dummy_data/Testing/pituitary/Te-pi_0048.jpg,Pituitary tumor,Pituitary tumor,0.9874,0.99905,1,0.0126,0.00696,0.01228,0.96817
+dummy_data/Testing/pituitary/Te-pi_0049.jpg,Pituitary tumor,Pituitary tumor,0.99016,0.99611,1,0.00984,0.00791,0.01249,0.96975
+dummy_data/Testing/pituitary/Te-pi_0050.jpg,Pituitary tumor,Pituitary tumor,0.98961,0.99916,1,0.01039,0.00601,0.01086,0.97275
+dummy_data/Testing/pituitary/Te-pi_0051.jpg,Pituitary tumor,Pituitary tumor,0.99189,0.99952,0,0.00811,0.03177,0.01298,0.94715
+dummy_data/Testing/pituitary/Te-pi_0052.jpg,Pituitary tumor,Pituitary tumor,0.99478,0.98859,1,0.00522,0.00285,0.00936,0.98257
+dummy_data/Testing/pituitary/Te-pi_0053.jpg,Pituitary tumor,Pituitary tumor,0.99514,0.9897,1,0.00486,0.00422,0.01763,0.97329
+dummy_data/Testing/pituitary/Te-pi_0054.jpg,Pituitary tumor,Pituitary tumor,0.9964,0.81962,0,0.0036,0.00235,0.02559,0.96846
+dummy_data/Testing/pituitary/Te-pi_0055.jpg,Pituitary tumor,Pituitary tumor,0.99521,0.99962,1,0.00479,0.00439,0.01179,0.97903
+dummy_data/Testing/pituitary/Te-pi_0056.jpg,Pituitary tumor,Pituitary tumor,0.99485,0.99636,1,0.00515,0.00287,0.00667,0.98532
+dummy_data/Testing/pituitary/Te-pi_0057.jpg,Pituitary tumor,Pituitary tumor,0.99491,0.99464,1,0.00509,0.005,0.00668,0.98323
+dummy_data/Testing/pituitary/Te-pi_0058.jpg,Pituitary tumor,Pituitary tumor,0.99521,0.99674,1,0.00479,0.00532,0.00854,0.98135
+dummy_data/Testing/pituitary/Te-pi_0059.jpg,Pituitary tumor,Pituitary tumor,0.99467,0.99611,0,0.00533,0.00884,0.00393,0.98189
+dummy_data/Testing/pituitary/Te-pi_0060.jpg,Pituitary tumor,Pituitary tumor,0.99516,0.98511,0,0.00484,0.00644,0.00874,0.97998
+dummy_data/Testing/pituitary/Te-pi_0061.jpg,Pituitary tumor,Pituitary tumor,0.99542,0.99334,1,0.00458,0.00234,0.01028,0.98281
+dummy_data/Testing/pituitary/Te-pi_0062.jpg,Pituitary tumor,Pituitary tumor,0.99648,0.99835,1,0.00352,0.00292,0.01287,0.98068
+dummy_data/Testing/pituitary/Te-pi_0063.jpg,Pituitary tumor,Pituitary tumor,0.98878,0.94853,1,0.01122,0.00396,0.01042,0.9744
+dummy_data/Testing/pituitary/Te-pi_0064.jpg,Pituitary tumor,Pituitary tumor,0.99455,0.98796,1,0.00545,0.00715,0.0052,0.9822
+dummy_data/Testing/pituitary/Te-pi_0065.jpg,Pituitary tumor,Pituitary tumor,0.99344,0.9841,1,0.00656,0.00459,0.01022,0.97863
+dummy_data/Testing/pituitary/Te-pi_0066.jpg,Pituitary tumor,Pituitary tumor,0.99453,0.99225,1,0.00547,0.00305,0.0308,0.96068
+dummy_data/Testing/pituitary/Te-pi_0067.jpg,Pituitary tumor,Pituitary tumor,0.98576,0.99925,0,0.01424,0.00798,0.01826,0.95951
+dummy_data/Testing/pituitary/Te-pi_0068.jpg,Pituitary tumor,Pituitary tumor,0.97806,0.99885,0,0.02194,0.00387,0.18562,0.78858
+dummy_data/Testing/pituitary/Te-pi_0069.jpg,Pituitary tumor,Pituitary tumor,0.98916,0.98775,0,0.01084,0.00462,0.0439,0.94064
+dummy_data/Testing/pituitary/Te-pi_0070.jpg,Pituitary tumor,Pituitary tumor,0.98918,0.99774,0,0.01082,0.00779,0.01243,0.96896
+dummy_data/Testing/pituitary/Te-pi_0071.jpg,Pituitary tumor,Pituitary tumor,0.99244,0.99881,0,0.00756,0.00264,0.01194,0.97786
+dummy_data/Testing/pituitary/Te-pi_0072.jpg,Pituitary tumor,Pituitary tumor,0.99545,0.99854,0,0.00455,0.00441,0.01415,0.97689
+dummy_data/Testing/pituitary/Te-pi_0073.jpg,Pituitary tumor,Pituitary tumor,0.98947,0.99802,0,0.01053,0.00362,0.01236,0.97349
+dummy_data/Testing/pituitary/Te-pi_0074.jpg,Pituitary tumor,Pituitary tumor,0.9926,0.99961,0,0.0074,0.00572,0.00745,0.97943
+dummy_data/Testing/pituitary/Te-pi_0075.jpg,Pituitary tumor,Pituitary tumor,0.99464,0.99897,0,0.00536,0.00738,0.01647,0.97079
+dummy_data/Testing/pituitary/Te-pi_0076.jpg,Pituitary tumor,Pituitary tumor,0.99006,0.99892,0,0.00994,0.00777,0.00683,0.97546
+dummy_data/Testing/pituitary/Te-pi_0077.jpg,Pituitary tumor,Pituitary tumor,0.98915,0.99892,0,0.01085,0.0084,0.01159,0.96916
+dummy_data/Testing/pituitary/Te-pi_0078.jpg,Pituitary tumor,Pituitary tumor,0.98995,0.99948,0,0.01005,0.0137,0.02564,0.95062
+dummy_data/Testing/pituitary/Te-pi_0079.jpg,Pituitary tumor,Pituitary tumor,0.98655,0.99941,0,0.01345,0.02204,0.01783,0.94669
+dummy_data/Testing/pituitary/Te-pi_0080.jpg,Pituitary tumor,Pituitary tumor,0.98887,0.99954,0,0.01113,0.01667,0.01523,0.95697
+dummy_data/Testing/pituitary/Te-pi_0081.jpg,Pituitary tumor,Pituitary tumor,0.99164,0.99802,0,0.00836,0.00696,0.0123,0.97238
+dummy_data/Testing/pituitary/Te-pi_0082.jpg,Pituitary tumor,Pituitary tumor,0.98932,0.99896,0,0.01068,0.00607,0.00961,0.97364
+dummy_data/Testing/pituitary/Te-pi_0083.jpg,Pituitary tumor,Pituitary tumor,0.99252,0.99973,0,0.00748,0.00571,0.01155,0.97527
+dummy_data/Testing/pituitary/Te-pi_0084.jpg,Pituitary tumor,Pituitary tumor,0.99345,0.99196,0,0.00655,0.00316,0.01174,0.97855
+dummy_data/Testing/pituitary/Te-pi_0085.jpg,Pituitary tumor,Pituitary tumor,0.98955,0.99915,0,0.01045,0.00842,0.00738,0.97376
+dummy_data/Testing/pituitary/Te-pi_0086.jpg,Pituitary tumor,Pituitary tumor,0.98935,0.99908,0,0.01065,0.00431,0.01194,0.9731
+dummy_data/Testing/pituitary/Te-pi_0087.jpg,Pituitary tumor,Pituitary tumor,0.99111,0.99621,0,0.00889,0.00276,0.01289,0.97546
+dummy_data/Testing/pituitary/Te-pi_0088.jpg,Pituitary tumor,Pituitary tumor,0.99242,0.99806,0,0.00758,0.00501,0.00584,0.98157
+dummy_data/Testing/pituitary/Te-pi_0089.jpg,Pituitary tumor,Pituitary tumor,0.99259,0.99712,0,0.00741,0.00782,0.00776,0.97701
+dummy_data/Testing/pituitary/Te-pi_0090.jpg,Pituitary tumor,Pituitary tumor,0.99433,0.99618,0,0.00567,0.00296,0.00761,0.98376
+dummy_data/Testing/pituitary/Te-pi_0091.jpg,Pituitary tumor,Pituitary tumor,0.9929,0.99794,0,0.0071,0.00401,0.00794,0.98096
+dummy_data/Testing/pituitary/Te-pi_0092.jpg,Pituitary tumor,Pituitary tumor,0.99407,0.99782,0,0.00593,0.00599,0.00817,0.97991
+dummy_data/Testing/pituitary/Te-pi_0093.jpg,Pituitary tumor,Pituitary tumor,0.99083,0.99831,0,0.00917,0.00253,0.01656,0.97174
+dummy_data/Testing/pituitary/Te-pi_0094.jpg,Pituitary tumor,Pituitary tumor,0.99404,0.99851,0,0.00596,0.00557,0.01129,0.97718
+dummy_data/Testing/pituitary/Te-pi_0095.jpg,Pituitary tumor,Pituitary tumor,0.99494,0.99833,0,0.00506,0.00609,0.05863,0.93022
+dummy_data/Testing/pituitary/Te-pi_0096.jpg,Pituitary tumor,Pituitary tumor,0.99406,0.99864,0,0.00594,0.00567,0.0239,0.96448
+dummy_data/Testing/pituitary/Te-pi_0097.jpg,Pituitary tumor,Pituitary tumor,0.99514,0.99919,0,0.00486,0.00591,0.00932,0.97991
+dummy_data/Testing/pituitary/Te-pi_0098.jpg,Pituitary tumor,Pituitary tumor,0.99175,0.99622,0,0.00825,0.0135,0.02724,0.95101
+dummy_data/Testing/pituitary/Te-pi_0099.jpg,Pituitary tumor,Pituitary tumor,0.97961,0.99127,0,0.02039,0.00345,0.00778,0.96838
+dummy_data/Testing/pituitary/Te-pi_0100.jpg,Pituitary tumor,Pituitary tumor,0.98959,0.99938,0,0.01041,0.00896,0.00795,0.97268
+dummy_data/Testing/pituitary/Te-pi_0101.jpg,Pituitary tumor,Pituitary tumor,0.99137,0.99897,0,0.00863,0.00512,0.00644,0.97981
+dummy_data/Testing/pituitary/Te-pi_0102.jpg,Pituitary tumor,Pituitary tumor,0.99351,0.99915,0,0.00649,0.00416,0.00964,0.97971
+dummy_data/Testing/pituitary/Te-pi_0103.jpg,Pituitary tumor,Pituitary tumor,0.99305,0.98037,0,0.00695,0.00616,0.00736,0.97953
+dummy_data/Testing/pituitary/Te-pi_0104.jpg,Pituitary tumor,Pituitary tumor,0.99095,0.99942,0,0.00905,0.011,0.02004,0.95991
+dummy_data/Testing/pituitary/Te-pi_0105.jpg,Pituitary tumor,Pituitary tumor,0.99252,0.99858,0,0.00748,0.00954,0.01565,0.96732
+dummy_data/Testing/pituitary/Te-pi_0106.jpg,Pituitary tumor,Pituitary tumor,0.995,0.99819,0,0.005,0.00577,0.00946,0.97977
+dummy_data/Testing/pituitary/Te-pi_0107.jpg,Pituitary tumor,Pituitary tumor,0.99008,0.99809,0,0.00992,0.00789,0.00723,0.97496
+dummy_data/Testing/pituitary/Te-pi_0108.jpg,Pituitary tumor,Pituitary tumor,0.99384,0.99641,0,0.00616,0.0061,0.03574,0.952
+dummy_data/Testing/pituitary/Te-pi_0109.jpg,Pituitary tumor,Pituitary tumor,0.99519,0.9972,0,0.00481,0.00579,0.02918,0.96021
+dummy_data/Testing/pituitary/Te-pi_0110.jpg,Pituitary tumor,Pituitary tumor,0.98859,0.99934,0,0.01141,0.00524,0.02897,0.95438
+dummy_data/Testing/pituitary/Te-pi_0111.jpg,Pituitary tumor,Pituitary tumor,0.99517,0.99712,0,0.00483,0.00838,0.01587,0.97092
+dummy_data/Testing/pituitary/Te-pi_0112.jpg,Pituitary tumor,Pituitary tumor,0.99615,0.906,0,0.00385,0.00233,0.01653,0.97729
+dummy_data/Testing/pituitary/Te-pi_0113.jpg,Pituitary tumor,Pituitary tumor,0.99264,0.99679,0,0.00736,0.0063,0.03323,0.95311
+dummy_data/Testing/pituitary/Te-pi_0114.jpg,Pituitary tumor,Pituitary tumor,0.9895,0.99652,0,0.0105,0.00896,0.0169,0.96363
+dummy_data/Testing/pituitary/Te-pi_0115.jpg,Pituitary tumor,Pituitary tumor,0.99223,0.99563,0,0.00777,0.00381,0.02183,0.96659
+dummy_data/Testing/pituitary/Te-pi_0116.jpg,Pituitary tumor,Pituitary tumor,0.98819,0.99632,0,0.01181,0.00245,0.01374,0.97199
+dummy_data/Testing/pituitary/Te-pi_0117.jpg,Pituitary tumor,Pituitary tumor,0.99401,0.99937,0,0.00599,0.00457,0.00358,0.98586
+dummy_data/Testing/pituitary/Te-pi_0118.jpg,Pituitary tumor,Pituitary tumor,0.99352,0.99836,0,0.00648,0.00694,0.00616,0.98042
+dummy_data/Testing/pituitary/Te-pi_0119.jpg,Pituitary tumor,Pituitary tumor,0.99398,0.75034,0,0.00602,0.00425,0.00667,0.98306
+dummy_data/Testing/pituitary/Te-pi_0120.jpg,Pituitary tumor,Pituitary tumor,0.99441,0.99593,0,0.00559,0.00255,0.00598,0.98588
+dummy_data/Testing/pituitary/Te-pi_0121.jpg,Pituitary tumor,Pituitary tumor,0.99358,0.99325,0,0.00642,0.00462,0.00634,0.98262
+dummy_data/Testing/pituitary/Te-pi_0122.jpg,Pituitary tumor,Pituitary tumor,0.99519,0.99686,0,0.00481,0.00528,0.00868,0.98123
+dummy_data/Testing/pituitary/Te-pi_0123.jpg,Pituitary tumor,Pituitary tumor,0.99479,0.99252,0,0.00521,0.00891,0.00391,0.98197
+dummy_data/Testing/pituitary/Te-pi_0124.jpg,Pituitary tumor,Pituitary tumor,0.99261,0.98633,0,0.00739,0.00427,0.01401,0.97433
+dummy_data/Testing/pituitary/Te-pi_0125.jpg,Pituitary tumor,Pituitary tumor,0.9882,0.99935,0,0.0118,0.01058,0.01374,0.96388
+dummy_data/Testing/pituitary/Te-pi_0126.jpg,Pituitary tumor,Pituitary tumor,0.99522,0.97099,0,0.00478,0.00651,0.00896,0.97975
+dummy_data/Testing/pituitary/Te-pi_0127.jpg,Pituitary tumor,Pituitary tumor,0.99545,0.99187,0,0.00455,0.00233,0.01048,0.98265
+dummy_data/Testing/pituitary/Te-pi_0128.jpg,Pituitary tumor,Pituitary tumor,0.99655,0.99907,0,0.00345,0.00295,0.01289,0.98071
+dummy_data/Testing/pituitary/Te-pi_0129.jpg,Pituitary tumor,Pituitary tumor,0.99406,0.82386,0,0.00594,0.00362,0.0061,0.98434
+dummy_data/Testing/pituitary/Te-pi_0130.jpg,Pituitary tumor,Pituitary tumor,0.99502,0.99498,0,0.00498,0.005,0.01101,0.97901
+dummy_data/Testing/pituitary/Te-pi_0131.jpg,Pituitary tumor,Pituitary tumor,0.99341,0.99402,0,0.00659,0.00369,0.01137,0.97835
+dummy_data/Testing/pituitary/Te-pi_0132.jpg,Pituitary tumor,Pituitary tumor,0.99286,0.994,0,0.00714,0.00367,0.03787,0.95131
+dummy_data/Testing/pituitary/Te-pi_0133.jpg,Pituitary tumor,Pituitary tumor,0.99397,0.98077,0,0.00603,0.00591,0.01412,0.97394
+dummy_data/Testing/pituitary/Te-pi_0134.jpg,Pituitary tumor,Pituitary tumor,0.99543,0.99758,0,0.00457,0.00613,0.00972,0.97958
+dummy_data/Testing/pituitary/Te-pi_0135.jpg,Pituitary tumor,Pituitary tumor,0.99648,0.9937,0,0.00352,0.00458,0.00539,0.98651
+dummy_data/Testing/pituitary/Te-pi_0136.jpg,Pituitary tumor,Pituitary tumor,0.9967,0.99052,0,0.0033,0.00307,0.00776,0.98587
+dummy_data/Testing/pituitary/Te-pi_0137.jpg,Pituitary tumor,Pituitary tumor,0.99426,0.99908,0,0.00574,0.01091,0.00991,0.97345
+dummy_data/Testing/pituitary/Te-pi_0138.jpg,Pituitary tumor,Pituitary tumor,0.9925,0.98713,0,0.0075,0.00715,0.00732,0.97803
+dummy_data/Testing/pituitary/Te-pi_0139.jpg,Pituitary tumor,Pituitary tumor,0.99665,0.97043,0,0.00335,0.00293,0.00728,0.98645
+dummy_data/Testing/pituitary/Te-pi_0140.jpg,Pituitary tumor,Pituitary tumor,0.9946,0.99847,0,0.0054,0.00589,0.02521,0.96349
+dummy_data/Testing/pituitary/Te-pi_0141.jpg,Pituitary tumor,Pituitary tumor,0.99348,0.99117,0,0.00652,0.00623,0.00743,0.97982
+dummy_data/Testing/pituitary/Te-pi_0142.jpg,Pituitary tumor,Pituitary tumor,0.986,0.99927,0,0.014,0.0083,0.0109,0.96681
+dummy_data/Testing/pituitary/Te-pi_0143.jpg,Pituitary tumor,Pituitary tumor,0.99026,0.97256,0,0.00974,0.00333,0.00617,0.98077
+dummy_data/Testing/pituitary/Te-pi_0144.jpg,Pituitary tumor,Pituitary tumor,0.9964,0.99954,0,0.0036,0.00459,0.00788,0.98393
+dummy_data/Testing/pituitary/Te-pi_0145.jpg,Pituitary tumor,Pituitary tumor,0.9941,0.99803,0,0.0059,0.00797,0.01005,0.97608
+dummy_data/Testing/pituitary/Te-pi_0146.jpg,Pituitary tumor,Pituitary tumor,0.99376,0.97528,0,0.00624,0.00591,0.01064,0.97721
+dummy_data/Testing/pituitary/Te-pi_0147.jpg,Pituitary tumor,Pituitary tumor,0.99612,0.99958,0,0.00388,0.05507,0.00985,0.9312
+dummy_data/Testing/pituitary/Te-pi_0148.jpg,Pituitary tumor,Pituitary tumor,0.99539,0.99084,0,0.00461,0.00291,0.00799,0.9845
+dummy_data/Testing/pituitary/Te-pi_0149.jpg,Pituitary tumor,Pituitary tumor,0.99454,0.98735,0,0.00546,0.0038,0.00886,0.98189
+dummy_data/Testing/pituitary/Te-pi_0150.jpg,Pituitary tumor,Pituitary tumor,0.99622,0.99125,0,0.00378,0.00329,0.00867,0.98426
+dummy_data/Testing/pituitary/Te-pi_0151.jpg,Pituitary tumor,Pituitary tumor,0.99648,0.97505,0,0.00352,0.00325,0.00753,0.98571
+dummy_data/Testing/pituitary/Te-pi_0152.jpg,Pituitary tumor,Pituitary tumor,0.99137,0.99421,0,0.00863,0.00482,0.0174,0.96915
+dummy_data/Testing/pituitary/Te-pi_0153.jpg,Pituitary tumor,Pituitary tumor,0.99628,0.99879,0,0.00372,0.00569,0.00909,0.9815
+dummy_data/Testing/pituitary/Te-pi_0154.jpg,Pituitary tumor,Pituitary tumor,0.99301,0.99287,0,0.00699,0.00618,0.01037,0.97646
+dummy_data/Testing/pituitary/Te-pi_0155.jpg,Pituitary tumor,Pituitary tumor,0.99641,0.92426,0,0.00359,0.00276,0.00551,0.98815
+dummy_data/Testing/pituitary/Te-pi_0156.jpg,Pituitary tumor,Pituitary tumor,0.994,0.99767,0,0.006,0.00925,0.01374,0.97101
+dummy_data/Testing/pituitary/Te-pi_0157.jpg,Pituitary tumor,Pituitary tumor,0.99553,0.96143,0,0.00447,0.00485,0.01406,0.97662
+dummy_data/Testing/pituitary/Te-pi_0158.jpg,Pituitary tumor,Pituitary tumor,0.99401,0.97105,0,0.00599,0.00765,0.00723,0.97913
+dummy_data/Testing/pituitary/Te-pi_0159.jpg,Pituitary tumor,Pituitary tumor,0.99434,0.97091,0,0.00566,0.00327,0.01084,0.98022
+dummy_data/Testing/pituitary/Te-pi_0160.jpg,Pituitary tumor,Pituitary tumor,0.99316,0.92584,0,0.00684,0.00369,0.00784,0.98163
+dummy_data/Testing/pituitary/Te-pi_0161.jpg,Pituitary tumor,Pituitary tumor,0.99557,0.9979,0,0.00443,0.00479,0.0034,0.98739
+dummy_data/Testing/pituitary/Te-pi_0162.jpg,Pituitary tumor,Pituitary tumor,0.99545,0.99736,0,0.00455,0.00502,0.00794,0.98249
+dummy_data/Testing/pituitary/Te-pi_0163.jpg,Pituitary tumor,Pituitary tumor,0.99589,0.99638,0,0.00411,0.00658,0.00374,0.98557
+dummy_data/Testing/pituitary/Te-pi_0164.jpg,Pituitary tumor,Pituitary tumor,0.99341,0.98878,0,0.00659,0.00634,0.00718,0.97989
+dummy_data/Testing/pituitary/Te-pi_0165.jpg,Pituitary tumor,Pituitary tumor,0.99509,0.9942,0,0.00491,0.00614,0.00545,0.9835
+dummy_data/Testing/pituitary/Te-pi_0166.jpg,Pituitary tumor,Pituitary tumor,0.99406,0.98406,0,0.00594,0.00264,0.00821,0.98321
+dummy_data/Testing/pituitary/Te-pi_0167.jpg,Pituitary tumor,Pituitary tumor,0.99486,0.99024,0,0.00514,0.00289,0.0092,0.98278
+dummy_data/Testing/pituitary/Te-pi_0168.jpg,Pituitary tumor,Pituitary tumor,0.9952,0.9964,0,0.0048,0.00427,0.01727,0.97366
+dummy_data/Testing/pituitary/Te-pi_0169.jpg,Pituitary tumor,Pituitary tumor,0.99564,0.96199,0,0.00436,0.00474,0.01184,0.97906
+dummy_data/Testing/pituitary/Te-pi_0170.jpg,Pituitary tumor,Pituitary tumor,0.99416,0.99151,0,0.00584,0.00402,0.03414,0.956
+dummy_data/Testing/pituitary/Te-pi_0171.jpg,Pituitary tumor,Pituitary tumor,0.99597,0.98862,0,0.00403,0.00435,0.03572,0.9559
+dummy_data/Testing/pituitary/Te-pi_0172.jpg,Pituitary tumor,Pituitary tumor,0.99008,0.99652,0,0.00992,0.00362,0.02894,0.95752
+dummy_data/Testing/pituitary/Te-pi_0173.jpg,Pituitary tumor,Pituitary tumor,0.98196,0.99743,0,0.01804,0.01296,0.01217,0.95684
+dummy_data/Testing/pituitary/Te-pi_0174.jpg,Pituitary tumor,Pituitary tumor,0.99656,0.99808,0,0.00344,0.00374,0.01882,0.97399
+dummy_data/Testing/pituitary/Te-pi_0175.jpg,Pituitary tumor,Pituitary tumor,0.99423,0.98041,0,0.00577,0.00332,0.02728,0.96363
+dummy_data/Testing/pituitary/Te-pi_0176.jpg,Pituitary tumor,Pituitary tumor,0.99648,0.99953,0,0.00352,0.00539,0.00399,0.9871
+dummy_data/Testing/pituitary/Te-pi_0177.jpg,Pituitary tumor,Pituitary tumor,0.99486,0.99221,0,0.00514,0.00675,0.00347,0.98465
+dummy_data/Testing/pituitary/Te-pi_0178.jpg,Pituitary tumor,Pituitary tumor,0.99591,0.99816,0,0.00409,0.00831,0.00534,0.98226
+dummy_data/Testing/pituitary/Te-pi_0179.jpg,Pituitary tumor,Pituitary tumor,0.99129,0.99952,0,0.00871,0.00674,0.01037,0.97418
+dummy_data/Testing/pituitary/Te-pi_0180.jpg,Pituitary tumor,Pituitary tumor,0.99369,0.99691,0,0.00631,0.00898,0.00488,0.97983
+dummy_data/Testing/pituitary/Te-pi_0181.jpg,Pituitary tumor,Pituitary tumor,0.99438,0.9954,0,0.00562,0.00338,0.01194,0.97906
+dummy_data/Testing/pituitary/Te-pi_0182.jpg,Pituitary tumor,Pituitary tumor,0.99387,0.99808,0,0.00613,0.00354,0.01132,0.97902
+dummy_data/Testing/pituitary/Te-pi_0183.jpg,Pituitary tumor,Pituitary tumor,0.99616,0.99685,0,0.00384,0.00532,0.0077,0.98314
+dummy_data/Testing/pituitary/Te-pi_0184.jpg,Pituitary tumor,Pituitary tumor,0.99445,0.98871,0,0.00555,0.0079,0.00554,0.98101
+dummy_data/Testing/pituitary/Te-pi_0185.jpg,Pituitary tumor,Pituitary tumor,0.98408,0.99869,0,0.01592,0.00766,0.06438,0.91204
+dummy_data/Testing/pituitary/Te-pi_0186.jpg,Pituitary tumor,Pituitary tumor,0.99405,0.98918,0,0.00595,0.00654,0.00585,0.98165
+dummy_data/Testing/pituitary/Te-pi_0187.jpg,Pituitary tumor,Pituitary tumor,0.99267,0.99874,0,0.00733,0.01067,0.0064,0.9756
+dummy_data/Testing/pituitary/Te-pi_0188.jpg,Pituitary tumor,Pituitary tumor,0.98664,0.98767,0,0.01336,0.11817,0.08286,0.78561
+dummy_data/Testing/pituitary/Te-pi_0189.jpg,Pituitary tumor,Pituitary tumor,0.99365,0.98402,0,0.00635,0.00324,0.0092,0.98121
+dummy_data/Testing/pituitary/Te-pi_0190.jpg,Pituitary tumor,Pituitary tumor,0.99654,0.99863,0,0.00346,0.00507,0.00763,0.98384
+dummy_data/Testing/pituitary/Te-pi_0191.jpg,Pituitary tumor,Pituitary tumor,0.99342,0.99936,0,0.00658,0.00959,0.00419,0.97963
+dummy_data/Testing/pituitary/Te-pi_0192.jpg,Pituitary tumor,Pituitary tumor,0.99357,0.99741,0,0.00643,0.01021,0.00931,0.97404
+dummy_data/Testing/pituitary/Te-pi_0193.jpg,Pituitary tumor,Pituitary tumor,0.99514,0.99969,0,0.00486,0.00675,0.0118,0.97659
+dummy_data/Testing/pituitary/Te-pi_0194.jpg,Pituitary tumor,Pituitary tumor,0.98919,0.99073,0,0.01081,0.00351,0.00574,0.97995
+dummy_data/Testing/pituitary/Te-pi_0195.jpg,Pituitary tumor,Pituitary tumor,0.98807,0.99969,0,0.01193,0.00892,0.01032,0.96883
+dummy_data/Testing/pituitary/Te-pi_0196.jpg,Pituitary tumor,Pituitary tumor,0.99302,0.99886,0,0.00698,0.00355,0.01137,0.97809
+dummy_data/Testing/pituitary/Te-pi_0197.jpg,Pituitary tumor,Pituitary tumor,0.99299,0.99954,0,0.00701,0.00891,0.01494,0.96914
+dummy_data/Testing/pituitary/Te-pi_0198.jpg,Pituitary tumor,Pituitary tumor,0.99185,0.99697,0,0.00815,0.00748,0.01433,0.97003
+dummy_data/Testing/pituitary/Te-pi_0199.jpg,Pituitary tumor,Pituitary tumor,0.98955,0.99948,0,0.01045,0.00611,0.01075,0.9727
+dummy_data/Testing/pituitary/Te-pi_0200.jpg,Pituitary tumor,Pituitary tumor,0.9916,0.99974,0,0.0084,0.02795,0.01326,0.95038
+dummy_data/Testing/pituitary/Te-pi_0201.jpg,Pituitary tumor,Pituitary tumor,0.99284,0.9988,0,0.00716,0.00289,0.0048,0.98515
+dummy_data/Testing/pituitary/Te-pi_0202.jpg,Pituitary tumor,Pituitary tumor,0.99103,0.99768,0,0.00897,0.00758,0.00975,0.9737
+dummy_data/Testing/pituitary/Te-pi_0203.jpg,Pituitary tumor,Pituitary tumor,0.98671,0.99457,0,0.01329,0.00978,0.01397,0.96296
+dummy_data/Testing/pituitary/Te-pi_0204.jpg,Pituitary tumor,Pituitary tumor,0.98715,0.98459,0,0.01285,0.00803,0.00843,0.97069
+dummy_data/Testing/pituitary/Te-pi_0205.jpg,Pituitary tumor,Pituitary tumor,0.99292,0.99976,0,0.00708,0.00771,0.00886,0.97634
+dummy_data/Testing/pituitary/Te-pi_0206.jpg,Pituitary tumor,Pituitary tumor,0.98968,0.98794,0,0.01032,0.00204,0.01314,0.97449
+dummy_data/Testing/pituitary/Te-pi_0207.jpg,Pituitary tumor,Pituitary tumor,0.98881,0.99819,0,0.01119,0.0031,0.02133,0.96438
+dummy_data/Testing/pituitary/Te-pi_0208.jpg,Pituitary tumor,Pituitary tumor,0.98775,0.99923,0,0.01225,0.00562,0.01896,0.96317
+dummy_data/Testing/pituitary/Te-pi_0209.jpg,Pituitary tumor,Pituitary tumor,0.98878,0.99963,0,0.01122,0.0055,0.01323,0.97005
+dummy_data/Testing/pituitary/Te-pi_0210.jpg,Pituitary tumor,Pituitary tumor,0.99044,0.99954,0,0.00956,0.00918,0.01097,0.97029
+dummy_data/Testing/pituitary/Te-pi_0211.jpg,Pituitary tumor,Pituitary tumor,0.98439,0.99982,0,0.01561,0.01124,0.01217,0.96098
+dummy_data/Testing/pituitary/Te-pi_0212.jpg,Pituitary tumor,Pituitary tumor,0.97637,0.9942,0,0.02363,0.00574,0.00806,0.96257
+dummy_data/Testing/pituitary/Te-pi_0213.jpg,Pituitary tumor,Pituitary tumor,0.99215,0.99891,0,0.00785,0.00678,0.00846,0.9769
+dummy_data/Testing/pituitary/Te-pi_0214.jpg,Pituitary tumor,Pituitary tumor,0.99365,0.99931,0,0.00635,0.00523,0.00765,0.98077
+dummy_data/Testing/pituitary/Te-pi_0215.jpg,Pituitary tumor,Pituitary tumor,0.98949,0.9994,0,0.01051,0.00449,0.01395,0.97105
+dummy_data/Testing/pituitary/Te-pi_0216.jpg,Pituitary tumor,Pituitary tumor,0.97318,0.99925,0,0.02682,0.01235,0.02054,0.94029
+dummy_data/Testing/pituitary/Te-pi_0217.jpg,Pituitary tumor,Pituitary tumor,0.99546,0.99943,0,0.00454,0.00241,0.01454,0.97851
+dummy_data/Testing/pituitary/Te-pi_0218.jpg,Pituitary tumor,Pituitary tumor,0.98762,0.99948,0,0.01238,0.00763,0.01,0.97
+dummy_data/Testing/pituitary/Te-pi_0219.jpg,Pituitary tumor,Pituitary tumor,0.9877,0.99978,0,0.0123,0.01618,0.01118,0.96034
+dummy_data/Testing/pituitary/Te-pi_0220.jpg,Pituitary tumor,Pituitary tumor,0.99337,0.98734,0,0.00663,0.00424,0.00579,0.98334
+dummy_data/Testing/pituitary/Te-pi_0221.jpg,Pituitary tumor,Pituitary tumor,0.99187,0.99937,0,0.00813,0.00291,0.01018,0.97878
+dummy_data/Testing/pituitary/Te-pi_0222.jpg,Pituitary tumor,Pituitary tumor,0.9912,0.99934,0,0.0088,0.00306,0.02073,0.96741
+dummy_data/Testing/pituitary/Te-pi_0223.jpg,Pituitary tumor,Pituitary tumor,0.99402,0.99957,0,0.00598,0.00639,0.00992,0.9777
+dummy_data/Testing/pituitary/Te-pi_0224.jpg,Pituitary tumor,Pituitary tumor,0.99516,0.96487,0,0.00484,0.01608,0.1054,0.87368
+dummy_data/Testing/pituitary/Te-pi_0225.jpg,Pituitary tumor,Pituitary tumor,0.99588,0.99003,0,0.00412,0.00634,0.00845,0.9811
+dummy_data/Testing/pituitary/Te-pi_0226.jpg,Pituitary tumor,Pituitary tumor,0.99423,0.99112,0,0.00577,0.00263,0.00571,0.98589
+dummy_data/Testing/pituitary/Te-pi_0227.jpg,Pituitary tumor,Pituitary tumor,0.99129,0.99969,0,0.00871,0.00842,0.01636,0.96651
+dummy_data/Testing/pituitary/Te-pi_0228.jpg,Pituitary tumor,Pituitary tumor,0.99323,0.99861,0,0.00677,0.0034,0.00474,0.98508
+dummy_data/Testing/pituitary/Te-pi_0229.jpg,Pituitary tumor,Pituitary tumor,0.99364,0.99947,0,0.00636,0.0082,0.01793,0.9675
+dummy_data/Testing/pituitary/Te-pi_0230.jpg,Pituitary tumor,Pituitary tumor,0.99499,0.99976,0,0.00501,0.00396,0.01852,0.97252
+dummy_data/Testing/pituitary/Te-pi_0231.jpg,Pituitary tumor,Pituitary tumor,0.98934,0.9978,0,0.01066,0.00385,0.01696,0.96853
+dummy_data/Testing/pituitary/Te-pi_0232.jpg,Pituitary tumor,Pituitary tumor,0.99086,0.99967,0,0.00914,0.0054,0.01176,0.97371
+dummy_data/Testing/pituitary/Te-pi_0233.jpg,Pituitary tumor,Pituitary tumor,0.98752,0.99928,0,0.01248,0.00661,0.0198,0.96111
+dummy_data/Testing/pituitary/Te-pi_0234.jpg,Pituitary tumor,Pituitary tumor,0.98101,0.97208,0,0.01899,0.00394,0.00858,0.9685
+dummy_data/Testing/pituitary/Te-pi_0235.jpg,Pituitary tumor,Pituitary tumor,0.98609,0.99686,0,0.01391,0.00664,0.00493,0.97452
+dummy_data/Testing/pituitary/Te-pi_0236.jpg,Pituitary tumor,Pituitary tumor,0.99115,0.99874,0,0.00885,0.00941,0.0309,0.95084
+dummy_data/Testing/pituitary/Te-pi_0237.jpg,Pituitary tumor,Pituitary tumor,0.98656,0.99968,0,0.01344,0.02987,0.1069,0.84979
+dummy_data/Testing/pituitary/Te-pi_0238.jpg,Pituitary tumor,Pituitary tumor,0.98744,0.99664,0,0.01256,0.00298,0.01267,0.9718
+dummy_data/Testing/pituitary/Te-pi_0239.jpg,Pituitary tumor,Pituitary tumor,0.99079,0.99926,0,0.00921,0.00817,0.01038,0.97223
+dummy_data/Testing/pituitary/Te-pi_0240.jpg,Pituitary tumor,Pituitary tumor,0.99347,0.99958,0,0.00653,0.01064,0.00939,0.97343
+dummy_data/Testing/pituitary/Te-pi_0241.jpg,Pituitary tumor,Pituitary tumor,0.99357,0.99955,0,0.00643,0.00694,0.01128,0.97535
+dummy_data/Testing/pituitary/Te-pi_0242.jpg,Pituitary tumor,Pituitary tumor,0.99175,0.99722,0,0.00825,0.00713,0.01734,0.96728
+dummy_data/Testing/pituitary/Te-pi_0243.jpg,Pituitary tumor,Pituitary tumor,0.99407,0.99816,0,0.00593,0.00441,0.0088,0.98087
+dummy_data/Testing/pituitary/Te-pi_0244.jpg,Pituitary tumor,Pituitary tumor,0.99356,0.9998,0,0.00644,0.00561,0.00975,0.9782
+dummy_data/Testing/pituitary/Te-pi_0245.jpg,Pituitary tumor,Pituitary tumor,0.99249,0.99949,0,0.00751,0.00488,0.00527,0.98234
+dummy_data/Testing/pituitary/Te-pi_0246.jpg,Pituitary tumor,Pituitary tumor,0.9909,0.99877,0,0.0091,0.00749,0.00773,0.97569
+dummy_data/Testing/pituitary/Te-pi_0247.jpg,Pituitary tumor,Pituitary tumor,0.98969,0.99792,0,0.01031,0.00683,0.01461,0.96825
+dummy_data/Testing/pituitary/Te-pi_0248.jpg,Pituitary tumor,Pituitary tumor,0.98893,0.96302,0,0.01107,0.00577,0.01598,0.96718
+dummy_data/Testing/pituitary/Te-pi_0249.jpg,Pituitary tumor,Pituitary tumor,0.98892,0.99973,0,0.01108,0.02039,0.01043,0.95811
+dummy_data/Testing/pituitary/Te-pi_0250.jpg,Pituitary tumor,Pituitary tumor,0.9926,0.99925,0,0.0074,0.0513,0.02806,0.91324
+dummy_data/Testing/pituitary/Te-pi_0251.jpg,Pituitary tumor,Pituitary tumor,0.99049,0.99723,0,0.00951,0.01658,0.01534,0.95857
+dummy_data/Testing/pituitary/Te-pi_0252.jpg,Pituitary tumor,Pituitary tumor,0.99078,0.99624,0,0.00922,0.00222,0.00632,0.98224
+dummy_data/Testing/pituitary/Te-pi_0253.jpg,Pituitary tumor,Pituitary tumor,0.99486,0.99871,0,0.00514,0.00721,0.03175,0.95589
+dummy_data/Testing/pituitary/Te-pi_0254.jpg,Pituitary tumor,Pituitary tumor,0.99263,0.99659,0,0.00737,0.01231,0.01138,0.96894
+dummy_data/Testing/pituitary/Te-pi_0255.jpg,Pituitary tumor,Pituitary tumor,0.98451,0.90453,0,0.01549,0.0041,0.00494,0.97547
+dummy_data/Testing/pituitary/Te-pi_0256.jpg,Pituitary tumor,Pituitary tumor,0.98999,0.81248,0,0.01001,0.00599,0.00425,0.97975
+dummy_data/Testing/pituitary/Te-pi_0257.jpg,Pituitary tumor,Pituitary tumor,0.99196,0.98631,0,0.00804,0.00614,0.00774,0.97809
+dummy_data/Testing/pituitary/Te-pi_0258.jpg,Pituitary tumor,Pituitary tumor,0.99432,0.99921,0,0.00568,0.00425,0.00948,0.98058
+dummy_data/Testing/pituitary/Te-pi_0259.jpg,Pituitary tumor,Pituitary tumor,0.99013,0.99838,0,0.00987,0.00971,0.01423,0.9662
+dummy_data/Testing/pituitary/Te-pi_0260.jpg,Pituitary tumor,Pituitary tumor,0.98887,0.99861,0,0.01113,0.00392,0.01099,0.97395
+dummy_data/Testing/pituitary/Te-pi_0261.jpg,Pituitary tumor,Pituitary tumor,0.99085,0.99909,0,0.00915,0.00483,0.01121,0.9748
+dummy_data/Testing/pituitary/Te-pi_0262.jpg,Pituitary tumor,Pituitary tumor,0.99081,0.99953,0,0.00919,0.00668,0.00795,0.97618
+dummy_data/Testing/pituitary/Te-pi_0263.jpg,Pituitary tumor,Pituitary tumor,0.99251,0.99959,0,0.00749,0.00663,0.01564,0.97025
+dummy_data/Testing/pituitary/Te-pi_0264.jpg,Pituitary tumor,Pituitary tumor,0.98719,0.9983,0,0.01281,0.0042,0.01448,0.96851
+dummy_data/Testing/pituitary/Te-pi_0265.jpg,Pituitary tumor,Pituitary tumor,0.99473,0.99984,0,0.00527,0.01086,0.00809,0.97578
+dummy_data/Testing/pituitary/Te-pi_0266.jpg,Pituitary tumor,Pituitary tumor,0.99182,0.99974,0,0.00818,0.00377,0.01205,0.976
+dummy_data/Testing/pituitary/Te-pi_0267.jpg,Pituitary tumor,Pituitary tumor,0.9935,0.99961,0,0.0065,0.02253,0.00676,0.96421
+dummy_data/Testing/pituitary/Te-pi_0268.jpg,Pituitary tumor,Pituitary tumor,0.99346,0.99859,0,0.00654,0.00343,0.00419,0.98585
+dummy_data/Testing/pituitary/Te-pi_0269.jpg,Pituitary tumor,Pituitary tumor,0.98166,0.99396,0,0.01834,0.03707,0.15811,0.78648
+dummy_data/Testing/pituitary/Te-pi_0270.jpg,Pituitary tumor,Pituitary tumor,0.99298,0.99767,0,0.00702,0.00375,0.01269,0.97654
+dummy_data/Testing/pituitary/Te-pi_0271.jpg,Pituitary tumor,Pituitary tumor,0.99343,0.99382,0,0.00657,0.01783,0.00994,0.96566
+dummy_data/Testing/pituitary/Te-pi_0272.jpg,Pituitary tumor,Pituitary tumor,0.99484,0.99538,0,0.00516,0.01294,0.00637,0.97552
+dummy_data/Testing/pituitary/Te-pi_0273.jpg,Pituitary tumor,Pituitary tumor,0.99203,0.99947,0,0.00797,0.00647,0.00513,0.98044
+dummy_data/Testing/pituitary/Te-pi_0274.jpg,Pituitary tumor,Pituitary tumor,0.99022,0.99812,0,0.00978,0.00526,0.0174,0.96756
+dummy_data/Testing/pituitary/Te-pi_0275.jpg,Pituitary tumor,Pituitary tumor,0.99173,0.99779,0,0.00827,0.00568,0.01689,0.96916
+dummy_data/Testing/pituitary/Te-pi_0276.jpg,Pituitary tumor,Pituitary tumor,0.98574,0.99745,0,0.01426,0.0059,0.01529,0.96455
+dummy_data/Testing/pituitary/Te-pi_0277.jpg,Pituitary tumor,Pituitary tumor,0.99283,0.99841,0,0.00717,0.00626,0.01141,0.97516
+dummy_data/Testing/pituitary/Te-pi_0278.jpg,Pituitary tumor,Pituitary tumor,0.99317,0.99878,0,0.00683,0.00595,0.00982,0.97739
+dummy_data/Testing/pituitary/Te-pi_0279.jpg,Pituitary tumor,Pituitary tumor,0.99174,0.99884,0,0.00826,0.00268,0.06855,0.92051
+dummy_data/Testing/pituitary/Te-pi_0280.jpg,Pituitary tumor,Pituitary tumor,0.99467,0.99901,0,0.00533,0.00955,0.0134,0.97172
+dummy_data/Testing/pituitary/Te-pi_0281.jpg,Pituitary tumor,Pituitary tumor,0.99139,0.9993,0,0.00861,0.0079,0.00727,0.97623
+dummy_data/Testing/pituitary/Te-pi_0282.jpg,Pituitary tumor,Pituitary tumor,0.99345,0.99912,0,0.00655,0.00529,0.01287,0.97529
+dummy_data/Testing/pituitary/Te-pi_0283.jpg,Pituitary tumor,Pituitary tumor,0.98826,0.99777,0,0.01174,0.00534,0.00746,0.97545
+dummy_data/Testing/pituitary/Te-pi_0284.jpg,Pituitary tumor,Pituitary tumor,0.98642,0.99505,0,0.01358,0.00577,0.00734,0.97331
+dummy_data/Testing/pituitary/Te-pi_0285.jpg,Pituitary tumor,Pituitary tumor,0.99281,0.99889,0,0.00719,0.00428,0.00542,0.98311
+dummy_data/Testing/pituitary/Te-pi_0286.jpg,Pituitary tumor,Pituitary tumor,0.99203,0.99941,0,0.00797,0.00439,0.01013,0.97752
+dummy_data/Testing/pituitary/Te-pi_0287.jpg,Pituitary tumor,Pituitary tumor,0.99341,0.99238,0,0.00659,0.00287,0.01943,0.97111
+dummy_data/Testing/pituitary/Te-pi_0288.jpg,Pituitary tumor,Pituitary tumor,0.99191,0.9972,0,0.00809,0.00497,0.01333,0.97361
+dummy_data/Testing/pituitary/Te-pi_0289.jpg,Pituitary tumor,Pituitary tumor,0.98429,0.99866,0,0.01571,0.00893,0.02837,0.94699
+dummy_data/Testing/pituitary/Te-pi_0290.jpg,Pituitary tumor,Pituitary tumor,0.98689,0.99275,0,0.01311,0.00655,0.01266,0.96769
+dummy_data/Testing/pituitary/Te-pi_0291.jpg,Pituitary tumor,Pituitary tumor,0.99393,0.99974,0,0.00607,0.00663,0.01584,0.97146
+dummy_data/Testing/pituitary/Te-pi_0292.jpg,Pituitary tumor,Pituitary tumor,0.99324,0.99851,0,0.00676,0.0039,0.02407,0.96527
+dummy_data/Testing/pituitary/Te-pi_0293.jpg,Pituitary tumor,Pituitary tumor,0.98799,0.99951,0,0.01201,0.04118,0.02454,0.92227
+dummy_data/Testing/pituitary/Te-pi_0294.jpg,Pituitary tumor,Pituitary tumor,0.98448,0.99941,0,0.01552,0.00479,0.00849,0.9712
+dummy_data/Testing/pituitary/Te-pi_0295.jpg,Pituitary tumor,Pituitary tumor,0.98679,0.99892,0,0.01321,0.0082,0.00708,0.9715
+dummy_data/Testing/pituitary/Te-pi_0296.jpg,Pituitary tumor,Pituitary tumor,0.9889,0.99933,0,0.0111,0.01302,0.01383,0.96205
+dummy_data/Testing/pituitary/Te-pi_0297.jpg,Pituitary tumor,Pituitary tumor,0.99567,0.99693,0,0.00433,0.00309,0.01405,0.97852
+dummy_data/Testing/pituitary/Te-pi_0298.jpg,Pituitary tumor,Pituitary tumor,0.98736,0.99715,0,0.01264,0.0068,0.00842,0.97214
+dummy_data/Testing/pituitary/Te-pi_0299.jpg,Pituitary tumor,Pituitary tumor,0.98956,0.99867,0,0.01044,0.00619,0.01407,0.9693

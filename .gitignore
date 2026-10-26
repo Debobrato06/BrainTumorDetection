@@ -24,3 +24,4 @@ smoke_test_model.pth
 temp_upload*
 models/
 external/
+paper_submission/_build/node_modules/

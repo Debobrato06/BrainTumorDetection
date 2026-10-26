@@ -1,4 +1,4 @@
-# BrainHybridNet: A Lightweight Hybrid CNN-Transformer Framework with Self-Supervised Pre-training and Uncertainty Estimation for Joint Brain Tumor Classification and Segmentation from Multi-Modal MRI
+  # BrainHybridNet: A Lightweight Hybrid CNN-Transformer Framework with Self-Supervised Pre-training and Uncertainty Estimation for Joint Brain Tumor Classification and Segmentation from Multi-Modal MRI
 
 **Debobrato [Last Name]¹**, [Co-author Name]¹, [Co-author Name]²
 
